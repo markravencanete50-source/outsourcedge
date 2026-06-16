@@ -1,7 +1,7 @@
 import { ReactNode, useEffect, useState } from 'react';
 import { Link, useLocation } from 'wouter';
 import { useAdmin } from '@/contexts/AdminContext';
-import { BarChart3, Users, Mail, FileText, LogOut, Menu, X, Wifi, WifiOff, Zap } from 'lucide-react';
+import { BarChart3, Users, Mail, FileText, LogOut, Menu, X, Wifi, WifiOff, Zap, Briefcase } from 'lucide-react';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 
@@ -22,11 +22,9 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       setFirebaseConnected(false);
       return;
     }
-
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setFirebaseConnected(!!user);
     });
-
     return () => unsubscribe();
   }, []);
 
@@ -48,6 +46,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     { href: '/admin/dashboard', label: 'Dashboard', icon: BarChart3 },
     { href: '/admin/contacts', label: 'Contact Submissions', icon: Mail },
     { href: '/admin/applications', label: 'Job Applications', icon: Users },
+    { href: '/admin/jobs', label: 'Manage Jobs', icon: Briefcase },
     { href: '/admin/analytics', label: 'Analytics', icon: FileText },
   ];
 
@@ -60,7 +59,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   return (
     <div className="flex h-screen bg-gray-100">
       {/* Sidebar */}
-      <aside
+      <aside 
         className={`${
           sidebarOpen ? 'w-64' : 'w-20'
         } bg-[#0F172A] text-white transition-all duration-300 flex flex-col`}
@@ -72,10 +71,10 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
               <div className="w-10 h-10 bg-[#0891B2] rounded-lg flex items-center justify-center font-bold">
                 OE
               </div>
-              <span className="font-bold">OutsourcEdge</span>
+              <span className="font-bold">OutsourceEdge</span>
             </div>
           )}
-          <button
+          <button 
             onClick={() => setSidebarOpen(!sidebarOpen)}
             className="p-1 hover:bg-gray-700 rounded"
           >
@@ -84,119 +83,57 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 p-4 space-y-2">
-          {menuItems.map((item) => {
-            const Icon = item.icon;
-            const active = isActive(item.href);
-            return (
-              <Link key={item.href} href={item.href}>
-                <a
-                  className={`flex items-center gap-3 px-4 py-3 rounded-lg transition ${
-                    active
-                      ? 'bg-[#0891B2] text-white'
-                      : 'text-gray-300 hover:bg-gray-700'
-                  }`}
-                  title={item.label}
-                >
-                  <Icon className="w-5 h-5" />
-                  {sidebarOpen && <span className="font-medium">{item.label}</span>}
-                </a>
-              </Link>
-            );
-          })}
+        <nav className="flex-1 py-6">
+          <ul className="space-y-2 px-3">
+            {menuItems.map((item) => (
+              <li key={item.href}>
+                <Link href={item.href}>
+                  <a className={`flex items-center gap-3 p-3 rounded-lg transition-colors ${
+                    isActive(item.href) 
+                      ? 'bg-[#0891B2] text-white' 
+                      : 'text-gray-400 hover:bg-gray-800 hover:text-white'
+                  }`}>
+                    <item.icon className="w-5 h-5" />
+                    {sidebarOpen && <span>{item.label}</span>}
+                  </a>
+                </Link>
+              </li>
+            ))}
+          </ul>
         </nav>
 
-        {/* Connection Status */}
-        {sidebarOpen && (
-          <div className="p-4 border-t border-gray-700 space-y-3">
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                {isOnline ? (
-                  <Wifi className="w-4 h-4 text-green-400" />
-                ) : (
-                  <WifiOff className="w-4 h-4 text-red-400" />
-                )}
-                <span className="text-xs text-gray-400">
+        {/* Status Bar */}
+        <div className="p-4 border-t border-gray-700 space-y-3">
+          {sidebarOpen && (
+            <div className="space-y-2 mb-4">
+              <div className="flex items-center justify-between text-xs text-gray-400">
+                <span>System Status</span>
+                <span className={isOnline ? 'text-green-500' : 'text-red-500'}>
                   {isOnline ? 'Online' : 'Offline'}
                 </span>
               </div>
-              <div className="flex items-center gap-2">
-                {firebaseConnected ? (
-                  <Zap className="w-4 h-4 text-green-400" />
-                ) : (
-                  <Zap className="w-4 h-4 text-gray-600" />
-                )}
-                <span className="text-xs text-gray-400">
-                  {firebaseConnected ? 'Firebase Connected' : 'Connecting...'}
+              <div className="flex items-center justify-between text-xs text-gray-400">
+                <span>Database</span>
+                <span className={firebaseConnected ? 'text-green-500' : 'text-yellow-500'}>
+                  {firebaseConnected ? 'Connected' : 'Syncing...'}
                 </span>
               </div>
             </div>
-          </div>
-        )}
-
-        {/* User Section */}
-        <div className="p-4 border-t border-gray-700">
-          <div className="mb-4">
-            {sidebarOpen && (
-              <div>
-                <p className="text-xs text-gray-400 mb-2">Logged in as</p>
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="w-8 h-8 bg-[#0891B2] rounded-full flex items-center justify-center text-xs font-bold">
-                    {adminEmail?.charAt(0).toUpperCase()}
-                  </div>
-                  <p className="text-sm font-semibold truncate">{adminEmail}</p>
-                </div>
-              </div>
-            )}
-          </div>
-          <button
+          )}
+          
+          <button 
             onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg transition text-sm font-medium"
+            className="flex items-center gap-3 w-full p-3 text-gray-400 hover:bg-red-900/20 hover:text-red-500 rounded-lg transition-colors"
           >
-            <LogOut className="w-4 h-4" />
-            {sidebarOpen && 'Logout'}
+            <LogOut className="w-5 h-5" />
+            {sidebarOpen && <span>Logout</span>}
           </button>
         </div>
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-auto">
-        {/* Top Bar */}
-        <div className="bg-white shadow-sm border-b border-gray-200 px-8 py-4">
-          <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold text-[#0F172A]">
-              {menuItems.find((item) => isActive(item.href))?.label || 'Dashboard'}
-            </h1>
-            <div className="flex items-center gap-4">
-              {/* Connection Status Indicator */}
-              <div className="flex items-center gap-2">
-                {isOnline ? (
-                  <div className="flex items-center gap-1 text-xs text-green-600">
-                    <div className="w-2 h-2 bg-green-600 rounded-full animate-pulse" />
-                    Online
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-1 text-xs text-red-600">
-                    <div className="w-2 h-2 bg-red-600 rounded-full" />
-                    Offline
-                  </div>
-                )}
-              </div>
-
-              {/* Date */}
-              <div className="text-sm text-gray-600">
-                {new Date().toLocaleDateString('en-US', {
-                  weekday: 'short',
-                  month: 'short',
-                  day: 'numeric',
-                })}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Content */}
-        <div className="p-8">{children}</div>
+      <main className="flex-1 overflow-auto p-8">
+        {children}
       </main>
     </div>
   );
