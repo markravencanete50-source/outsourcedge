@@ -1,8 +1,9 @@
-import { ReactNode } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { Link, useLocation } from 'wouter';
 import { useAdmin } from '@/contexts/AdminContext';
-import { BarChart3, Users, Mail, FileText, LogOut, Menu, X } from 'lucide-react';
-import { useState } from 'react';
+import { BarChart3, Users, Mail, FileText, LogOut, Menu, X, Wifi, WifiOff, Zap } from 'lucide-react';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from '@/lib/firebase';
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -12,6 +13,36 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const { logout, adminEmail } = useAdmin();
   const [location] = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [isOnline, setIsOnline] = useState(true);
+  const [firebaseConnected, setFirebaseConnected] = useState(false);
+
+  // Check Firebase connection
+  useEffect(() => {
+    if (!auth) {
+      setFirebaseConnected(false);
+      return;
+    }
+
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setFirebaseConnected(!!user);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  // Check online status
+  useEffect(() => {
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
 
   const menuItems = [
     { href: '/admin/dashboard', label: 'Dashboard', icon: BarChart3 },
@@ -21,6 +52,10 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   ];
 
   const isActive = (href: string) => location === href;
+
+  const handleLogout = async () => {
+    await logout();
+  };
 
   return (
     <div className="flex h-screen bg-gray-100">
@@ -71,18 +106,51 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           })}
         </nav>
 
+        {/* Connection Status */}
+        {sidebarOpen && (
+          <div className="p-4 border-t border-gray-700 space-y-3">
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                {isOnline ? (
+                  <Wifi className="w-4 h-4 text-green-400" />
+                ) : (
+                  <WifiOff className="w-4 h-4 text-red-400" />
+                )}
+                <span className="text-xs text-gray-400">
+                  {isOnline ? 'Online' : 'Offline'}
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                {firebaseConnected ? (
+                  <Zap className="w-4 h-4 text-green-400" />
+                ) : (
+                  <Zap className="w-4 h-4 text-gray-600" />
+                )}
+                <span className="text-xs text-gray-400">
+                  {firebaseConnected ? 'Firebase Connected' : 'Connecting...'}
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* User Section */}
         <div className="p-4 border-t border-gray-700">
           <div className="mb-4">
             {sidebarOpen && (
               <div>
-                <p className="text-xs text-gray-400 mb-1">Logged in as</p>
-                <p className="text-sm font-semibold truncate">{adminEmail}</p>
+                <p className="text-xs text-gray-400 mb-2">Logged in as</p>
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-8 h-8 bg-[#0891B2] rounded-full flex items-center justify-center text-xs font-bold">
+                    {adminEmail?.charAt(0).toUpperCase()}
+                  </div>
+                  <p className="text-sm font-semibold truncate">{adminEmail}</p>
+                </div>
               </div>
             )}
           </div>
           <button
-            onClick={logout}
+            onClick={handleLogout}
             className="w-full flex items-center gap-3 px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg transition text-sm font-medium"
           >
             <LogOut className="w-4 h-4" />
@@ -99,13 +167,30 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             <h1 className="text-2xl font-bold text-[#0F172A]">
               {menuItems.find((item) => isActive(item.href))?.label || 'Dashboard'}
             </h1>
-            <div className="text-sm text-gray-600">
-              {new Date().toLocaleDateString('en-US', {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-              })}
+            <div className="flex items-center gap-4">
+              {/* Connection Status Indicator */}
+              <div className="flex items-center gap-2">
+                {isOnline ? (
+                  <div className="flex items-center gap-1 text-xs text-green-600">
+                    <div className="w-2 h-2 bg-green-600 rounded-full animate-pulse" />
+                    Online
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-1 text-xs text-red-600">
+                    <div className="w-2 h-2 bg-red-600 rounded-full" />
+                    Offline
+                  </div>
+                )}
+              </div>
+
+              {/* Date */}
+              <div className="text-sm text-gray-600">
+                {new Date().toLocaleDateString('en-US', {
+                  weekday: 'short',
+                  month: 'short',
+                  day: 'numeric',
+                })}
+              </div>
             </div>
           </div>
         </div>
