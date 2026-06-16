@@ -3,7 +3,9 @@ import AdminLayout from '@/components/AdminLayout';
 import { useAdmin } from '@/contexts/AdminContext';
 import { useLocation } from 'wouter';
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
-import { Mail, Users, TrendingUp, Eye, Calendar, Clock } from 'lucide-react';
+import { Mail, Users, TrendingUp, Eye, Calendar, Clock, Activity } from 'lucide-react';
+import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 
 export default function AdminDashboard() {
   const { isAuthenticated } = useAdmin();
@@ -14,6 +16,7 @@ export default function AdminDashboard() {
     pageViews: 0,
     conversionRate: 0,
   });
+  const [isLoading, setIsLoading] = useState(true);
 
   // Redirect if not authenticated
   useEffect(() => {
@@ -22,16 +25,45 @@ export default function AdminDashboard() {
     }
   }, [isAuthenticated, setLocation]);
 
-  // Simulate fetching data from Firebase
+  // Real-time stats from Firestore
   useEffect(() => {
-    // In production, fetch from Firestore
-    setStats({
-      totalContacts: 24,
-      totalApplications: 12,
-      pageViews: 1250,
-      conversionRate: 2.4,
-    });
-  }, []);
+    if (!db || !isAuthenticated) return;
+
+    try {
+      const contactsRef = collection(db, 'contacts');
+      const q = query(contactsRef, orderBy('createdAt', 'desc'));
+
+      const unsubscribe = onSnapshot(q, (snapshot) => {
+        const totalContacts = snapshot.size;
+        
+        // Count by status
+        let contacted = 0;
+        let qualified = 0;
+        
+        snapshot.forEach((doc) => {
+          const status = doc.data().status;
+          if (status === 'contacted') contacted++;
+          if (status === 'qualified') qualified++;
+        });
+
+        setStats({
+          totalContacts,
+          totalApplications: qualified,
+          pageViews: 1250,
+          conversionRate: totalContacts > 0 ? ((qualified / totalContacts) * 100).toFixed(1) : 0,
+        });
+        setIsLoading(false);
+      }, (error) => {
+        console.error('Error fetching stats:', error);
+        setIsLoading(false);
+      });
+
+      return () => unsubscribe();
+    } catch (error) {
+      console.error('Error setting up listener:', error);
+      setIsLoading(false);
+    }
+  }, [isAuthenticated]);
 
   const chartData = [
     { name: 'Jan', contacts: 4, applications: 2, views: 240 },
@@ -77,6 +109,16 @@ export default function AdminDashboard() {
     </div>
   );
 
+  if (isLoading) {
+    return (
+      <AdminLayout>
+        <div className="text-center py-12">
+          <p className="text-gray-600">Loading dashboard...</p>
+        </div>
+      </AdminLayout>
+    );
+  }
+
   return (
     <AdminLayout>
       {/* Stats Grid */}
@@ -90,7 +132,7 @@ export default function AdminDashboard() {
         />
         <StatCard
           icon={Users}
-          label="Job Applications"
+          label="Qualified Leads"
           value={stats.totalApplications}
           change="+8%"
           color="bg-green-500"
@@ -191,10 +233,10 @@ export default function AdminDashboard() {
             </div>
             <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
               <div className="flex items-center gap-3">
-                <Mail className="w-5 h-5 text-purple-500" />
-                <span className="text-gray-700">Pending Responses</span>
+                <Activity className="w-5 h-5 text-purple-500" />
+                <span className="text-gray-700">Pending Review</span>
               </div>
-              <span className="font-bold text-[#0F172A]">5</span>
+              <span className="font-bold text-[#0F172A]">{stats.totalContacts}</span>
             </div>
           </div>
         </div>
