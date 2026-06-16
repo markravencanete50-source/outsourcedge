@@ -79,7 +79,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         "Authorization": `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: "llama3-8b-8192",
+        model: "llama-3.1-8b-instant",
         max_tokens: 400,
         messages: [
           { role: "system", content: SYSTEM_PROMPT },
@@ -90,8 +90,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     if (!groqRes.ok) {
       const errText = await groqRes.text();
-      console.error("Groq error:", errText);
-      return res.status(502).json({ error: "Upstream API error" });
+      console.error("Groq error:", groqRes.status, errText);
+      return res.status(502).json({ error: `Groq API error: ${groqRes.status}`, details: errText });
     }
 
     const data = await groqRes.json();
