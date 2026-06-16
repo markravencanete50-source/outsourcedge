@@ -1,5 +1,5 @@
 import { Switch, Route } from "wouter";
-import { Toaster } from "@/components/ui/toaster";
+import { Toaster } from "@/components/ui/sonner"; // Fixed import path
 import { AdminProvider } from "./contexts/AdminContext";
 import NotFound from "@/pages/NotFound";
 import Home from "@/pages/Home";
