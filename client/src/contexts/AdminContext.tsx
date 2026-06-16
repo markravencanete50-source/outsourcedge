@@ -1,60 +1,116 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { 
+  signInWithEmailAndPassword, 
+  signOut, 
+  onAuthStateChanged,
+  createUserWithEmailAndPassword,
+  User
+} from 'firebase/auth';
+import { auth } from '@/lib/firebase';
 
 interface AdminContextType {
   isAuthenticated: boolean;
   adminEmail: string | null;
+  adminUser: User | null;
   login: (email: string, password: string) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
   isLoading: boolean;
+  error: string | null;
 }
 
 const AdminContext = createContext<AdminContextType | undefined>(undefined);
 
-// Simple admin credentials (in production, use Firebase Auth)
-const ADMIN_EMAIL = 'admin@outsourcedge.com';
-const ADMIN_PASSWORD = 'OutsourcEdge2024!'; // Change this!
-
 export function AdminProvider({ children }: { children: React.ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [adminEmail, setAdminEmail] = useState<string | null>(null);
+  const [adminUser, setAdminUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Check if admin is already logged in (from localStorage)
+  // Listen for Firebase auth state changes
   useEffect(() => {
-    const storedAdmin = localStorage.getItem('adminSession');
-    if (storedAdmin) {
-      setAdminEmail(storedAdmin);
-      setIsAuthenticated(true);
+    if (!auth) {
+      setIsLoading(false);
+      return;
     }
-    setIsLoading(false);
+
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setAdminEmail(user.email);
+        setAdminUser(user);
+        setIsAuthenticated(true);
+        setError(null);
+      } else {
+        setAdminEmail(null);
+        setAdminUser(null);
+        setIsAuthenticated(false);
+      }
+      setIsLoading(false);
+    });
+
+    return () => unsubscribe();
   }, []);
 
   const login = async (email: string, password: string) => {
     setIsLoading(true);
+    setError(null);
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 500));
-
-      if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-        setAdminEmail(email);
-        setIsAuthenticated(true);
-        localStorage.setItem('adminSession', email);
-      } else {
-        throw new Error('Invalid credentials');
+      if (!auth) {
+        throw new Error('Firebase is not initialized');
       }
+      
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      setAdminEmail(userCredential.user.email);
+      setAdminUser(userCredential.user);
+      setIsAuthenticated(true);
+    } catch (err: any) {
+      const errorMessage = err.code === 'auth/user-not-found' 
+        ? 'Email not found. Please check your email address.'
+        : err.code === 'auth/wrong-password'
+        ? 'Incorrect password. Please try again.'
+        : err.code === 'auth/invalid-email'
+        ? 'Invalid email address.'
+        : err.message || 'Login failed. Please try again.';
+      
+      setError(errorMessage);
+      setIsAuthenticated(false);
+      throw new Error(errorMessage);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const logout = () => {
-    setAdminEmail(null);
-    setIsAuthenticated(false);
-    localStorage.removeItem('adminSession');
+  const logout = async () => {
+    setIsLoading(true);
+    try {
+      if (!auth) {
+        throw new Error('Firebase is not initialized');
+      }
+      
+      await signOut(auth);
+      setAdminEmail(null);
+      setAdminUser(null);
+      setIsAuthenticated(false);
+      setError(null);
+    } catch (err: any) {
+      setError(err.message || 'Logout failed');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
-    <AdminContext.Provider value={{ isAuthenticated, adminEmail, login, logout, isLoading }}>
+    <AdminContext.Provider 
+      value={{ 
+        isAuthenticated, 
+        adminEmail, 
+        adminUser,
+        login, 
+        logout, 
+        isLoading,
+        error 
+      }}
+    >
       {children}
     </AdminContext.Provider>
   );
