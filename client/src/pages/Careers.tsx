@@ -33,11 +33,10 @@ export default function Careers() {
   useEffect(() => {
     if (!db) return;
 
-    // Fetch only active jobs from Firestore
+    // Simplified query to avoid indexing issues
     const q = query(
       collection(db, 'jobs'), 
-      where('status', '==', 'active'),
-      orderBy('createdAt', 'desc')
+      where('status', '==', 'active')
     );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -45,7 +44,18 @@ export default function Careers() {
         id: doc.id,
         ...doc.data()
       })) as Job[];
-      setJobs(jobsData);
+      
+      // Sort manually in code to avoid Firestore composite index requirement
+      const sortedJobs = jobsData.sort((a: any, b: any) => {
+        const dateA = a.createdAt?.toDate ? a.createdAt.toDate() : 0;
+        const dateB = b.createdAt?.toDate ? b.createdAt.toDate() : 0;
+        return dateB - dateA;
+      });
+
+      setJobs(sortedJobs);
+      setIsLoading(false);
+    }, (error) => {
+      console.error("Firestore error:", error);
       setIsLoading(false);
     });
 
