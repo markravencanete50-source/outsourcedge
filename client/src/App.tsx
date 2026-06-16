@@ -1,6 +1,4 @@
 import { Switch, Route } from "wouter";
-import { QueryClientProvider } from "@tanstack/react-query";
-import { queryClient } from "./lib/queryClient";
 import { Toaster } from "@/components/ui/toaster";
 import { AdminProvider } from "./contexts/AdminContext";
 import NotFound from "@/pages/NotFound";
@@ -14,7 +12,7 @@ import AdminDashboard from "@/pages/AdminDashboard";
 import AdminContacts from "@/pages/AdminContacts";
 import AdminApplications from "@/pages/AdminApplications";
 import AdminAnalytics from "@/pages/AdminAnalytics";
-import AdminJobs from "@/pages/AdminJobs"; // Import the new page
+import AdminJobs from "@/pages/AdminJobs";
 
 function Router() {
   return (
@@ -29,7 +27,7 @@ function Router() {
       <Route path="/admin/contacts" component={AdminContacts} />
       <Route path="/admin/applications" component={AdminApplications} />
       <Route path="/admin/analytics" component={AdminAnalytics} />
-      <Route path="/admin/jobs" component={AdminJobs} /> {/* Add the new route */}
+      <Route path="/admin/jobs" component={AdminJobs} />
       <Route component={NotFound} />
     </Switch>
   );
@@ -37,12 +35,10 @@ function Router() {
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <AdminProvider>
-        <Router />
-        <Toaster />
-      </AdminProvider>
-    </QueryClientProvider>
+    <AdminProvider>
+      <Router />
+      <Toaster />
+    </AdminProvider>
   );
 }
 
