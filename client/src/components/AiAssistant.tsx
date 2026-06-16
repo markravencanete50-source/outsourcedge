@@ -7,34 +7,6 @@ interface Message {
   content: string;
 }
 
-const SYSTEM_PROMPT = `You are Aria, a friendly and knowledgeable AI assistant for OutsourcEdge — a premium outsourcing company that provides:
-
-1. **Dedicated Growth Partners** – Strategic teams focused on scaling business operations and driving sustainable growth.
-2. **Property Management Support** – Expert assistance with tenant relations, maintenance coordination, and compliance.
-3. **Virtual Staffing** – Access to pre-vetted, skilled professionals for administrative, technical, and specialized roles.
-4. **Customer Service Support** – 24/7 support teams delivering exceptional customer experiences across all channels.
-5. **Administrative Support** – Handling day-to-day operations so clients can focus on strategic growth.
-6. **Business Operations** – End-to-end support for streamlined, efficient operations.
-7. **Project Management Services** – Including Landlord Support, Tenant Management, Maintenance Coordination, Property Inspections, and Rent Collection.
-
-Key facts:
-- Onboarding typically takes 5–7 business days
-- Services can reduce operational costs by up to 40%
-- 24/7 support is available
-- 98% client retention rate
-- 500+ properties managed
-- They serve property management, real estate, tech startups, e-commerce, and more
-
-Your job is to:
-- Help visitors understand which OutsourcEdge service is right for them
-- Answer questions about services, pricing approach, and onboarding
-- Guide users toward booking a consultation via the Contact page
-- Be warm, professional, and concise (keep replies under 120 words unless detail is truly needed)
-- Always end with a helpful follow-up question or a CTA to visit /contact
-
-Do NOT make up specific pricing — tell users to contact the team for a custom quote.
-Do NOT answer questions unrelated to OutsourcEdge or outsourcing/property management.`;
-
 const SUGGESTED_QUESTIONS = [
   "What services do you offer?",
   "How does onboarding work?",
@@ -66,7 +38,6 @@ function MessageBubble({ msg }: { msg: Message }) {
       transition={{ duration: 0.25 }}
       className={`flex items-end gap-2 ${isUser ? "flex-row-reverse" : "flex-row"}`}
     >
-      {/* Avatar */}
       <div
         className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 ${
           isUser
@@ -81,9 +52,8 @@ function MessageBubble({ msg }: { msg: Message }) {
         )}
       </div>
 
-      {/* Bubble */}
       <div
-        className={`max-w-[80%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${
+        className={`max-w-[80%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap ${
           isUser
             ? "bg-gradient-to-br from-[#0891B2] to-[#059669] text-white rounded-br-sm"
             : "bg-gray-100 text-gray-800 rounded-bl-sm"
@@ -125,33 +95,33 @@ export default function AiAssistant() {
     if (!text.trim() || loading) return;
 
     const userMsg: Message = { role: "user", content: text.trim() };
-    setMessages((prev) => [...prev, userMsg]);
+    const updatedMessages = [...messages, userMsg];
+    setMessages(updatedMessages);
     setInput("");
     setLoading(true);
 
     try {
-      const history = [...messages, userMsg].map((m) => ({
-        role: m.role,
-        content: m.content,
-      }));
-
-      const response = await fetch("https://api.anthropic.com/v1/messages", {
+      // Call our secure server-side proxy — API key never touches the browser
+      const response = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          model: "claude-sonnet-4-6",
-          max_tokens: 1000,
-          system: SYSTEM_PROMPT,
-          messages: history,
+          messages: updatedMessages.map((m) => ({
+            role: m.role,
+            content: m.content,
+          })),
         }),
       });
 
-      const data = await response.json();
-      const reply =
-        data?.content?.[0]?.text ?? "Sorry, I couldn't get a response. Please try again.";
+      if (!response.ok) {
+        throw new Error(`Server error: ${response.status}`);
+      }
 
+      const data = await response.json();
+      const reply = data?.reply ?? "Sorry, I couldn't get a response. Please try again.";
       setMessages((prev) => [...prev, { role: "assistant", content: reply }]);
-    } catch {
+    } catch (err) {
+      console.error("Chat error:", err);
       setMessages((prev) => [
         ...prev,
         {
@@ -176,7 +146,6 @@ export default function AiAssistant() {
     <>
       {/* ── Floating Button ── */}
       <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
-        {/* Tooltip bubble */}
         <AnimatePresence>
           {!open && showBadge && (
             <motion.div
@@ -200,17 +169,28 @@ export default function AiAssistant() {
         >
           <AnimatePresence mode="wait">
             {open ? (
-              <motion.div key="close" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.2 }}>
+              <motion.div
+                key="close"
+                initial={{ rotate: -90, opacity: 0 }}
+                animate={{ rotate: 0, opacity: 1 }}
+                exit={{ rotate: 90, opacity: 0 }}
+                transition={{ duration: 0.2 }}
+              >
                 <ChevronDown className="w-6 h-6" />
               </motion.div>
             ) : (
-              <motion.div key="open" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.2 }}>
+              <motion.div
+                key="open"
+                initial={{ rotate: 90, opacity: 0 }}
+                animate={{ rotate: 0, opacity: 1 }}
+                exit={{ rotate: -90, opacity: 0 }}
+                transition={{ duration: 0.2 }}
+              >
                 <Sparkles className="w-6 h-6" />
               </motion.div>
             )}
           </AnimatePresence>
 
-          {/* Pulse ring */}
           {!open && (
             <span className="absolute inset-0 rounded-full animate-ping bg-[#0891B2] opacity-20" />
           )}
@@ -269,7 +249,7 @@ export default function AiAssistant() {
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Suggested questions (only at start) */}
+            {/* Suggested questions — shown only at conversation start */}
             {messages.length === 1 && !loading && (
               <div className="px-4 pb-3 flex flex-wrap gap-2 flex-shrink-0">
                 {SUGGESTED_QUESTIONS.map((q) => (
@@ -300,7 +280,7 @@ export default function AiAssistant() {
                 onClick={() => sendMessage(input)}
                 disabled={loading || !input.trim()}
                 className="w-9 h-9 bg-gradient-to-br from-[#0891B2] to-[#059669] rounded-xl flex items-center justify-center text-white disabled:opacity-40 hover:opacity-90 transition flex-shrink-0"
-                aria-label="Send"
+                aria-label="Send message"
               >
                 {loading ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
@@ -312,10 +292,14 @@ export default function AiAssistant() {
 
             {/* Footer */}
             <p className="text-center text-[10px] text-gray-400 pb-2 flex-shrink-0">
-              Powered by OutsourcEdge AI • <a href="/contact" className="underline hover:text-[#0891B2]">Talk to a human</a>
+              Powered by OutsourcEdge AI •{" "}
+              <a href="/contact" className="underline hover:text-[#0891B2]">
+                Talk to a human
+              </a>
             </p>
           </motion.div>
         )}
       </AnimatePresence>
     </>
   );
+}
