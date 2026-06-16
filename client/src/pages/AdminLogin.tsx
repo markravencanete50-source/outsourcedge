@@ -89,19 +89,6 @@ export default function AdminLogin() {
               {isLoading ? 'Logging in...' : 'Login to Dashboard'}
             </Button>
           </form>
-
-          {/* Demo Credentials */}
-          <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-            <p className="text-sm text-gray-600 mb-2">
-              <strong>Demo Credentials:</strong>
-            </p>
-            <p className="text-sm text-gray-600">
-              Email: <code className="bg-white px-2 py-1 rounded">admin@outsourcedge.com</code>
-            </p>
-            <p className="text-sm text-gray-600">
-              Password: <code className="bg-white px-2 py-1 rounded">OutsourcEdge2024!</code>
-            </p>
-          </div>
         </div>
 
         {/* Footer */}
