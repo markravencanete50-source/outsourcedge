@@ -1,5 +1,6 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import AiAssistant from "@/components/AiAssistant";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, CheckCircle, Users, Zap, TrendingUp, Globe, Award } from "lucide-react";
 import { Link } from "wouter";
@@ -410,6 +411,7 @@ export default function Home() {
       </section>
 
       <Footer />
+      <AiAssistant />
     </div>
   );
 }
