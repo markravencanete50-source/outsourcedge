@@ -319,4 +319,5 @@ export default function AiAssistant() {
       </AnimatePresence>
     </>
   );
+  fix: force re-index AiAssistant component
 }
