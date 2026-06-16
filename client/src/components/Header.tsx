@@ -1,57 +1,50 @@
 import { Link } from "wouter";
-import { Menu, X, ChevronDown, Users, Building2, Headphones, ClipboardList, Cog, TrendingUp } from "lucide-react";
+import { Menu, X, ChevronDown, Home, Users, Wrench, ClipboardCheck, DollarSign } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 
-const projectManagementServices = [
+const pmServices = [
   {
-    icon: TrendingUp,
-    title: "Dedicated Growth Partners",
-    description: "Strategic teams focused on scaling your business operations.",
-    href: "/services",
-  },
-  {
-    icon: Building2,
-    title: "Property Management Support",
-    description: "Expert tenant relations, maintenance, and compliance.",
+    icon: Home,
+    title: "Landlord Support",
+    description: "Full-service support for landlords managing single or multi-unit properties.",
     href: "/services",
   },
   {
     icon: Users,
-    title: "Virtual Staffing",
-    description: "Pre-vetted professionals for any role, on demand.",
+    title: "Tenant Management",
+    description: "Streamlined tenant screening, onboarding, and ongoing communication.",
     href: "/services",
   },
   {
-    icon: Headphones,
-    title: "Customer Service Support",
-    description: "24/7 multi-channel support teams for your customers.",
+    icon: Wrench,
+    title: "Maintenance Coordination",
+    description: "Fast, reliable coordination of repairs and preventive maintenance.",
     href: "/services",
   },
   {
-    icon: ClipboardList,
-    title: "Administrative Support",
-    description: "Day-to-day operations handled so you can focus on growth.",
+    icon: ClipboardCheck,
+    title: "Property Inspections",
+    description: "Scheduled and ad-hoc property inspections with detailed reporting.",
     href: "/services",
   },
   {
-    icon: Cog,
-    title: "Business Operations",
-    description: "End-to-end support for streamlined, efficient operations.",
+    icon: DollarSign,
+    title: "Rent Collection",
+    description: "Automated and manual rent collection with full payment tracking.",
     href: "/services",
   },
 ];
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
-  const [servicesOpen, setServicesOpen] = useState(false);
-  const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
+  const [pmOpen, setPmOpen] = useState(false);
+  const [mobilePmOpen, setMobilePmOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        setServicesOpen(false);
+        setPmOpen(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -61,6 +54,7 @@ export default function Header() {
   const navLinks = [
     { href: "/", label: "Home" },
     { href: "/about", label: "About" },
+    { href: "/services", label: "Services" },
     { href: "/careers", label: "Careers" },
     { href: "/contact", label: "Contact" },
   ];
@@ -80,48 +74,56 @@ export default function Header() {
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-8">
-          {navLinks.slice(0, 2).map((link) => (
-            <Link key={link.href} href={link.href}>
-              <a className="text-[#0F172A] hover:text-[#0891B2] transition font-medium">
-                {link.label}
-              </a>
-            </Link>
-          ))}
+          {/* Home */}
+          <Link href="/">
+            <a className="text-[#0F172A] hover:text-[#0891B2] transition font-medium">Home</a>
+          </Link>
+
+          {/* About */}
+          <Link href="/about">
+            <a className="text-[#0F172A] hover:text-[#0891B2] transition font-medium">About</a>
+          </Link>
+
+          {/* Services */}
+          <Link href="/services">
+            <a className="text-[#0F172A] hover:text-[#0891B2] transition font-medium">Services</a>
+          </Link>
 
           {/* Project Management Services Dropdown */}
           <div className="relative" ref={dropdownRef}>
             <button
-              className="flex items-center gap-1.5 text-[#0F172A] hover:text-[#0891B2] transition font-medium"
-              onClick={() => setServicesOpen((v) => !v)}
-              onMouseEnter={() => setServicesOpen(true)}
-              aria-expanded={servicesOpen}
+              className="flex items-center gap-1.5 text-[#0F172A] hover:text-[#0891B2] transition font-medium whitespace-nowrap"
+              onClick={() => setPmOpen((v) => !v)}
+              onMouseEnter={() => setPmOpen(true)}
+              aria-expanded={pmOpen}
             >
               Project Management Services
               <ChevronDown
-                className={`w-4 h-4 transition-transform duration-200 ${servicesOpen ? "rotate-180" : ""}`}
+                className={`w-4 h-4 transition-transform duration-200 ${pmOpen ? "rotate-180" : ""}`}
               />
             </button>
 
             {/* Dropdown Panel */}
-            {servicesOpen && (
+            {pmOpen && (
               <div
-                className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-[620px] bg-white rounded-2xl shadow-2xl border border-gray-100 p-6 z-50"
-                onMouseLeave={() => setServicesOpen(false)}
+                className="absolute top-full right-0 mt-3 w-[380px] bg-white rounded-2xl shadow-2xl border border-gray-100 p-5 z-50"
+                onMouseLeave={() => setPmOpen(false)}
               >
                 {/* Arrow tip */}
-                <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white border-l border-t border-gray-100 rotate-45" />
+                <div className="absolute -top-2 right-8 w-4 h-4 bg-white border-l border-t border-gray-100 rotate-45" />
 
-                <p className="text-xs font-semibold text-[#0891B2] uppercase tracking-widest mb-4 px-1">
-                  Our Services
+                <p className="text-xs font-semibold text-[#0891B2] uppercase tracking-widest mb-3 px-1">
+                  Project Management Services
                 </p>
-                <div className="grid grid-cols-2 gap-2">
-                  {projectManagementServices.map((service) => {
+
+                <div className="flex flex-col gap-1">
+                  {pmServices.map((service) => {
                     const Icon = service.icon;
                     return (
                       <Link key={service.title} href={service.href}>
                         <a
                           className="flex items-start gap-3 p-3 rounded-xl hover:bg-blue-50 transition group"
-                          onClick={() => setServicesOpen(false)}
+                          onClick={() => setPmOpen(false)}
                         >
                           <div className="w-9 h-9 bg-gradient-to-br from-[#0891B2] to-[#059669] rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
                             <Icon className="w-4 h-4 text-white" />
@@ -140,16 +142,14 @@ export default function Header() {
                   })}
                 </div>
 
-                <div className="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between">
-                  <p className="text-sm text-gray-500">
-                    Need a custom solution?
-                  </p>
+                <div className="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between">
+                  <p className="text-sm text-gray-500">Need property management help?</p>
                   <Link href="/contact">
                     <a
                       className="text-sm font-semibold text-[#0891B2] hover:underline"
-                      onClick={() => setServicesOpen(false)}
+                      onClick={() => setPmOpen(false)}
                     >
-                      Talk to us →
+                      Contact us →
                     </a>
                   </Link>
                 </div>
@@ -157,13 +157,15 @@ export default function Header() {
             )}
           </div>
 
-          {navLinks.slice(2).map((link) => (
-            <Link key={link.href} href={link.href}>
-              <a className="text-[#0F172A] hover:text-[#0891B2] transition font-medium">
-                {link.label}
-              </a>
-            </Link>
-          ))}
+          {/* Careers */}
+          <Link href="/careers">
+            <a className="text-[#0F172A] hover:text-[#0891B2] transition font-medium">Careers</a>
+          </Link>
+
+          {/* Contact */}
+          <Link href="/contact">
+            <a className="text-[#0F172A] hover:text-[#0891B2] transition font-medium">Contact</a>
+          </Link>
         </nav>
 
         {/* CTA Button */}
@@ -191,7 +193,8 @@ export default function Header() {
       {isOpen && (
         <nav className="md:hidden bg-white border-t border-gray-200">
           <div className="container py-4 flex flex-col gap-1">
-            {navLinks.slice(0, 2).map((link) => (
+            {/* Regular links before PM Services */}
+            {[{ href: "/", label: "Home" }, { href: "/about", label: "About" }, { href: "/services", label: "Services" }].map((link) => (
               <Link key={link.href} href={link.href}>
                 <a
                   className="text-[#0F172A] hover:text-[#0891B2] transition font-medium py-2 px-2 rounded-lg hover:bg-gray-50 block"
@@ -202,27 +205,27 @@ export default function Header() {
               </Link>
             ))}
 
-            {/* Mobile Services Accordion */}
+            {/* Mobile PM Services Accordion */}
             <div>
               <button
                 className="w-full flex items-center justify-between text-[#0F172A] font-medium py-2 px-2 rounded-lg hover:bg-gray-50 hover:text-[#0891B2] transition"
-                onClick={() => setMobileServicesOpen((v) => !v)}
+                onClick={() => setMobilePmOpen((v) => !v)}
               >
                 Project Management Services
                 <ChevronDown
-                  className={`w-4 h-4 transition-transform duration-200 ${mobileServicesOpen ? "rotate-180" : ""}`}
+                  className={`w-4 h-4 transition-transform duration-200 ${mobilePmOpen ? "rotate-180" : ""}`}
                 />
               </button>
 
-              {mobileServicesOpen && (
-                <div className="mt-1 ml-2 border-l-2 border-[#0891B2]/20 pl-4 flex flex-col gap-1">
-                  {projectManagementServices.map((service) => {
+              {mobilePmOpen && (
+                <div className="mt-1 ml-2 border-l-2 border-[#0891B2]/20 pl-3 flex flex-col gap-1">
+                  {pmServices.map((service) => {
                     const Icon = service.icon;
                     return (
                       <Link key={service.title} href={service.href}>
                         <a
                           className="flex items-center gap-3 py-2 px-2 rounded-lg hover:bg-blue-50 transition group"
-                          onClick={() => { setIsOpen(false); setMobileServicesOpen(false); }}
+                          onClick={() => { setIsOpen(false); setMobilePmOpen(false); }}
                         >
                           <div className="w-7 h-7 bg-gradient-to-br from-[#0891B2] to-[#059669] rounded-md flex items-center justify-center flex-shrink-0">
                             <Icon className="w-3.5 h-3.5 text-white" />
@@ -238,7 +241,8 @@ export default function Header() {
               )}
             </div>
 
-            {navLinks.slice(2).map((link) => (
+            {/* Remaining links */}
+            {[{ href: "/careers", label: "Careers" }, { href: "/contact", label: "Contact" }].map((link) => (
               <Link key={link.href} href={link.href}>
                 <a
                   className="text-[#0F172A] hover:text-[#0891B2] transition font-medium py-2 px-2 rounded-lg hover:bg-gray-50 block"
