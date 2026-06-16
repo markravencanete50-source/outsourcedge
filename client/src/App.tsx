@@ -10,6 +10,7 @@ import About from "./pages/About";
 import Services from "./pages/Services";
 import Careers from "./pages/Careers";
 import Contact from "./pages/Contact";
+import ProjectManagement from "./pages/ProjectManagement";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminContacts from "./pages/AdminContacts";
@@ -22,6 +23,7 @@ function Router() {
       <Route path={"/"} component={Home} />
       <Route path={"/about"} component={About} />
       <Route path={"/services"} component={Services} />
+      <Route path={"/project-management"} component={ProjectManagement} />
       <Route path={"/careers"} component={Careers} />
       <Route path={"/contact"} component={Contact} />
       <Route path={"/admin/login"} component={AdminLogin} />
