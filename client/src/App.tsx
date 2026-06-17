@@ -20,6 +20,7 @@ import AdminServices from "@/pages/AdminServices";
 import AdminTestimonials from "@/pages/AdminTestimonials";
 import AdminServiceQuestionnaires from "@/pages/AdminServiceQuestionnaires";
 import JobDetail from "@/pages/JobDetail";
+import ServiceDetail from "@/pages/ServiceDetail";
 
 function Router() {
   return (
@@ -28,6 +29,7 @@ function Router() {
       <Route path="/services" component={Services} />
       <Route path="/careers" component={Careers} />
       <Route path="/job/:id" component={JobDetail} />
+      <Route path="/service/:id" component={ServiceDetail} />
       <Route path="/about" component={About} />
       <Route path="/contact" component={Contact} />
       <Route path="/project-management" component={ProjectManagement} />
@@ -39,7 +41,7 @@ function Router() {
       <Route path="/admin/jobs" component={AdminJobs} />
       <Route path="/admin/clients" component={AdminClients} />
       <Route path="/admin/editor" component={AdminPageEditor} />
-
+      <Route path="/admin/services" component={AdminServices} />
       <Route path="/admin/testimonials" component={AdminTestimonials} />
       <Route path="/admin/service-questionnaires" component={AdminServiceQuestionnaires} />
       <Route component={NotFound} />
