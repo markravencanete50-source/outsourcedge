@@ -10,12 +10,14 @@ import { Textarea } from '@/components/ui/textarea';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
-import { Plus, Edit2, Trash2, Layout, Star } from 'lucide-react';
+import { Plus, Edit2, Trash2, Settings } from 'lucide-react';
 
 interface Service {
   id: string;
   title: string;
   description: string;
+  longDescription?: string;
+  questions?: string[];
   icon?: string;
   order?: number;
 }
@@ -28,6 +30,8 @@ export default function AdminServices() {
   const [currentService, setCurrentService] = useState<Service | null>(null);
   const [formTitle, setFormTitle] = useState('');
   const [formDescription, setFormDescription] = useState('');
+  const [formLongDescription, setFormLongDescription] = useState('');
+  const [formQuestions, setFormQuestions] = useState('');
   const [formIcon, setFormIcon] = useState('');
   const [formOrder, setFormOrder] = useState(0);
 
@@ -55,6 +59,8 @@ export default function AdminServices() {
     setCurrentService(null);
     setFormTitle('');
     setFormDescription('');
+    setFormLongDescription('');
+    setFormQuestions('');
     setFormIcon('Zap');
     setFormOrder(services.length);
   };
@@ -68,6 +74,8 @@ export default function AdminServices() {
       await addDoc(collection(db, 'services'), {
         title: formTitle,
         description: formDescription,
+        longDescription: formLongDescription,
+        questions: formQuestions.split('\n').filter(q => q.trim() !== ''),
         icon: formIcon,
         order: formOrder,
         createdAt: new Date()
@@ -91,6 +99,8 @@ export default function AdminServices() {
       await updateDoc(serviceRef, {
         title: formTitle,
         description: formDescription,
+        longDescription: formLongDescription,
+        questions: formQuestions.split('\n').filter(q => q.trim() !== ''),
         icon: formIcon,
         order: formOrder,
       });
@@ -119,6 +129,8 @@ export default function AdminServices() {
     setCurrentService(service);
     setFormTitle(service.title);
     setFormDescription(service.description);
+    setFormLongDescription(service.longDescription || '');
+    setFormQuestions(service.questions?.join('\n') || '');
     setFormIcon(service.icon || 'Zap');
     setFormOrder(service.order || 0);
     setIsDialogOpen(true);
@@ -146,7 +158,6 @@ export default function AdminServices() {
             <TableHeader>
               <TableRow>
                 <TableHead>Order</TableHead>
-                <TableHead>Icon</TableHead>
                 <TableHead>Title</TableHead>
                 <TableHead>Description</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
@@ -156,7 +167,6 @@ export default function AdminServices() {
               {services.map((service) => (
                 <TableRow key={service.id}>
                   <TableCell>{service.order}</TableCell>
-                  <TableCell>{service.icon || 'Zap'}</TableCell>
                   <TableCell className="font-medium">{service.title}</TableCell>
                   <TableCell className="max-w-xs truncate">{service.description}</TableCell>
                   <TableCell className="text-right">
@@ -175,7 +185,7 @@ export default function AdminServices() {
       )}
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-[600px]">
           <DialogHeader>
             <DialogTitle>{currentService ? 'Edit Service' : 'Add New Service'}</DialogTitle>
           </DialogHeader>
@@ -189,8 +199,16 @@ export default function AdminServices() {
               <Input id="icon" value={formIcon} onChange={(e) => setFormIcon(e.target.value)} className="col-span-3" placeholder="e.g., Zap, Users, Shield" />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="description" className="text-right">Description</Label>
+              <Label htmlFor="description" className="text-right">Short Description</Label>
               <Textarea id="description" value={formDescription} onChange={(e) => setFormDescription(e.target.value)} className="col-span-3" />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="longDescription" className="text-right">Full Details</Label>
+              <Textarea id="longDescription" value={formLongDescription} onChange={(e) => setFormLongDescription(e.target.value)} className="col-span-3" rows={5} />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="questions" className="text-right">Questionnaire (one per line)</Label>
+              <Textarea id="questions" value={formQuestions} onChange={(e) => setFormQuestions(e.target.value)} className="col-span-3" placeholder="What is your current property count?&#10;Which software do you use?" />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="order" className="text-right">Order</Label>
