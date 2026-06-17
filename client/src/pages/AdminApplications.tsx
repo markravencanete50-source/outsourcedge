@@ -11,18 +11,22 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { ExternalLink, Video, FileText, User, Mail, Briefcase, Phone, Globe } from 'lucide-react';
 
 interface Application {
   id: string;
-  name: string;
+  fullName: string;
   email: string;
-  position: string;
+  phone: string;
+  jobTitle: string;
+  portfolioUrl?: string;
+  experience: string;
+  coverLetter: string;
+  resumeUrl: string;
+  videoIntroUrl?: string;
   status: 'new' | 'reviewed' | 'accepted' | 'rejected' | 'hired';
-  date: any; // Firestore Timestamp
-  resumeUrl?: string;
-  experience?: string;
-  message?: string;
-  notes?: string; // Added notes field
+  date: any;
+  notes?: string;
 }
 
 export default function AdminApplications() {
@@ -30,7 +34,7 @@ export default function AdminApplications() {
   const [applications, setApplications] = useState<Application[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [currentApplication, setCurrentApplication] = useState<Partial<Application> | null>(null);
+  const [currentApplication, setCurrentApplication] = useState<Application | null>(null);
   const [filterStatus, setFilterStatus] = useState<'all' | 'new' | 'reviewed' | 'accepted' | 'rejected' | 'hired'>('all');
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -41,32 +45,28 @@ export default function AdminApplications() {
       const appsRef = collection(db, 'applications');
       let q = query(appsRef, orderBy('date', 'desc'));
 
-      if (filterStatus !== 'all') {
-        q = query(q, where('status', '==', filterStatus));
-      }
-
       const unsubscribe = onSnapshot(q, (snapshot) => {
-        const appsData: Application[] = [];
-        snapshot.forEach((docSnap) => {
+        const appsData = snapshot.docs.map(docSnap => {
           const data = docSnap.data();
-          appsData.push({
+          // Map fields to handle both old and new data structures
+          return {
             id: docSnap.id,
-            name: data.name || 'Anonymous',
+            fullName: data.fullName || data.name || 'Anonymous',
             email: data.email || 'No email',
-            position: data.position || 'Not specified',
+            phone: data.phone || 'N/A',
+            jobTitle: data.jobTitle || data.position || 'Not specified',
+            portfolioUrl: data.portfolioUrl,
+            experience: data.experience || 'N/A',
+            coverLetter: data.coverLetter || data.message || 'N/A',
+            resumeUrl: data.resumeUrl,
+            videoIntroUrl: data.videoIntroUrl,
             status: data.status || 'new',
             date: data.date,
-            resumeUrl: data.resumeUrl,
-            experience: data.experience,
-            message: data.message,
             notes: data.notes || '',
-          });
+          } as Application;
         });
-        setApplications(appsData.filter(app => 
-          app.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          app.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          app.position.toLowerCase().includes(searchTerm.toLowerCase())
-        ));
+        
+        setApplications(appsData);
         setIsLoading(false);
       }, (error) => {
         console.error('Error fetching applications:', error);
@@ -79,7 +79,18 @@ export default function AdminApplications() {
       console.error('Error setting up listener:', error);
       setIsLoading(false);
     }
-  }, [isAuthenticated, filterStatus, searchTerm]);
+  }, [isAuthenticated]);
+
+  const filteredApplications = applications.filter(app => {
+    const matchesSearch = 
+      (app.fullName?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+      (app.email?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+      (app.jobTitle?.toLowerCase() || '').includes(searchTerm.toLowerCase());
+    
+    const matchesStatus = filterStatus === 'all' || app.status === filterStatus;
+    
+    return matchesSearch && matchesStatus;
+  });
 
   const handleEditApplication = (application: Application) => {
     setCurrentApplication(application);
@@ -87,70 +98,54 @@ export default function AdminApplications() {
   };
 
   const handleDeleteApplication = async (id: string) => {
-    if (!db) return;
     if (window.confirm('Are you sure you want to delete this application?')) {
       try {
         await deleteDoc(doc(db, 'applications', id));
         toast.success('Application deleted successfully');
       } catch (error) {
-        console.error('Error deleting application:', error);
         toast.error('Failed to delete application');
       }
     }
   };
 
   const handleSaveApplication = async () => {
-    if (!db || !currentApplication?.id) {
-      toast.error('Application ID is missing.');
-      return;
-    }
-
-    setIsLoading(true);
+    if (!currentApplication?.id) return;
     try {
-      const appRef = doc(db, 'applications', currentApplication.id);
-      await updateDoc(appRef, {
+      await updateDoc(doc(db, 'applications', currentApplication.id), {
         status: currentApplication.status,
-        notes: currentApplication.notes,
+        notes: currentApplication.notes || '',
       });
-      toast.success('Application updated successfully');
+      toast.success('Application updated');
       setIsDialogOpen(false);
-      setCurrentApplication(null);
     } catch (error) {
-      console.error('Error saving application:', error);
-      toast.error('Failed to save application');
+      toast.error('Failed to update application');
     }
-    setIsLoading(false);
   };
 
-  if (!isAuthenticated) {
-    return (
-      <AdminLayout>
-        <div className="p-6 text-center text-gray-500">
-          Please log in to access the admin dashboard.
-        </div>
-      </AdminLayout>
-    );
-  }
+  if (!isAuthenticated) return null;
 
   return (
     <AdminLayout>
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold">Job Applications</h1>
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h1 className="text-3xl font-bold text-slate-900">Job Applications</h1>
+          <p className="text-slate-500">Review and manage incoming job applications</p>
+        </div>
       </div>
 
-      <div className="flex space-x-4 mb-4">
-        <Input
-          placeholder="Search by name, email, or position..."
+      <div className="flex gap-4 mb-6">
+        <Input 
+          placeholder="Search name, email, or position..." 
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="max-w-sm"
+          className="max-w-md bg-white"
         />
-        <Select onValueChange={(value: 'all' | 'new' | 'reviewed' | 'accepted' | 'rejected' | 'hired') => setFilterStatus(value)} value={filterStatus}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Filter by Status" />
+        <Select value={filterStatus} onValueChange={(v: any) => setFilterStatus(v)}>
+          <SelectTrigger className="w-[180px] bg-white">
+            <SelectValue placeholder="Filter by status" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All</SelectItem>
+            <SelectItem value="all">All Statuses</SelectItem>
             <SelectItem value="new">New</SelectItem>
             <SelectItem value="reviewed">Reviewed</SelectItem>
             <SelectItem value="accepted">Accepted</SelectItem>
@@ -160,97 +155,165 @@ export default function AdminApplications() {
         </Select>
       </div>
 
-      {isLoading ? (
-        <div className="text-center py-8">Loading applications...</div>
-      ) : applications.length === 0 ? (
-        <div className="text-center py-8 text-gray-500">No applications found.</div>
-      ) : (
-        <div className="rounded-md border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Position</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>Resume</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {applications.map((app) => (
-                <TableRow key={app.id}>
-                  <TableCell className="font-medium">{app.name}</TableCell>
-                  <TableCell>{app.email}</TableCell>
-                  <TableCell>{app.position}</TableCell>
-                  <TableCell>{app.status}</TableCell>
-                  <TableCell>{app.date?.toDate().toLocaleDateString()}</TableCell>
+      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+        <Table>
+          <TableHeader className="bg-slate-50">
+            <TableRow>
+              <TableHead className="font-semibold">Applicant</TableHead>
+              <TableHead className="font-semibold">Position</TableHead>
+              <TableHead className="font-semibold">Status</TableHead>
+              <TableHead className="font-semibold">Date</TableHead>
+              <TableHead className="font-semibold">Links</TableHead>
+              <TableHead className="text-right font-semibold">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {isLoading ? (
+              <TableRow><TableCell colSpan={6} className="text-center py-10">Loading...</TableCell></TableRow>
+            ) : filteredApplications.length === 0 ? (
+              <TableRow><TableCell colSpan={6} className="text-center py-10 text-slate-500">No applications found.</TableCell></TableRow>
+            ) : (
+              filteredApplications.map((app) => (
+                <TableRow key={app.id} className="hover:bg-slate-50 transition-colors">
                   <TableCell>
-                    {app.resumeUrl ? (
-                      <a href={app.resumeUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-                        View Resume
-                      </a>
-                    ) : (
-                      'N/A'
-                    )}
+                    <div className="font-medium text-slate-900">{app.fullName}</div>
+                    <div className="text-xs text-slate-500">{app.email}</div>
+                  </TableCell>
+                  <td className="px-4 py-4">
+                    <div className="text-sm font-medium text-slate-900">{app.jobTitle}</div>
+                  </td>
+                  <TableCell>
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                      app.status === 'new' ? 'bg-blue-100 text-blue-700' :
+                      app.status === 'accepted' ? 'bg-green-100 text-green-700' :
+                      app.status === 'rejected' ? 'bg-red-100 text-red-700' :
+                      'bg-slate-100 text-slate-700'
+                    }`}>
+                      {app.status.toUpperCase()}
+                    </span>
+                  </TableCell>
+                  <TableCell className="text-sm text-slate-600">
+                    {app.date?.toDate().toLocaleDateString() || 'N/A'}
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex gap-2">
+                      {app.resumeUrl && (
+                        <a href={app.resumeUrl} target="_blank" rel="noreferrer" title="Resume" className="p-1 text-[#0891B2] hover:bg-[#0891B2]/10 rounded">
+                          <FileText size={18} />
+                        </a>
+                      )}
+                      {app.videoIntroUrl && (
+                        <a href={app.videoIntroUrl} target="_blank" rel="noreferrer" title="Video Intro" className="p-1 text-purple-600 hover:bg-purple-50 rounded">
+                          <Video size={18} />
+                        </a>
+                      )}
+                      {app.portfolioUrl && (
+                        <a href={app.portfolioUrl} target="_blank" rel="noreferrer" title="Portfolio" className="p-1 text-orange-600 hover:bg-orange-50 rounded">
+                          <Globe size={18} />
+                        </a>
+                      )}
+                    </div>
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button variant="ghost" size="sm" onClick={() => handleEditApplication(app)}>Edit</Button>
-                    <Button variant="destructive" size="sm" onClick={() => handleDeleteApplication(app.id)}>Delete</Button>
+                    <div className="flex justify-end gap-2">
+                      <Button variant="outline" size="sm" onClick={() => handleEditApplication(app)}>View/Edit</Button>
+                      <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700 hover:bg-red-50" onClick={() => handleDeleteApplication(app.id)}>Delete</Button>
+                    </div>
                   </TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-      )}
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </div>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Edit Application</DialogTitle>
+            <DialogTitle className="text-2xl">Application Details</DialogTitle>
           </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="name" className="text-right">Name</Label>
-              <Input id="name" value={currentApplication?.name || ''} readOnly className="col-span-3" />
+          
+          {currentApplication && (
+            <div className="space-y-6 py-4">
+              <div className="grid grid-cols-2 gap-6">
+                <div className="space-y-1">
+                  <Label className="text-slate-500">Full Name</Label>
+                  <div className="flex items-center gap-2 font-medium">
+                    <User size={16} className="text-[#0891B2]" />
+                    {currentApplication.fullName}
+                  </div>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-slate-500">Email Address</Label>
+                  <div className="flex items-center gap-2 font-medium">
+                    <Mail size={16} className="text-[#0891B2]" />
+                    {currentApplication.email}
+                  </div>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-slate-500">Phone Number</Label>
+                  <div className="flex items-center gap-2 font-medium">
+                    <Phone size={16} className="text-[#0891B2]" />
+                    {currentApplication.phone}
+                  </div>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-slate-500">Applied Position</Label>
+                  <div className="flex items-center gap-2 font-medium">
+                    <Briefcase size={16} className="text-[#0891B2]" />
+                    {currentApplication.jobTitle}
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-slate-500">Relevant Experience</Label>
+                <div className="p-3 bg-slate-50 rounded-lg text-sm text-slate-700 whitespace-pre-wrap">
+                  {currentApplication.experience}
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-slate-500">Cover Letter</Label>
+                <div className="p-3 bg-slate-50 rounded-lg text-sm text-slate-700 whitespace-pre-wrap">
+                  {currentApplication.coverLetter}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Application Status</Label>
+                  <Select 
+                    value={currentApplication.status} 
+                    onValueChange={(v: any) => setCurrentApplication({...currentApplication, status: v})}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="new">New</SelectItem>
+                      <SelectItem value="reviewed">Reviewed</SelectItem>
+                      <SelectItem value="accepted">Accepted</SelectItem>
+                      <SelectItem value="rejected">Rejected</SelectItem>
+                      <SelectItem value="hired">Hired</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label>Internal Notes</Label>
+                  <Textarea 
+                    placeholder="Add private notes about this candidate..."
+                    value={currentApplication.notes || ''}
+                    onChange={(e) => setCurrentApplication({...currentApplication, notes: e.target.value})}
+                  />
+                </div>
+              </div>
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="email" className="text-right">Email</Label>
-              <Input id="email" value={currentApplication?.email || ''} readOnly className="col-span-3" />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="position" className="text-right">Position</Label>
-              <Input id="position" value={currentApplication?.position || ''} readOnly className="col-span-3" />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="status" className="text-right">Status</Label>
-              <Select onValueChange={(value: 'new' | 'reviewed' | 'accepted' | 'rejected' | 'hired') => setCurrentApplication({ ...currentApplication, status: value })} value={currentApplication?.status || 'new'}>
-                <SelectTrigger className="col-span-3">
-                  <SelectValue placeholder="Select Status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="new">New</SelectItem>
-                  <SelectItem value="reviewed">Reviewed</SelectItem>
-                  <SelectItem value="accepted">Accepted</SelectItem>
-                  <SelectItem value="rejected">Rejected</SelectItem>
-                  <SelectItem value="hired">Hired</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="message" className="text-right">Message</Label>
-              <Textarea id="message" value={currentApplication?.message || ''} readOnly className="col-span-3" />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="notes" className="text-right">Notes</Label>
-              <Textarea id="notes" value={currentApplication?.notes || ''} onChange={(e) => setCurrentApplication({ ...currentApplication, notes: e.target.value })} className="col-span-3" />
-            </div>
-          </div>
+          )}
+
           <DialogFooter>
-            <Button onClick={() => setIsDialogOpen(false)} variant="outline">Cancel</Button>
-            <Button onClick={handleSaveApplication}>Save Changes</Button>
+            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>Close</Button>
+            <Button className="bg-[#0891B2] hover:bg-[#0891B2]/90" onClick={handleSaveApplication}>Save Changes</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
