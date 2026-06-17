@@ -54,27 +54,6 @@ const differentiators = [
   { icon: Cpu, title: "Technology-Enabled Operations", description: "Leverage Microsoft 365, ClickUp, Firebase, and custom integrations for seamless collaboration." },
 ];
 
-const serviceSolutions = [
-  {
-    title: "Property Management Support",
-    challenge: "Managing tenant communications and lease administration is time-consuming.",
-    solution: "Dedicated property management team handling relations, maintenance, and admin.",
-    benefits: ["Faster response times", "Improved tenant satisfaction", "Reduced burden"],
-  },
-  {
-    title: "Customer Experience Support",
-    challenge: "Scaling support without hiring full-time staff creates bottlenecks.",
-    solution: "Trained support team providing multi-channel service and ticket management.",
-    benefits: ["24/7 availability", "Consistent quality", "Reduced response time"],
-  },
-  {
-    title: "Administrative Support",
-    challenge: "Administrative tasks consume time meant for strategic activities.",
-    solution: "Comprehensive support including scheduling, email management, and reporting.",
-    benefits: ["More time for strategy", "Improved organization", "Better documentation"],
-  }
-];
-
 const processSteps = [
   { step: 1, title: "Discovery", description: "We learn about your business, challenges, and goals." },
   { step: 2, title: "Assessment", description: "We analyze processes and identify opportunities." },
@@ -101,100 +80,363 @@ export default function Home() {
     onSnapshot(qTestimonials, (snapshot) => setTestimonials(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Testimonial))));
   }, []);
 
-  const containerVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.15 } } };
-  const itemVariants = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6 } } };
+  // Animation Variants
+  const fadeUpVariant = {
+    hidden: { opacity: 0, y: 40 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } }
+  };
+
+  const scaleVariant = {
+    hidden: { opacity: 0, scale: 0.8 },
+    visible: { opacity: 1, scale: 1, transition: { duration: 0.6, ease: "easeOut" } }
+  };
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.12,
+        delayChildren: 0.2,
+      }
+    }
+  };
 
   return (
     <div className="min-h-screen bg-white">
       <Header />
       
-      {/* HERO */}
+      {/* HERO SECTION */}
       <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-cyan-50/30 to-white -z-10" />
+        <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-100/20 rounded-full blur-3xl -z-10 animate-pulse" />
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-100/20 rounded-full blur-3xl -z-10 animate-pulse" style={{ animationDelay: "1s" }} />
+        
         <div className="container">
-          <motion.div className="max-w-4xl" initial="hidden" animate="visible" variants={containerVariants}>
-            <motion.div variants={itemVariants} className="inline-flex items-center gap-2 mb-6 px-4 py-2 bg-cyan-50 rounded-full border border-cyan-200/50">
+          <motion.div 
+            className="max-w-4xl"
+            initial="hidden"
+            animate="visible"
+            variants={containerVariants}
+          >
+            <motion.div 
+              variants={fadeUpVariant}
+              className="inline-flex items-center gap-2 mb-6 px-4 py-2 bg-cyan-50 rounded-full border border-cyan-200/50"
+            >
               <Zap className="w-4 h-4 text-cyan-600" />
               <span className="text-sm font-bold text-cyan-900">Trusted by leading businesses worldwide</span>
             </motion.div>
-            <motion.h1 variants={itemVariants} className="text-5xl md:text-7xl font-bold text-slate-900 mb-6 leading-tight">
+
+            <motion.h1 
+              variants={fadeUpVariant}
+              className="text-5xl md:text-7xl font-bold text-slate-900 mb-6 leading-tight"
+            >
               {content.heroTitle}
             </motion.h1>
-            <motion.p variants={itemVariants} className="text-xl md:text-2xl text-slate-600 mb-8 max-w-3xl leading-relaxed">
+
+            <motion.p 
+              variants={fadeUpVariant}
+              className="text-xl md:text-2xl text-slate-600 mb-8 max-w-3xl leading-relaxed"
+            >
               {content.heroSubtitle}
             </motion.p>
-            <motion.div variants={itemVariants} className="flex flex-col sm:flex-row gap-4">
-              <Link href="/contact"><Button className="btn-primary text-lg">Book a Consultation</Button></Link>
-              <Link href="/services"><Button className="btn-outline text-lg">Explore Services</Button></Link>
+
+            <motion.div 
+              variants={fadeUpVariant}
+              className="flex flex-col sm:flex-row gap-4"
+            >
+              <Link href="/contact">
+                <Button className="btn-primary text-lg">Book a Consultation</Button>
+              </Link>
+              <Link href="/services">
+                <Button className="btn-outline text-lg">Explore Services</Button>
+              </Link>
+            </motion.div>
+
+            <motion.div 
+              variants={fadeUpVariant}
+              className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8"
+            >
+              {[
+                { label: "Years of Experience", value: "10+" },
+                { label: "Team Members", value: "500+" },
+                { label: "Clients Served", value: "200+" },
+                { label: "Success Rate", value: "98%" },
+              ].map((stat, i) => (
+                <motion.div 
+                  key={i}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.6 + i * 0.1, duration: 0.6 }}
+                  className="text-center"
+                >
+                  <div className="text-3xl md:text-4xl font-bold text-cyan-600 mb-2">{stat.value}</div>
+                  <div className="text-sm text-slate-600">{stat.label}</div>
+                </motion.div>
+              ))}
             </motion.div>
           </motion.div>
         </div>
       </section>
 
-      {/* TRUST */}
+      {/* TRUST & CREDIBILITY */}
       <section className="py-20 md:py-32 bg-slate-50">
         <div className="container">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">Why Businesses Trust OutsourcEdge</h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <motion.div 
+            className="text-center mb-16"
+            initial="hidden"
+            whileInView="visible"
+            variants={containerVariants}
+            viewport={{ once: true, margin: "-100px" }}
+          >
+            <motion.h2 
+              variants={fadeUpVariant}
+              className="text-4xl md:text-5xl font-bold text-slate-900 mb-4"
+            >
+              Why Businesses Trust OutsourcEdge
+            </motion.h2>
+            <motion.p 
+              variants={fadeUpVariant}
+              className="text-xl text-slate-600 max-w-2xl mx-auto"
+            >
+              We combine operational excellence with dedicated partnership to deliver measurable business outcomes.
+            </motion.p>
+          </motion.div>
+
+          <motion.div 
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+            initial="hidden"
+            whileInView="visible"
+            variants={containerVariants}
+            viewport={{ once: true, margin: "-100px" }}
+          >
             {trustItems.map((item, i) => (
-              <div key={i} className="p-8 bg-white rounded-2xl border border-slate-200 hover:border-cyan-300 transition-all">
-                <item.icon className="w-10 h-10 text-cyan-600 mb-6" />
+              <motion.div 
+                key={i}
+                variants={scaleVariant}
+                className="group p-8 bg-white rounded-2xl border border-slate-200 hover:border-cyan-300 hover:shadow-xl transition-all duration-300 cursor-pointer"
+                whileHover={{ y: -5 }}
+              >
+                <motion.div 
+                  className="w-14 h-14 bg-cyan-100 rounded-xl flex items-center justify-center mb-6 group-hover:bg-cyan-200 transition-colors"
+                  whileHover={{ scale: 1.1, rotate: 5 }}
+                >
+                  <item.icon className="w-7 h-7 text-cyan-600" />
+                </motion.div>
                 <h3 className="text-xl font-bold text-slate-900 mb-3">{item.title}</h3>
                 <p className="text-slate-600 leading-relaxed">{item.description}</p>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
-      {/* WHY US */}
+      {/* WHY OUTSOURCEDGE */}
       <section className="py-20 md:py-32 bg-white">
         <div className="container">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">What Sets Us Apart</h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <motion.div 
+            className="text-center mb-16"
+            initial="hidden"
+            whileInView="visible"
+            variants={containerVariants}
+            viewport={{ once: true, margin: "-100px" }}
+          >
+            <motion.h2 
+              variants={fadeUpVariant}
+              className="text-4xl md:text-5xl font-bold text-slate-900 mb-4"
+            >
+              What Sets Us Apart
+            </motion.h2>
+            <motion.p 
+              variants={fadeUpVariant}
+              className="text-xl text-slate-600 max-w-2xl mx-auto"
+            >
+              Six core differentiators that make OutsourcEdge your ideal growth partner.
+            </motion.p>
+          </motion.div>
+
+          <motion.div 
+            className="grid grid-cols-1 md:grid-cols-2 gap-8"
+            initial="hidden"
+            whileInView="visible"
+            variants={containerVariants}
+            viewport={{ once: true, margin: "-100px" }}
+          >
             {differentiators.map((item, i) => (
-              <div key={i} className="p-8 bg-slate-50 rounded-2xl border border-slate-200 flex gap-4">
-                <item.icon className="w-10 h-10 text-cyan-600 flex-shrink-0" />
+              <motion.div 
+                key={i}
+                variants={fadeUpVariant}
+                className="p-8 bg-slate-50 rounded-2xl border border-slate-200 hover:border-cyan-300 hover:shadow-lg transition-all flex gap-4"
+                whileHover={{ x: 5 }}
+              >
+                <motion.div 
+                  whileHover={{ scale: 1.15, rotate: -5 }}
+                  className="w-12 h-12 bg-cyan-600 rounded-xl flex items-center justify-center flex-shrink-0"
+                >
+                  <item.icon className="w-6 h-6 text-white" />
+                </motion.div>
                 <div>
                   <h3 className="text-lg font-bold text-slate-900 mb-2">{item.title}</h3>
                   <p className="text-slate-600 leading-relaxed">{item.description}</p>
                 </div>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
-      {/* PROCESS */}
+      {/* HOW IT WORKS */}
       <section className="py-20 md:py-32 bg-slate-50">
         <div className="container">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">Our Proven Process</h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8">
+          <motion.div 
+            className="text-center mb-16"
+            initial="hidden"
+            whileInView="visible"
+            variants={containerVariants}
+            viewport={{ once: true, margin: "-100px" }}
+          >
+            <motion.h2 
+              variants={fadeUpVariant}
+              className="text-4xl md:text-5xl font-bold text-slate-900 mb-4"
+            >
+              Our Proven Process
+            </motion.h2>
+            <motion.p 
+              variants={fadeUpVariant}
+              className="text-xl text-slate-600 max-w-2xl mx-auto"
+            >
+              Six strategic steps to transform your operations and accelerate growth.
+            </motion.p>
+          </motion.div>
+
+          <motion.div 
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8"
+            initial="hidden"
+            whileInView="visible"
+            variants={containerVariants}
+            viewport={{ once: true, margin: "-100px" }}
+          >
             {processSteps.map((item, i) => (
-              <div key={i} className="text-center">
-                <div className="w-12 h-12 bg-cyan-600 text-white rounded-full flex items-center justify-center font-bold mx-auto mb-4 shadow-lg">{item.step}</div>
+              <motion.div 
+                key={i}
+                variants={fadeUpVariant}
+                className="text-center"
+              >
+                <motion.div 
+                  className="w-12 h-12 bg-cyan-600 text-white rounded-full flex items-center justify-center font-bold mx-auto mb-4 shadow-lg"
+                  whileHover={{ scale: 1.2, rotate: 360 }}
+                  transition={{ duration: 0.6 }}
+                >
+                  {item.step}
+                </motion.div>
                 <h3 className="text-lg font-bold text-slate-900 mb-2">{item.title}</h3>
-                <p className="text-slate-600 text-sm">{item.description}</p>
-              </div>
+                <p className="text-slate-600 text-sm leading-relaxed">{item.description}</p>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* FINAL CTA */}
-      <section className="py-20 md:py-32 bg-cyan-600 text-white text-center">
-        <div className="container">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">Ready to Scale Your Business?</h2>
-          <p className="text-xl mb-8 max-w-2xl mx-auto opacity-90">Partner with OutsourcEdge and gain access to dedicated growth partners and operational excellence.</p>
-          <Link href="/contact"><Button className="bg-white text-cyan-600 hover:bg-slate-100 text-lg px-8 py-6 font-bold">Book a Consultation</Button></Link>
+      <section className="py-20 md:py-32 bg-gradient-to-br from-cyan-600 to-cyan-700 text-white relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-white rounded-full blur-3xl animate-pulse" />
+        </div>
+
+        <div className="container relative z-10">
+          <motion.div 
+            className="max-w-3xl mx-auto text-center"
+            initial="hidden"
+            whileInView="visible"
+            variants={containerVariants}
+            viewport={{ once: true }}
+          >
+            <motion.h2 
+              variants={fadeUpVariant}
+              className="text-4xl md:text-5xl font-bold mb-6"
+            >
+              Ready to Scale Your Business?
+            </motion.h2>
+            <motion.p 
+              variants={fadeUpVariant}
+              className="text-xl md:text-2xl mb-8 leading-relaxed opacity-90"
+            >
+              Partner with OutsourcEdge and gain access to dedicated growth partners and operational excellence.
+            </motion.p>
+            <motion.div 
+              variants={fadeUpVariant}
+              className="flex flex-col sm:flex-row gap-4 justify-center"
+            >
+              <Link href="/contact">
+                <Button className="bg-white text-cyan-600 hover:bg-slate-100 text-lg px-8 py-6 font-bold">
+                  Book a Consultation
+                </Button>
+              </Link>
+              <Link href="/services">
+                <Button className="border-2 border-white text-white hover:bg-white/10 text-lg px-8 py-6 font-bold">
+                  Explore Services
+                </Button>
+              </Link>
+            </motion.div>
+          </motion.div>
         </div>
       </section>
+
+      {/* TESTIMONIALS */}
+      {testimonials.length > 0 && (
+        <section className="py-20 md:py-32 bg-white">
+          <div className="container">
+            <motion.div 
+              className="text-center mb-16"
+              initial="hidden"
+              whileInView="visible"
+              variants={containerVariants}
+              viewport={{ once: true, margin: "-100px" }}
+            >
+              <motion.h2 
+                variants={fadeUpVariant}
+                className="text-4xl md:text-5xl font-bold text-slate-900 mb-4"
+              >
+                Trusted by Industry Leaders
+              </motion.h2>
+            </motion.div>
+            <motion.div 
+              className="grid grid-cols-1 md:grid-cols-3 gap-8"
+              initial="hidden"
+              whileInView="visible"
+              variants={containerVariants}
+              viewport={{ once: true, margin: "-100px" }}
+            >
+              {testimonials.map((t) => (
+                <motion.div 
+                  key={t.id}
+                  variants={scaleVariant}
+                  className="p-8 bg-slate-50 rounded-2xl border border-slate-200 hover:shadow-lg transition-all"
+                  whileHover={{ y: -5 }}
+                >
+                  <div className="flex gap-1 mb-4">
+                    {[...Array(t.rating)].map((_, i) => (
+                      <motion.div
+                        key={i}
+                        initial={{ opacity: 0, scale: 0 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: i * 0.1 }}
+                      >
+                        <Star className="w-5 h-5 fill-amber-400 text-amber-400" />
+                      </motion.div>
+                    ))}
+                  </div>
+                  <p className="text-slate-700 mb-6 italic leading-relaxed">"{t.content}"</p>
+                  <div className="border-t border-slate-200 pt-4">
+                    <p className="font-bold text-slate-900">{t.name}</p>
+                    <p className="text-sm text-slate-600">{t.company}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
+        </section>
+      )}
 
       <Footer />
       <AiAssistant />
