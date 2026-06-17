@@ -14,6 +14,7 @@ import AdminContacts from "@/pages/AdminContacts";
 import AdminApplications from "@/pages/AdminApplications";
 import AdminAnalytics from "@/pages/AdminAnalytics";
 import AdminJobs from "@/pages/AdminJobs";
+import AdminClients from "@/pages/AdminClients"; // Added this import
 
 function Router() {
   return (
@@ -30,6 +31,7 @@ function Router() {
       <Route path="/admin/applications" component={AdminApplications} />
       <Route path="/admin/analytics" component={AdminAnalytics} />
       <Route path="/admin/jobs" component={AdminJobs} />
+      <Route path="/admin/clients" component={AdminClients} /> {/* Added this route */}
       <Route component={NotFound} />
     </Switch>
   );
