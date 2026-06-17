@@ -18,6 +18,7 @@ import AdminClients from "@/pages/AdminClients";
 import AdminPageEditor from "@/pages/AdminPageEditor";
 import AdminServices from "@/pages/AdminServices";
 import AdminTestimonials from "@/pages/AdminTestimonials";
+import AdminServiceQuestionnaires from "@/pages/AdminServiceQuestionnaires";
 import JobDetail from "@/pages/JobDetail";
 
 function Router() {
@@ -40,6 +41,7 @@ function Router() {
       <Route path="/admin/editor" component={AdminPageEditor} />
 
       <Route path="/admin/testimonials" component={AdminTestimonials} />
+      <Route path="/admin/service-questionnaires" component={AdminServiceQuestionnaires} />
       <Route component={NotFound} />
     </Switch>
   );
