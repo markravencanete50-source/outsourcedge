@@ -14,7 +14,8 @@ import AdminContacts from "@/pages/AdminContacts";
 import AdminApplications from "@/pages/AdminApplications";
 import AdminAnalytics from "@/pages/AdminAnalytics";
 import AdminJobs from "@/pages/AdminJobs";
-import AdminClients from "@/pages/AdminClients"; // Added this import
+import AdminClients from "@/pages/AdminClients";
+import JobDetail from "@/pages/JobDetail";
 
 function Router() {
   return (
@@ -22,6 +23,7 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/services" component={Services} />
       <Route path="/careers" component={Careers} />
+      <Route path="/job/:id" component={JobDetail} />
       <Route path="/about" component={About} />
       <Route path="/contact" component={Contact} />
       <Route path="/project-management" component={ProjectManagement} />
@@ -31,7 +33,7 @@ function Router() {
       <Route path="/admin/applications" component={AdminApplications} />
       <Route path="/admin/analytics" component={AdminAnalytics} />
       <Route path="/admin/jobs" component={AdminJobs} />
-      <Route path="/admin/clients" component={AdminClients} /> {/* Added this route */}
+      <Route path="/admin/clients" component={AdminClients} />
       <Route component={NotFound} />
     </Switch>
   );
