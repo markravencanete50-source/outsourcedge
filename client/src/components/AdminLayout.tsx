@@ -48,6 +48,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     { href: '/admin/applications', label: 'Job Applications', icon: Users },
     { href: '/admin/jobs', label: 'Manage Jobs', icon: Briefcase },
     { href: '/admin/analytics', label: 'Analytics', icon: FileText },
+    { href: '/admin/clients', label: 'Clients', icon: Users }, // Added this link
   ];
 
   const isActive = (href: string) => location === href;
