@@ -1,7 +1,7 @@
 import { ReactNode, useEffect, useState } from 'react';
 import { Link, useLocation } from 'wouter';
 import { useAdmin } from '@/contexts/AdminContext';
-import { BarChart3, Users, Mail, FileText, LogOut, Menu, X, Wifi, WifiOff, Zap, Briefcase, Layout, Settings, Star } from 'lucide-react';
+import { BarChart3, Users, Mail, FileText, LogOut, Menu, X, Wifi, WifiOff, Zap, Briefcase, Layout, Settings, Star, FileText } from 'lucide-react';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 
@@ -46,8 +46,9 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     { href: '/admin/analytics', label: 'Analytics', icon: FileText },
     { href: '/admin/clients', label: 'Clients', icon: Users },
     { href: '/admin/editor', label: 'Website Editor', icon: Layout },
-    { href: '/admin/services', label: 'Service Manager', icon: Settings },
+
     { href: '/admin/testimonials', label: 'Testimonial Manager', icon: Star },
+    { href: '/admin/service-questionnaires', label: 'Service Inquiries', icon: FileText },
   ];
 
   const isActive = (href: string) => location === href;
