@@ -1,6 +1,7 @@
 import { Link } from "wouter";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
+import { Button } from "@/components/ui/button"; // Import Button component
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
@@ -39,9 +40,9 @@ export default function Header() {
         </nav>
 
         {/* CTA Button */}
-        <div className="hidden md:flex items-center gap-4">
+        <div className="hidden md:flex items-center">
           <Link href="/contact">
-            <a className="btn-primary">Get Started</a>
+            <Button className="btn-primary">Get Started</Button> {/* Using Button component */}
           </Link>
         </div>
 
@@ -74,12 +75,12 @@ export default function Header() {
               </Link>
             ))}
             <Link href="/contact">
-              <a
-                className="btn-primary inline-block text-center mt-2"
+              <Button // Using Button component for mobile as well
+                className="btn-primary w-full mt-2"
                 onClick={() => setIsOpen(false)}
               >
                 Get Started
-              </a>
+              </Button>
             </Link>
           </div>
         </nav>
