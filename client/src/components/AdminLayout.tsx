@@ -1,7 +1,7 @@
 import { ReactNode, useEffect, useState } from 'react';
 import { Link, useLocation } from 'wouter';
 import { useAdmin } from '@/contexts/AdminContext';
-import { BarChart3, Users, Mail, FileText, LogOut, Menu, X, Wifi, WifiOff, Zap, Briefcase, Layout } from 'lucide-react';
+import { BarChart3, Users, Mail, FileText, LogOut, Menu, X, Wifi, WifiOff, Zap, Briefcase, Layout, Settings, Star } from 'lucide-react';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 
@@ -46,6 +46,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     { href: '/admin/analytics', label: 'Analytics', icon: FileText },
     { href: '/admin/clients', label: 'Clients', icon: Users },
     { href: '/admin/editor', label: 'Website Editor', icon: Layout },
+    { href: '/admin/services', label: 'Service Manager', icon: Settings },
+    { href: '/admin/testimonials', label: 'Testimonial Manager', icon: Star },
   ];
 
   const isActive = (href: string) => location === href;
@@ -74,9 +76,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             {menuItems.map((item) => (
               <li key={item.href}>
                 <Link href={item.href}>
-                  <a className={`flex items-center gap-3 p-3 rounded-lg transition-colors ${
-                    isActive(item.href) ? 'bg-[#0891B2] text-white' : 'text-gray-400 hover:bg-gray-800 hover:text-white'
-                  }`}>
+                  <a className={`flex items-center gap-3 p-3 rounded-lg transition-colors ${isActive(item.href) ? 'bg-[#0891B2] text-white' : 'text-gray-400 hover:bg-gray-800 hover:text-white'}`}>
                     <item.icon className="w-5 h-5" />
                     {sidebarOpen && <span>{item.label}</span>}
                   </a>
