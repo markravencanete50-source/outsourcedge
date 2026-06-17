@@ -7,6 +7,7 @@ import Services from "@/pages/Services";
 import Careers from "@/pages/Careers";
 import About from "@/pages/About";
 import Contact from "@/pages/Contact";
+import ProjectManagement from "@/pages/ProjectManagement";
 import AdminLogin from "@/pages/AdminLogin";
 import AdminDashboard from "@/pages/AdminDashboard";
 import AdminContacts from "@/pages/AdminContacts";
@@ -22,6 +23,7 @@ function Router() {
       <Route path="/careers" component={Careers} />
       <Route path="/about" component={About} />
       <Route path="/contact" component={Contact} />
+      <Route path="/project-management" component={ProjectManagement} />
       <Route path="/admin/login" component={AdminLogin} />
       <Route path="/admin/dashboard" component={AdminDashboard} />
       <Route path="/admin/contacts" component={AdminContacts} />
