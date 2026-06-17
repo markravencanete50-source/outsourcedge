@@ -16,6 +16,8 @@ import AdminAnalytics from "@/pages/AdminAnalytics";
 import AdminJobs from "@/pages/AdminJobs";
 import AdminClients from "@/pages/AdminClients";
 import AdminPageEditor from "@/pages/AdminPageEditor";
+import AdminServices from "@/pages/AdminServices";
+import AdminTestimonials from "@/pages/AdminTestimonials";
 import JobDetail from "@/pages/JobDetail";
 
 function Router() {
@@ -36,6 +38,8 @@ function Router() {
       <Route path="/admin/jobs" component={AdminJobs} />
       <Route path="/admin/clients" component={AdminClients} />
       <Route path="/admin/editor" component={AdminPageEditor} />
+      <Route path="/admin/services" component={AdminServices} />
+      <Route path="/admin/testimonials" component={AdminTestimonials} />
       <Route component={NotFound} />
     </Switch>
   );
