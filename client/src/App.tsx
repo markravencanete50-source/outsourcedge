@@ -38,7 +38,7 @@ function Router() {
       <Route path="/admin/jobs" component={AdminJobs} />
       <Route path="/admin/clients" component={AdminClients} />
       <Route path="/admin/editor" component={AdminPageEditor} />
-      <Route path="/admin/services" component={AdminServices} />
+
       <Route path="/admin/testimonials" component={AdminTestimonials} />
       <Route component={NotFound} />
     </Switch>
