@@ -11,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Link } from "wouter";
 
 interface PageContent {
   contactEmail: string;
@@ -213,9 +214,7 @@ export default function Contact() {
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} viewport={{ once: true }}>
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-6"> Ready to Transform Your Operations? </h2>
             <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto"> Let's discuss how OutsourcEdge can help your business scale and thrive. </p>
-            <Link href="/contact">
-              <a className="inline-block bg-white text-[#0891B2] px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition"> Get in Touch </a>
-            </Link>
+            <Link href="/contact" className="inline-block bg-white text-[#0891B2] px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition"> Get in Touch </Link>
           </motion.div>
         </div>
       </section>
