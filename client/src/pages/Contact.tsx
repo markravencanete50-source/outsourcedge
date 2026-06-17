@@ -155,26 +155,26 @@ export default function Contact() {
 
             {/* Contact Form */}
             <motion.div initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }} viewport={{ once: true }}>
-              <h2 className="text-4xl font-bold text-[#0F172A] mb-6">Send Us a Message</h2>
+              <h2 className="text-4xl font-bold text-[#0F172A] mb-6">Send Us an Email</h2>
               <form onSubmit={handleSubmit} className="space-y-6 bg-white p-8 rounded-xl shadow-lg">
                 <div>
-                  <Label htmlFor="name" className="sr-only">Name</Label>
+                  <Label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</Label>
                   <Input type="text" id="name" placeholder="Your Name" value={formData.name} onChange={handleChange} required />
                 </div>
                 <div>
-                  <Label htmlFor="company" className="sr-only">Company</Label>
+                  <Label htmlFor="company" className="block text-sm font-medium text-gray-700">Company (Optional)</Label>
                   <Input type="text" id="company" placeholder="Your Company (Optional)" value={formData.company} onChange={handleChange} />
                 </div>
                 <div>
-                  <Label htmlFor="email" className="sr-only">Email</Label>
+                  <Label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</Label>
                   <Input type="email" id="email" placeholder="Your Email" value={formData.email} onChange={handleChange} required />
                 </div>
                 <div>
-                  <Label htmlFor="phone" className="sr-only">Phone Number</Label>
+                  <Label htmlFor="phone" className="block text-sm font-medium text-gray-700">Phone Number (Optional)</Label>
                   <Input type="tel" id="phone" placeholder="Your Phone Number (Optional)" value={formData.phone} onChange={handleChange} />
                 </div>
                 <div>
-                  <Label htmlFor="service" className="sr-only">Service of Interest</Label>
+                  <Label htmlFor="service" className="block text-sm font-medium text-gray-700">Service of Interest</Label>
                   <Select value={formData.service} onValueChange={handleSelectChange}>
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Select Service of Interest" />
@@ -191,7 +191,7 @@ export default function Contact() {
                   </Select>
                 </div>
                 <div>
-                  <Label htmlFor="message" className="sr-only">Message</Label>
+                  <Label htmlFor="message" className="block text-sm font-medium text-gray-700">Message</Label>
                   <Textarea id="message" placeholder="Your Message" rows={5} value={formData.message} onChange={handleChange} required />
                 </div>
                 <Button type="submit" className="w-full bg-[#0891B2] hover:bg-[#0891B2]/90 text-white py-3 rounded-lg flex items-center justify-center gap-2" disabled={loading}>
@@ -200,7 +200,7 @@ export default function Contact() {
                   ) : (
                     <Send className="w-5 h-5" />
                   )}
-                  Send Message
+                  Send Email
                 </Button>
               </form>
             </motion.div>
