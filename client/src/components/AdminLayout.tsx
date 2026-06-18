@@ -3,22 +3,12 @@ import { Link, useLocation } from 'wouter';
 import { useAdmin } from '@/contexts/AdminContext';
 import { useAdminActivityLogger } from '@/hooks/useAdminActivityLogger';
 import { 
-  BarChart3, 
-  Users, 
-  Mail, 
-  FileText, 
-  LogOut, 
-  Menu, 
-  X, 
-  Zap, 
-  Briefcase, 
-  Layout, 
-  Settings, 
-  Star,
-  Clock 
+  BarChart3, Users, Mail, FileText, LogOut, Menu, X, Zap, 
+  Briefcase, Layout, Settings, Star, Clock 
 } from 'lucide-react';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
+import { toast } from 'sonner';
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -26,8 +16,8 @@ interface AdminLayoutProps {
 
 export default function AdminLayout({ children }: AdminLayoutProps) {
   const { logout, adminEmail } = useAdmin();
-  const { trackPageView } = useAdminActivityLogger();
-  const [location] = useLocation();
+  const { trackPageView, logActivity } = useAdminActivityLogger();
+  const [location, setLocation] = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isOnline, setIsOnline] = useState(true);
   const [firebaseConnected, setFirebaseConnected] = useState(false);
@@ -46,39 +36,37 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     { href: '/admin/service-questionnaires', label: 'Service Inquiries', icon: FileText },
   ];
 
-  // Global Page Tracking
   useEffect(() => {
     const pageName = menuItems.find(item => item.href === location)?.label || 'Admin Page';
     trackPageView(pageName);
   }, [location]);
 
   useEffect(() => {
-    if (!auth) {
-      setFirebaseConnected(false);
-      return;
-    }
+    if (!auth) return;
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setFirebaseConnected(!!user);
     });
     return () => unsubscribe();
   }, []);
 
-  useEffect(() => {
-    const handleOnline = () => setIsOnline(true);
-    const handleOffline = () => setIsOnline(false);
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
-    return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
-    };
-  }, []);
+  const handleLogout = async () => {
+    try {
+      // 1. Log the logout activity FIRST while we still have the session
+      await logActivity('logout', 'System', 'Admin initiated logout');
+      
+      // 2. Perform the actual Firebase logout
+      await logout();
+      
+      // 3. Redirect to login page
+      setLocation('/admin/login');
+      toast.success("Logged out successfully");
+    } catch (error) {
+      console.error("Logout error:", error);
+      toast.error("Error during logout");
+    }
+  };
 
   const isActive = (href: string) => location === href;
-
-  const handleLogout = async () => {
-    await logout();
-  };
 
   return (
     <div className="flex h-screen bg-gray-100">
@@ -95,7 +83,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           </button>
         </div>
 
-        <nav className="flex-1 py-6">
+        <nav className="flex-1 py-6 overflow-y-auto">
           <ul className="space-y-2 px-3">
             {menuItems.map((item) => (
               <li key={item.href}>
@@ -113,10 +101,6 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         <div className="p-4 border-t border-gray-700 space-y-3">
           {sidebarOpen && (
             <div className="space-y-2 mb-4">
-              <div className="flex items-center justify-between text-xs text-gray-400">
-                <span>System Status</span>
-                <span className={isOnline ? 'text-green-500' : 'text-red-500'}>{isOnline ? 'Online' : 'Offline'}</span>
-              </div>
               <div className="flex items-center justify-between text-xs text-gray-400">
                 <span>Database</span>
                 <span className={firebaseConnected ? 'text-green-500' : 'text-yellow-500'}>{firebaseConnected ? 'Connected' : 'Syncing...'}</span>
