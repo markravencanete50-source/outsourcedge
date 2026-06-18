@@ -84,6 +84,7 @@ export default function AdminServices() {
       });
       // INJECTED LOG
       await logActivity('create', 'Service Manager', `Added new service: ${formTitle}`);
+      
       toast.success('Service added successfully!');
       setIsDialogOpen(false);
       resetForm();
@@ -110,6 +111,7 @@ export default function AdminServices() {
       });
       // INJECTED LOG
       await logActivity('update', 'Service Manager', `Updated service: ${formTitle}`, { id: currentService.id });
+      
       toast.success('Service updated successfully!');
       setIsDialogOpen(false);
       resetForm();
@@ -119,12 +121,13 @@ export default function AdminServices() {
     }
   };
 
-  const handleDeleteService = async (id: string, title: string) => { // ADDED title
+  const handleDeleteService = async (id: string, title: string) => { // ADDED title parameter
     if (window.confirm('Are you sure you want to delete this service?')) {
       try {
         await deleteDoc(doc(db, 'services', id));
         // INJECTED LOG
         await logActivity('delete', 'Service Manager', `Deleted service: ${title}`, { id });
+        
         toast.success('Service deleted successfully!');
       } catch (error) {
         console.error('Error deleting service:', error);
