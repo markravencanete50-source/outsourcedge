@@ -15,16 +15,18 @@ import AdminApplications from "@/pages/AdminApplications";
 import AdminAnalytics from "@/pages/AdminAnalytics";
 import AdminJobs from "@/pages/AdminJobs";
 import AdminClients from "@/pages/AdminClients";
+import AdminActivityLogs from "@/pages/AdminActivityLogs"; // Added this
 import AdminPageEditor from "@/pages/AdminPageEditor";
 import AdminServices from "@/pages/AdminServices";
 import AdminTestimonials from "@/pages/AdminTestimonials";
+import AdminServiceQuestionnaires from "@/pages/AdminServiceQuestionnaires";
 import JobDetail from "@/pages/JobDetail";
-import ScrollToTop from "@/components/ScrollToTop"; // Import the new component
+import ScrollToTop from "@/components/ScrollToTop";
 
 function Router() {
   return (
     <>
-      <ScrollToTop /> {/* This will now run on every page change */}
+      <ScrollToTop />
       <Switch>
         <Route path="/" component={Home} />
         <Route path="/services" component={Services} />
@@ -40,9 +42,11 @@ function Router() {
         <Route path="/admin/analytics" component={AdminAnalytics} />
         <Route path="/admin/jobs" component={AdminJobs} />
         <Route path="/admin/clients" component={AdminClients} />
+        <Route path="/admin/activity-logs" component={AdminActivityLogs} /> {/* Added this */}
         <Route path="/admin/editor" component={AdminPageEditor} />
         <Route path="/admin/services" component={AdminServices} />
         <Route path="/admin/testimonials" component={AdminTestimonials} />
+        <Route path="/admin/service-questionnaires" component={AdminServiceQuestionnaires} />
         <Route component={NotFound} />
       </Switch>
     </>
