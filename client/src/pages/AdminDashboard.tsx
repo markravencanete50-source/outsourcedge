@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import AdminLayout from '@/components/AdminLayout';
 import { useAdmin } from '@/contexts/AdminContext';
 import { useAdminActivityLogger } from '@/hooks/useAdminActivityLogger';
-import { collection, onSnapshot, query, orderBy, limit, where, getDocs } from 'firebase/firestore';
+import { collection, onSnapshot, query, orderBy, limit, where } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { 
   TrendingUp, 
@@ -10,19 +10,15 @@ import {
   DollarSign, 
   Activity, 
   Mail, 
-  Clock,
-  ArrowUpRight,
-  ArrowDownRight
+  Clock
 } from 'lucide-react';
+import { Badge } from "@/components/ui/badge"; // Fixed import
 
 export default function AdminDashboard() {
-  const { isAuthenticated, adminName } = useAdmin();
+  const { isAuthenticated } = useAdmin();
   const { trackPageView } = useAdminActivityLogger();
   
-  // Existing Stats
   const [totalInquiries, setTotalInquiries] = useState(0);
-  
-  // CRM & Activity Tracking State
   const [pipelineData, setPipelineData] = useState({
     totalValue: 0,
     activeOpportunities: 0,
@@ -36,7 +32,7 @@ export default function AdminDashboard() {
     trackPageView('Admin Dashboard');
   }, []);
 
-  // Fetch Total Inquiries (Original Stat)
+  // Fetch Total Inquiries
   useEffect(() => {
     if (!db) return;
     const unsubscribe = onSnapshot(collection(db, 'contacts'), (snapshot) => {
@@ -60,7 +56,7 @@ export default function AdminDashboard() {
         closedWon,
         winRate: opportunities.length > 0 ? Math.round((closedWon / opportunities.length) * 100) : 0,
       });
-    });
+    }, (err) => console.error("Pipeline fetch error:", err));
     return () => unsubscribe();
   }, []);
 
@@ -70,7 +66,7 @@ export default function AdminDashboard() {
     const q = query(collection(db, 'adminActivities'), orderBy('timestamp', 'desc'), limit(10));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       setRecentActivities(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-    });
+    }, (err) => console.error("Activity fetch error:", err));
     return () => unsubscribe();
   }, []);
 
@@ -80,7 +76,7 @@ export default function AdminDashboard() {
     const q = query(collection(db, 'adminActivities'), where('activityType', '==', 'login'), orderBy('timestamp', 'desc'), limit(5));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       setActiveSessions(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-    });
+    }, (err) => console.error("Session fetch error:", err));
     return () => unsubscribe();
   }, []);
 
@@ -136,7 +132,6 @@ export default function AdminDashboard() {
 
         {/* Activity & Pipeline Detail */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Admin Activity Feed */}
           <div className="lg:col-span-2 bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
             <div className="p-6 border-b border-slate-100 flex items-center justify-between">
               <h3 className="font-bold text-slate-900 flex items-center gap-2">
@@ -145,7 +140,7 @@ export default function AdminDashboard() {
               <Badge variant="secondary">Live Feed</Badge>
             </div>
             <div className="p-0 max-h-[500px] overflow-y-auto">
-              {recentActivities.map((activity) => (
+              {recentActivities.length > 0 ? recentActivities.map((activity) => (
                 <div key={activity.id} className="p-4 border-b border-slate-50 last:border-0 hover:bg-slate-50 transition-colors">
                   <div className="flex items-start gap-3">
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${
@@ -153,48 +148,51 @@ export default function AdminDashboard() {
                       activity.activityType === 'logout' ? 'bg-red-100 text-red-700' :
                       'bg-slate-100 text-slate-700'
                     }`}>
-                      {activity.adminName?.charAt(0).toUpperCase()}
+                      {activity.adminName?.charAt(0).toUpperCase() || 'A'}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between">
-                        <p className="text-sm font-bold text-slate-900">{activity.adminName}</p>
+                        <p className="text-sm font-bold text-slate-900">{activity.adminName || 'Admin'}</p>
                         <span className="text-[10px] text-slate-400 flex items-center gap-1">
-                          <Clock className="w-3 h-3" /> {activity.timestamp?.toDate().toLocaleTimeString()}
+                          <Clock className="w-3 h-3" /> {activity.timestamp?.toDate().toLocaleTimeString() || 'Recently'}
                         </span>
                       </div>
                       <p className="text-xs text-slate-600 mt-0.5">
                         <span className="font-semibold uppercase text-[10px] mr-2">{activity.activityType}</span>
-                        {activity.details || `Viewed ${activity.page}`}
+                        {activity.details || `Viewed ${activity.page || 'Dashboard'}`}
                       </p>
                     </div>
                   </div>
                 </div>
-              ))}
+              )) : (
+                <div className="p-8 text-center text-slate-400 text-sm italic">No activity recorded yet.</div>
+              )}
             </div>
           </div>
 
-          {/* Active Sessions */}
           <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
             <h3 className="font-bold text-slate-900 mb-4 flex items-center gap-2">
               <Users className="w-5 h-5 text-green-600" /> Active Sessions
             </h3>
             <div className="space-y-4">
-              {activeSessions.map((session) => (
+              {activeSessions.length > 0 ? activeSessions.map((session) => (
                 <div key={session.id} className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="relative">
                       <div className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center font-bold text-slate-600">
-                        {session.adminName?.charAt(0).toUpperCase()}
+                        {session.adminName?.charAt(0).toUpperCase() || 'A'}
                       </div>
                       <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
                     </div>
                     <div>
-                      <p className="text-sm font-bold text-slate-900">{session.adminName}</p>
+                      <p className="text-sm font-bold text-slate-900">{session.adminName || 'Admin'}</p>
                       <p className="text-[10px] text-slate-500">Online now</p>
                     </div>
                   </div>
                 </div>
-              ))}
+              )) : (
+                <div className="text-center text-slate-400 text-xs italic py-4">No active sessions.</div>
+              )}
             </div>
           </div>
         </div>
