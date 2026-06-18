@@ -9,11 +9,11 @@ export const useAdminActivityLogger = () => {
   const currentPageRef = useRef<string>('Dashboard');
 
   const logActivity = async (
-    activityType: 'login' | 'logout' | 'heartbeat' | 'create' | 'update' | 'delete' | 'view',
+    activityType: 'login' | 'logout' | 'heartbeat' | 'create' | 'update' | 'delete' | 'view' | 'click',
     page?: string,
-    details?: string
+    details?: string,
+    metadata?: any
   ) => {
-    // IMPORTANT: We use the email passed in or the one from context
     if (!db || !adminEmail) return;
 
     try {
@@ -23,6 +23,7 @@ export const useAdminActivityLogger = () => {
         activityType,
         page: page || currentPageRef.current,
         details: details || '',
+        metadata: metadata || {},
         timestamp: serverTimestamp(),
       });
     } catch (error) {
@@ -32,7 +33,12 @@ export const useAdminActivityLogger = () => {
 
   const trackPageView = (pageName: string) => {
     currentPageRef.current = pageName;
-    logActivity('view', pageName);
+    logActivity('view', pageName, `Visited ${pageName}`);
+  };
+
+  // NEW: Log specific clicks (buttons, links, etc.)
+  const trackClick = (elementName: string, details?: string) => {
+    logActivity('click', currentPageRef.current, `Clicked ${elementName}`, { details });
   };
 
   useEffect(() => {
@@ -40,7 +46,7 @@ export const useAdminActivityLogger = () => {
 
     // Heartbeat every 60 seconds
     heartbeatIntervalRef.current = setInterval(() => {
-      logActivity('heartbeat', currentPageRef.current);
+      logActivity('heartbeat', currentPageRef.current, 'User is still active');
     }, 60000);
 
     return () => {
@@ -48,5 +54,5 @@ export const useAdminActivityLogger = () => {
     };
   }, [adminEmail]);
 
-  return { logActivity, trackPageView };
+  return { logActivity, trackPageView, trackClick };
 };
