@@ -16,10 +16,9 @@ interface AdminLayoutProps {
 
 export default function AdminLayout({ children }: AdminLayoutProps) {
   const { logout, adminEmail } = useAdmin();
-  const { trackPageView, logActivity } = useAdminActivityLogger();
+  const { trackPageView, logActivity, trackClick } = useAdminActivityLogger();
   const [location, setLocation] = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [isOnline, setIsOnline] = useState(true);
   const [firebaseConnected, setFirebaseConnected] = useState(false);
 
   const menuItems = [
@@ -36,10 +35,30 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     { href: '/admin/service-questionnaires', label: 'Service Inquiries', icon: FileText },
   ];
 
+  // 1. GLOBAL PAGE TRACKING
   useEffect(() => {
     const pageName = menuItems.find(item => item.href === location)?.label || 'Admin Page';
     trackPageView(pageName);
   }, [location]);
+
+  // 2. GLOBAL CLICK LISTENER (Captures all button/link clicks)
+  useEffect(() => {
+    const handleGlobalClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      const clickable = target.closest('button, a, [role="button"]');
+      
+      if (clickable) {
+        const name = clickable.textContent?.trim() || clickable.getAttribute('aria-label') || 'Unknown Element';
+        // Don't log heartbeat or system internal clicks
+        if (name && !['Logout', 'OE', 'OutsourceEdge'].includes(name)) {
+          trackClick(name);
+        }
+      }
+    };
+
+    window.addEventListener('click', handleGlobalClick);
+    return () => window.removeEventListener('click', handleGlobalClick);
+  }, []);
 
   useEffect(() => {
     if (!auth) return;
@@ -51,17 +70,11 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
   const handleLogout = async () => {
     try {
-      // 1. Log the logout activity FIRST while we still have the session
       await logActivity('logout', 'System', 'Admin initiated logout');
-      
-      // 2. Perform the actual Firebase logout
       await logout();
-      
-      // 3. Redirect to login page
       setLocation('/admin/login');
       toast.success("Logged out successfully");
     } catch (error) {
-      console.error("Logout error:", error);
       toast.error("Error during logout");
     }
   };
