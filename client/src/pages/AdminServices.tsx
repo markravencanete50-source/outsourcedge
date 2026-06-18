@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import AdminLayout from '@/components/AdminLayout';
 import { useAdmin } from '@/contexts/AdminContext';
+import { useAdminActivityLogger } from '@/hooks/useAdminActivityLogger'; // INJECTED
 import { collection, onSnapshot, query, orderBy, addDoc, doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { toast } from 'sonner';
@@ -24,6 +25,7 @@ interface Service {
 
 export default function AdminServices() {
   const { isAuthenticated } = useAdmin();
+  const { logActivity } = useAdminActivityLogger(); // INJECTED
   const [services, setServices] = useState<Service[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -80,6 +82,8 @@ export default function AdminServices() {
         order: formOrder,
         createdAt: new Date()
       });
+      // INJECTED LOG
+      await logActivity('create', 'Service Manager', `Added new service: ${formTitle}`);
       toast.success('Service added successfully!');
       setIsDialogOpen(false);
       resetForm();
@@ -104,6 +108,8 @@ export default function AdminServices() {
         icon: formIcon,
         order: formOrder,
       });
+      // INJECTED LOG
+      await logActivity('update', 'Service Manager', `Updated service: ${formTitle}`, { id: currentService.id });
       toast.success('Service updated successfully!');
       setIsDialogOpen(false);
       resetForm();
@@ -113,10 +119,12 @@ export default function AdminServices() {
     }
   };
 
-  const handleDeleteService = async (id: string) => {
+  const handleDeleteService = async (id: string, title: string) => { // ADDED title
     if (window.confirm('Are you sure you want to delete this service?')) {
       try {
         await deleteDoc(doc(db, 'services', id));
+        // INJECTED LOG
+        await logActivity('delete', 'Service Manager', `Deleted service: ${title}`, { id });
         toast.success('Service deleted successfully!');
       } catch (error) {
         console.error('Error deleting service:', error);
@@ -173,7 +181,7 @@ export default function AdminServices() {
                     <Button variant="ghost" size="sm" onClick={() => openEditDialog(service)}>
                       <Edit2 className="w-4 h-4" />
                     </Button>
-                    <Button variant="ghost" size="sm" onClick={() => handleDeleteService(service.id)}>
+                    <Button variant="ghost" size="sm" onClick={() => handleDeleteService(service.id, service.title)}>
                       <Trash2 className="w-4 h-4 text-red-500" />
                     </Button>
                   </TableCell>
