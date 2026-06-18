@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import AdminLayout from '@/components/AdminLayout';
 import { useAdmin } from '@/contexts/AdminContext';
+import { useAdminActivityLogger } from '@/hooks/useAdminActivityLogger'; // INJECTED
 import { collection, onSnapshot, query, orderBy, doc, updateDoc, deleteDoc, where } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { toast } from 'sonner';
@@ -31,6 +32,7 @@ interface Application {
 
 export default function AdminApplications() {
   const { isAuthenticated } = useAdmin();
+  const { logActivity } = useAdminActivityLogger(); // INJECTED
   const [applications, setApplications] = useState<Application[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -48,7 +50,6 @@ export default function AdminApplications() {
       const unsubscribe = onSnapshot(q, (snapshot) => {
         const appsData = snapshot.docs.map(docSnap => {
           const data = docSnap.data();
-          // Map fields to handle both old and new data structures
           return {
             id: docSnap.id,
             fullName: data.fullName || data.name || 'Anonymous',
@@ -97,10 +98,12 @@ export default function AdminApplications() {
     setIsDialogOpen(true);
   };
 
-  const handleDeleteApplication = async (id: string) => {
+  const handleDeleteApplication = async (id: string, name: string) => { // ADDED name
     if (window.confirm('Are you sure you want to delete this application?')) {
       try {
         await deleteDoc(doc(db, 'applications', id));
+        // INJECTED LOG
+        await logActivity('delete', 'Job Applications', `Deleted application from ${name}`, { id });
         toast.success('Application deleted successfully');
       } catch (error) {
         toast.error('Failed to delete application');
@@ -115,6 +118,8 @@ export default function AdminApplications() {
         status: currentApplication.status,
         notes: currentApplication.notes || '',
       });
+      // INJECTED LOG
+      await logActivity('update', 'Job Applications', `Changed status of ${currentApplication.fullName} to ${currentApplication.status.toUpperCase()}`, { id: currentApplication.id });
       toast.success('Application updated');
       setIsDialogOpen(false);
     } catch (error) {
@@ -217,7 +222,7 @@ export default function AdminApplications() {
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
                       <Button variant="outline" size="sm" onClick={() => handleEditApplication(app)}>View/Edit</Button>
-                      <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700 hover:bg-red-50" onClick={() => handleDeleteApplication(app.id)}>Delete</Button>
+                      <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700 hover:bg-red-50" onClick={() => handleDeleteApplication(app.id, app.fullName)}>Delete</Button>
                     </div>
                   </TableCell>
                 </TableRow>
