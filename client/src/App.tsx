@@ -18,34 +18,34 @@ import AdminClients from "@/pages/AdminClients";
 import AdminPageEditor from "@/pages/AdminPageEditor";
 import AdminServices from "@/pages/AdminServices";
 import AdminTestimonials from "@/pages/AdminTestimonials";
-import AdminServiceQuestionnaires from "@/pages/AdminServiceQuestionnaires";
 import JobDetail from "@/pages/JobDetail";
-import ServiceDetail from "@/pages/ServiceDetail";
+import ScrollToTop from "@/components/ScrollToTop"; // Import the new component
 
 function Router() {
   return (
-    <Switch>
-      <Route path="/" component={Home} />
-      <Route path="/services" component={Services} />
-      <Route path="/careers" component={Careers} />
-      <Route path="/job/:id" component={JobDetail} />
-      <Route path="/service/:id" component={ServiceDetail} />
-      <Route path="/about" component={About} />
-      <Route path="/contact" component={Contact} />
-      <Route path="/project-management" component={ProjectManagement} />
-      <Route path="/admin/login" component={AdminLogin} />
-      <Route path="/admin/dashboard" component={AdminDashboard} />
-      <Route path="/admin/contacts" component={AdminContacts} />
-      <Route path="/admin/applications" component={AdminApplications} />
-      <Route path="/admin/analytics" component={AdminAnalytics} />
-      <Route path="/admin/jobs" component={AdminJobs} />
-      <Route path="/admin/clients" component={AdminClients} />
-      <Route path="/admin/editor" component={AdminPageEditor} />
-      <Route path="/admin/services" component={AdminServices} />
-      <Route path="/admin/testimonials" component={AdminTestimonials} />
-      <Route path="/admin/service-questionnaires" component={AdminServiceQuestionnaires} />
-      <Route component={NotFound} />
-    </Switch>
+    <>
+      <ScrollToTop /> {/* This will now run on every page change */}
+      <Switch>
+        <Route path="/" component={Home} />
+        <Route path="/services" component={Services} />
+        <Route path="/careers" component={Careers} />
+        <Route path="/job/:id" component={JobDetail} />
+        <Route path="/about" component={About} />
+        <Route path="/contact" component={Contact} />
+        <Route path="/project-management" component={ProjectManagement} />
+        <Route path="/admin/login" component={AdminLogin} />
+        <Route path="/admin/dashboard" component={AdminDashboard} />
+        <Route path="/admin/contacts" component={AdminContacts} />
+        <Route path="/admin/applications" component={AdminApplications} />
+        <Route path="/admin/analytics" component={AdminAnalytics} />
+        <Route path="/admin/jobs" component={AdminJobs} />
+        <Route path="/admin/clients" component={AdminClients} />
+        <Route path="/admin/editor" component={AdminPageEditor} />
+        <Route path="/admin/services" component={AdminServices} />
+        <Route path="/admin/testimonials" component={AdminTestimonials} />
+        <Route component={NotFound} />
+      </Switch>
+    </>
   );
 }
 
