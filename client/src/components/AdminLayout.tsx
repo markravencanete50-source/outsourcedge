@@ -1,7 +1,22 @@
 import { ReactNode, useEffect, useState } from 'react';
 import { Link, useLocation } from 'wouter';
 import { useAdmin } from '@/contexts/AdminContext';
-import { BarChart3, Users, Mail, FileText, LogOut, Menu, X, Wifi, WifiOff, Zap, Briefcase, Layout, Settings, Star } from 'lucide-react';
+import { useAdminActivityLogger } from '@/hooks/useAdminActivityLogger';
+import { 
+  BarChart3, 
+  Users, 
+  Mail, 
+  FileText, 
+  LogOut, 
+  Menu, 
+  X, 
+  Zap, 
+  Briefcase, 
+  Layout, 
+  Settings, 
+  Star,
+  Clock 
+} from 'lucide-react';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 
@@ -11,10 +26,31 @@ interface AdminLayoutProps {
 
 export default function AdminLayout({ children }: AdminLayoutProps) {
   const { logout, adminEmail } = useAdmin();
+  const { trackPageView } = useAdminActivityLogger();
   const [location] = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isOnline, setIsOnline] = useState(true);
   const [firebaseConnected, setFirebaseConnected] = useState(false);
+
+  const menuItems = [
+    { href: '/admin/dashboard', label: 'Dashboard', icon: BarChart3 },
+    { href: '/admin/contacts', label: 'Contact Submissions', icon: Mail },
+    { href: '/admin/applications', label: 'Job Applications', icon: Users },
+    { href: '/admin/jobs', label: 'Manage Jobs', icon: Briefcase },
+    { href: '/admin/analytics', label: 'Analytics', icon: FileText },
+    { href: '/admin/clients', label: 'Partnership Pipeline', icon: Zap },
+    { href: '/admin/activity-logs', label: 'Activity Logs', icon: Clock },
+    { href: '/admin/editor', label: 'Website Editor', icon: Layout },
+    { href: '/admin/services', label: 'Service Manager', icon: Settings },
+    { href: '/admin/testimonials', label: 'Testimonial Manager', icon: Star },
+    { href: '/admin/service-questionnaires', label: 'Service Inquiries', icon: FileText },
+  ];
+
+  // Global Page Tracking
+  useEffect(() => {
+    const pageName = menuItems.find(item => item.href === location)?.label || 'Admin Page';
+    trackPageView(pageName);
+  }, [location]);
 
   useEffect(() => {
     if (!auth) {
@@ -37,19 +73,6 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       window.removeEventListener('offline', handleOffline);
     };
   }, []);
-
-    const menuItems = [
-    { href: '/admin/dashboard', label: 'Dashboard', icon: BarChart3 },
-    { href: '/admin/contacts', label: 'Contact Submissions', icon: Mail },
-    { href: '/admin/applications', label: 'Job Applications', icon: Users },
-    { href: '/admin/jobs', label: 'Manage Jobs', icon: Briefcase },
-    { href: '/admin/analytics', label: 'Analytics', icon: FileText },
-    { href: '/admin/clients', label: 'Partnership Pipeline', icon: Zap }, // Updated Label and Icon
-    { href: '/admin/editor', label: 'Website Editor', icon: Layout },
-    { href: '/admin/services', label: 'Service Manager', icon: Settings },
-    { href: '/admin/testimonials', label: 'Testimonial Manager', icon: Star },
-    { href: '/admin/service-questionnaires', label: 'Service Inquiries', icon: FileText },
-  ];
 
   const isActive = (href: string) => location === href;
 
