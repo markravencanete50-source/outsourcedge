@@ -38,13 +38,13 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     };
   }, []);
 
-  const menuItems = [
+    const menuItems = [
     { href: '/admin/dashboard', label: 'Dashboard', icon: BarChart3 },
     { href: '/admin/contacts', label: 'Contact Submissions', icon: Mail },
     { href: '/admin/applications', label: 'Job Applications', icon: Users },
     { href: '/admin/jobs', label: 'Manage Jobs', icon: Briefcase },
     { href: '/admin/analytics', label: 'Analytics', icon: FileText },
-    { href: '/admin/clients', label: 'Clients', icon: Users },
+    { href: '/admin/clients', label: 'Partnership Pipeline', icon: Zap }, // Updated Label and Icon
     { href: '/admin/editor', label: 'Website Editor', icon: Layout },
     { href: '/admin/services', label: 'Service Manager', icon: Settings },
     { href: '/admin/testimonials', label: 'Testimonial Manager', icon: Star },
