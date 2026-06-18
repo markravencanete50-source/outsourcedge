@@ -1,30 +1,28 @@
 import { useEffect, useRef } from 'react';
-import { collection, addDoc, serverTimestamp, query, where, updateDoc, doc, getDocs } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useAdmin } from '@/contexts/AdminContext';
 
 export const useAdminActivityLogger = () => {
   const { adminEmail, adminName } = useAdmin();
   const heartbeatIntervalRef = useRef<NodeJS.Timeout | null>(null);
-  const currentPageRef = useRef<string>('');
+  const currentPageRef = useRef<string>('Dashboard');
 
-  // Log activity to Firestore
   const logActivity = async (
     activityType: 'login' | 'logout' | 'heartbeat' | 'create' | 'update' | 'delete' | 'view',
     page?: string,
-    action?: string,
     details?: string
   ) => {
+    // IMPORTANT: We use the email passed in or the one from context
     if (!db || !adminEmail) return;
 
     try {
       await addDoc(collection(db, 'adminActivities'), {
         adminEmail,
-        adminName: adminName || 'Unknown Admin',
+        adminName: adminName || 'Admin',
         activityType,
         page: page || currentPageRef.current,
-        action,
-        details,
+        details: details || '',
         timestamp: serverTimestamp(),
       });
     } catch (error) {
@@ -32,30 +30,21 @@ export const useAdminActivityLogger = () => {
     }
   };
 
-  // Track page changes
   const trackPageView = (pageName: string) => {
     currentPageRef.current = pageName;
     logActivity('view', pageName);
   };
 
-  // Start heartbeat on login
   useEffect(() => {
     if (!adminEmail || !db) return;
 
-    // Log login
-    logActivity('login');
-
-    // Start heartbeat every 60 seconds
+    // Heartbeat every 60 seconds
     heartbeatIntervalRef.current = setInterval(() => {
       logActivity('heartbeat', currentPageRef.current);
-    }, 60000); // 60 seconds
+    }, 60000);
 
-    // Cleanup on logout
     return () => {
-      if (heartbeatIntervalRef.current) {
-        clearInterval(heartbeatIntervalRef.current);
-      }
-      logActivity('logout');
+      if (heartbeatIntervalRef.current) clearInterval(heartbeatIntervalRef.current);
     };
   }, [adminEmail]);
 
