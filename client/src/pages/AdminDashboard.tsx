@@ -1,260 +1,201 @@
+// Add these imports at the top
 import { useEffect, useState } from 'react';
-import AdminLayout from '@/components/AdminLayout';
-import { useAdmin } from '@/contexts/AdminContext';
-import { useLocation } from 'wouter';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
-import { Mail, Users, TrendingUp, Eye, Calendar, Clock, Activity, Briefcase } from 'lucide-react';
-import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
+import { collection, onSnapshot, query, orderBy, limit, where } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
+import { TrendingUp, Users, DollarSign, Activity } from 'lucide-react';
 
-interface ChartData {
-  name: string;
-  contacts: number;
-}
-
-interface ServiceData {
-  name: string;
-  value: number;
-}
-
-const COLORS = ['#0891B2', '#059669', '#0F172A', '#64748B', '#E2E8F0'];
+// Inside your AdminDashboard component, add this new section:
 
 export default function AdminDashboard() {
-  const { isAuthenticated } = useAdmin();
-  const [, setLocation] = useLocation();
-  const [stats, setStats] = useState({
-    totalContacts: 0,
-    newLeads: 0,
-    totalApplications: 0,
-    conversionRate: 0,
+  // ... existing code ...
+  
+  // NEW: CRM & Activity Tracking State
+  const [pipelineData, setPipelineData] = useState({
+    totalValue: 0,
+    activeOpportunities: 0,
+    closedWon: 0,
+    winRate: 0,
   });
+  const [recentActivities, setRecentActivities] = useState<any[]>([]);
+  const [activeSessions, setActiveSessions] = useState<any[]>([]);
 
-  const [monthlyData, setMonthlyData] = useState<ChartData[]>([]);
-  const [serviceDistribution, setServiceDistribution] = useState<ServiceData[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
+  // NEW: Fetch CRM Pipeline Data
   useEffect(() => {
-    if (!isAuthenticated) {
-      setLocation('/admin/login');
-    }
-  }, [isAuthenticated, setLocation]);
-
-  useEffect(() => {
-    if (!db || !isAuthenticated) return;
-
-    try {
-      // 1. Fetch Contacts for Analytics
-      const contactsRef = collection(db, 'contacts');
-      const qContacts = query(contactsRef, orderBy('createdAt', 'desc'));
-
-      const unsubscribeContacts = onSnapshot(qContacts, (contactsSnapshot) => {
-        // 2. Fetch Applications for Job Stats
-        const appsRef = collection(db, 'applications');
-        const qApps = query(appsRef, orderBy('createdAt', 'desc'));
-
-        onSnapshot(qApps, (appsSnapshot) => {
-          const totalContacts = contactsSnapshot.size;
-          const totalApplications = appsSnapshot.size;
-          
-          let newLeads = 0;
-          const monthCounts: { [key: string]: number } = {};
-          const serviceCounts: { [key: string]: number } = {};
-
-          // Process Contacts
-          contactsSnapshot.docs.forEach(doc => {
-            const data = doc.data();
-            
-            // Count New Leads (last 7 days)
-            if (data.createdAt) {
-              const createdDate = data.createdAt.toDate();
-              const sevenDaysAgo = new Date();
-              sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-              if (createdDate > sevenDaysAgo) newLeads++;
-
-              // Group by Month
-              const monthName = createdDate.toLocaleString('default', { month: 'short' });
-              monthCounts[monthName] = (monthCounts[monthName] || 0) + 1;
-            }
-
-            // Group by Service
-            const service = data.service || 'General Inquiry';
-            serviceCounts[service] = (serviceCounts[service] || 0) + 1;
-          });
-
-          // Format Monthly Data (Last 6 months)
-          const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-          const currentMonth = new Date().getMonth();
-          const last6Months = [];
-          for (let i = 5; i >= 0; i--) {
-            const mIndex = (currentMonth - i + 12) % 12;
-            const mName = months[mIndex];
-            last6Months.push({
-              name: mName,
-              contacts: monthCounts[mName] || 0
-            });
-          }
-          setMonthlyData(last6Months);
-
-          // Format Service Distribution
-          const serviceData = Object.keys(serviceCounts).map(key => ({
-            name: key.length > 15 ? key.substring(0, 15) + '...' : key,
-            value: serviceCounts[key]
-          })).sort((a, b) => b.value - a.value).slice(0, 5);
-          setServiceDistribution(serviceData);
-
-          // Update All Stats
-          setStats({
-            totalContacts,
-            newLeads,
-            totalApplications,
-            conversionRate: totalContacts > 0 ? Math.round((totalApplications / totalContacts) * 100) : 0,
-          });
-          
-          setIsLoading(false);
-        });
+    if (!db) return;
+    
+    const q = query(collection(db, 'clients'), orderBy('dateAdded', 'desc'));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const opportunities = snapshot.docs.map(doc => doc.data());
+      const totalValue = opportunities.reduce((sum, opp) => sum + (opp.estimatedValue || 0), 0);
+      const closedWon = opportunities.filter(o => o.stage === 'closed-won' || o.stage === 'active-client').length;
+      
+      setPipelineData({
+        totalValue,
+        activeOpportunities: opportunities.length,
+        closedWon,
+        winRate: opportunities.length > 0 ? Math.round((closedWon / opportunities.length) * 100) : 0,
       });
+    });
+    
+    return () => unsubscribe();
+  }, []);
 
-      return () => unsubscribeContacts();
-    } catch (error) {
-      console.error('Error setting up dashboard listeners:', error);
-      setIsLoading(false);
-    }
-  }, [isAuthenticated]);
-
-  const StatCard = ({ icon: Icon, label, value, color, subtext }: any) => (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition">
-      <div className="flex items-center justify-between mb-4">
-        <div className={`p-3 rounded-lg ${color}`}>
-          <Icon className="w-6 h-6 text-white" />
-        </div>
-        <div className="flex items-center text-green-600 text-sm font-medium">
-          <Activity className="w-4 h-4 mr-1" />
-          Live
-        </div>
-      </div>
-      <p className="text-gray-600 text-sm mb-1">{label}</p>
-      <div className="flex items-baseline gap-2">
-        <h3 className="text-3xl font-bold text-[#0F172A]">{value}</h3>
-        {subtext && <span className="text-xs text-gray-400 font-medium">{subtext}</span>}
-      </div>
-    </div>
-  );
-
-  if (isLoading) {
-    return (
-      <AdminLayout>
-        <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#0891B2]"></div>
-          <span className="ml-3 text-gray-600 font-medium">Loading Real-Time Data...</span>
-        </div>
-      </AdminLayout>
+  // NEW: Fetch Recent Admin Activities
+  useEffect(() => {
+    if (!db) return;
+    
+    const q = query(
+      collection(db, 'adminActivities'),
+      orderBy('timestamp', 'desc'),
+      limit(10)
     );
-  }
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const activities = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setRecentActivities(activities);
+    });
+    
+    return () => unsubscribe();
+  }, []);
+
+  // NEW: Fetch Active Admin Sessions
+  useEffect(() => {
+    if (!db) return;
+    
+    const q = query(
+      collection(db, 'adminActivities'),
+      where('activityType', '==', 'login'),
+      orderBy('timestamp', 'desc'),
+      limit(5)
+    );
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const sessions = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setActiveSessions(sessions);
+    });
+    
+    return () => unsubscribe();
+  }, []);
 
   return (
     <AdminLayout>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">Dashboard Overview</h1>
-        <p className="text-gray-500">Real-time performance metrics from your database.</p>
-      </div>
+      <div className="space-y-8">
+        {/* Existing Dashboard Content */}
+        
+        {/* NEW: Growth & Pipeline Section */}
+        <section>
+          <h2 className="text-2xl font-bold text-slate-900 mb-6">Growth & Pipeline</h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-xl border border-blue-200 shadow-sm">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-blue-600 font-medium">Total Pipeline Value</p>
+                  <h3 className="text-3xl font-bold text-blue-900 mt-2">
+                    ${pipelineData.totalValue.toLocaleString()}
+                  </h3>
+                </div>
+                <DollarSign className="w-12 h-12 text-blue-300" />
+              </div>
+            </div>
 
-      {/* Real-Time Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <StatCard
-          icon={Mail}
-          label="Total Inquiries"
-          value={stats.totalContacts}
-          color="bg-blue-500"
-          subtext="Lifetime"
-        />
-        <StatCard
-          icon={Activity}
-          label="New Leads"
-          value={stats.newLeads}
-          color="bg-orange-500"
-          subtext="Last 7 Days"
-        />
-        <StatCard
-          icon={Briefcase}
-          label="Job Applications"
-          value={stats.totalApplications}
-          color="bg-purple-500"
-          subtext="Real-time"
-        />
-        <StatCard
-          icon={TrendingUp}
-          label="Conversion Rate"
-          value={`${stats.conversionRate}%`}
-          color="bg-emerald-500"
-          subtext="Lead to App"
-        />
-      </div>
+            <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-xl border border-purple-200 shadow-sm">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-purple-600 font-medium">Active Opportunities</p>
+                  <h3 className="text-3xl font-bold text-purple-900 mt-2">
+                    {pipelineData.activeOpportunities}
+                  </h3>
+                </div>
+                <Users className="w-12 h-12 text-purple-300" />
+              </div>
+            </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Inquiry Trends */}
-        <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="font-bold text-gray-900">Inquiry Trends</h3>
-            <div className="flex items-center text-xs text-gray-400">
-              <Clock className="w-3 h-3 mr-1" />
-              Updated just now
+            <div className="bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-xl border border-green-200 shadow-sm">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-green-600 font-medium">Closed Won</p>
+                  <h3 className="text-3xl font-bold text-green-900 mt-2">
+                    {pipelineData.closedWon}
+                  </h3>
+                </div>
+                <TrendingUp className="w-12 h-12 text-green-300" />
+              </div>
+            </div>
+
+            <div className="bg-gradient-to-br from-orange-50 to-orange-100 p-6 rounded-xl border border-orange-200 shadow-sm">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-orange-600 font-medium">Win Rate</p>
+                  <h3 className="text-3xl font-bold text-orange-900 mt-2">
+                    {pipelineData.winRate}%
+                  </h3>
+                </div>
+                <Activity className="w-12 h-12 text-orange-300" />
+              </div>
             </div>
           </div>
-          <div className="h-80">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={monthlyData}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F1F5F9" />
-                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#64748B', fontSize: 12 }} dy={10} />
-                <YAxis axisLine={false} tickLine={false} tick={{ fill: '#64748B', fontSize: 12 }} />
-                <Tooltip 
-                  cursor={{ fill: '#F8FAFC' }}
-                  contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
-                />
-                <Bar dataKey="contacts" fill="#0891B2" radius={[4, 4, 0, 0]} barSize={40} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
+        </section>
 
-        {/* Popular Services */}
-        <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="font-bold text-gray-900">Popular Services</h3>
-            <Users className="w-4 h-4 text-gray-400" />
-          </div>
-          <div className="h-80 flex items-center justify-center">
-            {serviceDistribution.length > 0 ? (
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={serviceDistribution}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={60}
-                    outerRadius={100}
-                    paddingAngle={5}
-                    dataKey="value"
-                  >
-                    {serviceDistribution.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip 
-                    contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
-                  />
-                  <Legend verticalAlign="bottom" height={36} iconType="circle" />
-                </PieChart>
-              </ResponsiveContainer>
-            ) : (
-              <div className="text-center py-10">
-                <div className="bg-gray-50 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                  <Mail className="w-8 h-8 text-gray-300" />
-                </div>
-                <p className="text-gray-400">No inquiry data available yet</p>
+        {/* NEW: Admin Activity Feed */}
+        <section>
+          <h2 className="text-2xl font-bold text-slate-900 mb-6">Admin Activity Log</h2>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Recent Activities */}
+            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+              <h3 className="font-semibold text-slate-900 mb-4">Recent Dashboard Activities</h3>
+              <div className="space-y-3 max-h-96 overflow-y-auto">
+                {recentActivities.length > 0 ? (
+                  recentActivities.map((activity) => (
+                    <div key={activity.id} className="flex items-start gap-3 pb-3 border-b border-slate-100 last:border-b-0">
+                      <div className="w-2 h-2 rounded-full bg-[#0891B2] mt-2 flex-shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-slate-900">
+                          {activity.adminName} <span className="text-slate-500 font-normal">{activity.activityType}</span>
+                        </p>
+                        <p className="text-xs text-slate-500 mt-1">{activity.page || 'Dashboard'}</p>
+                        {activity.details && <p className="text-xs text-slate-600 mt-1">{activity.details}</p>}
+                        <p className="text-xs text-slate-400 mt-2">
+                          {activity.timestamp?.toDate().toLocaleString() || 'Just now'}
+                        </p>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-sm text-slate-500">No activities yet</p>
+                )}
               </div>
-            )}
+            </div>
+
+            {/* Active Sessions */}
+            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+              <h3 className="font-semibold text-slate-900 mb-4">Admin Sessions</h3>
+              <div className="space-y-3 max-h-96 overflow-y-auto">
+                {activeSessions.length > 0 ? (
+                  activeSessions.map((session) => (
+                    <div key={session.id} className="flex items-start gap-3 pb-3 border-b border-slate-100 last:border-b-0">
+                      <div className="w-2 h-2 rounded-full bg-green-500 mt-2 flex-shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-slate-900">{session.adminName}</p>
+                        <p className="text-xs text-slate-500 mt-1">Logged in</p>
+                        <p className="text-xs text-slate-400 mt-2">
+                          {session.timestamp?.toDate().toLocaleString() || 'Recently'}
+                        </p>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-sm text-slate-500">No active sessions</p>
+                )}
+              </div>
+            </div>
           </div>
-        </div>
+        </section>
       </div>
     </AdminLayout>
   );
