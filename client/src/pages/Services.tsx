@@ -1,123 +1,125 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { motion } from "framer-motion";
-import { ArrowRight, Zap, TrendingUp, Users, Briefcase, Shield, CheckCircle } from "lucide-react";
+import { CheckCircle, ArrowRight, Zap, Users, Shield, TrendingUp, Globe, Clock, Mail, FileText } from "lucide-react";
 import { Link } from "wouter";
 import { useState, useEffect } from "react";
 import { collection, onSnapshot, query, orderBy } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import { Button } from "@/components/ui/button";
 
 interface Service {
   id: string;
   title: string;
   description: string;
-  icon: string;
-  order: number;
+  icon?: string;
+  order?: number;
 }
+
+// Helper to render icon by name
+const ServiceIcon = ({ name, className }: { name?: string, className?: string }) => {
+  const icons: Record<string, any> = {
+    Zap, Users, Shield, TrendingUp, Globe, Clock, Mail, FileText
+  };
+  const IconComponent = name && icons[name] ? icons[name] : Zap;
+  return <IconComponent className={className} />;
+};
 
 export default function Services() {
   const [services, setServices] = useState<Service[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (!db) return;
+    // Add a safety timeout to prevent infinite loading
+    const timeout = setTimeout(() => {
+      setIsLoading(false);
+    }, 5000);
+
+    if (!db) {
+      setIsLoading(false);
+      return;
+    }
 
     const q = query(collection(db, "services"), orderBy("order", "asc"));
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      setServices(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Service)));
+      const servicesData = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      })) as Service[];
+      setServices(servicesData);
       setIsLoading(false);
+      clearTimeout(timeout);
+    }, (error) => {
+      console.error("Error fetching services:", error);
+      setIsLoading(false);
+      clearTimeout(timeout);
     });
 
-    return () => unsubscribe();
+    return () => {
+      unsubscribe();
+      clearTimeout(timeout);
+    };
   }, []);
-
-  const fadeUpVariant = {
-    hidden: { opacity: 0, y: 40 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } }
-  };
-
-  const scaleVariant = {
-    hidden: { opacity: 0, scale: 0.8 },
-    visible: { opacity: 1, scale: 1, transition: { duration: 0.6, ease: "easeOut" } }
-  };
 
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.12,
-        delayChildren: 0.2,
-      }
-    }
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.5 },
+    },
   };
 
   return (
     <div className="min-h-screen bg-white">
       <Header />
-      
-      {/* HERO */}
-      <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-cyan-50/30 to-white -z-10" />
-        <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-100/20 rounded-full blur-3xl -z-10 animate-pulse" />
-        
+      {/* Hero Section */}
+      <section className="pt-32 pb-20 md:pt-48 md:pb-32 bg-gradient-to-br from-white via-blue-50 to-white">
         <div className="container">
-          <motion.div
-            className="max-w-4xl"
-            initial="hidden"
-            animate="visible"
-            variants={containerVariants}
-          >
-            <motion.div variants={fadeUpVariant} className="inline-flex items-center gap-2 mb-6 px-4 py-2 bg-cyan-50 rounded-full border border-cyan-200/50">
-              <Zap className="w-4 h-4 text-cyan-600" />
-              <span className="text-sm font-bold text-cyan-900">Strategic Solutions</span>
-            </motion.div>
-
-            <motion.h1 variants={fadeUpVariant} className="text-5xl md:text-7xl font-bold text-slate-900 mb-6 leading-tight">
+          <motion.div className="max-w-3xl mx-auto text-center" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
+            <h1 className="text-5xl md:text-6xl font-bold text-[#0F172A] mb-6">
               Our Services
-            </motion.h1>
-
-            <motion.p variants={fadeUpVariant} className="text-xl md:text-2xl text-slate-600 mb-8 max-w-3xl leading-relaxed">
-              Strategic outsourcing solutions designed to streamline operations, reduce costs, and accelerate your business growth.
-            </motion.p>
+            </h1>
+            <p className="text-xl text-gray-600 mb-8">
+              Comprehensive outsourcing solutions tailored to your business needs and growth objectives.
+            </p>
           </motion.div>
         </div>
       </section>
 
-      {/* SERVICES GRID */}
-      <section className="py-20 md:py-32 bg-slate-50">
+      {/* Services Grid */}
+      <section className="py-20 md:py-32 bg-white">
         <div className="container">
           {isLoading ? (
-            <div className="flex justify-center py-20">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-600"></div>
+            <div className="flex flex-col items-center justify-center py-20">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#0891B2] mb-4"></div>
+              <p className="text-gray-500">Loading our services...</p>
+            </div>
+          ) : services.length === 0 ? (
+            <div className="text-center py-20 bg-gray-50 rounded-2xl border border-dashed border-gray-300">
+              <p className="text-gray-500 text-lg">No services listed yet. Add some in the Service Manager!</p>
             </div>
           ) : (
-            <motion.div
-              className="grid grid-cols-1 md:grid-cols-2 gap-8"
-              initial="hidden"
-              whileInView="visible"
-              variants={containerVariants}
-              viewport={{ once: true, margin: "-100px" }}
-            >
+            <motion.div className="grid grid-cols-1 md:grid-cols-2 gap-12" initial="hidden" whileInView="visible" variants={containerVariants} viewport={{ once: true }}>
               {services.map((service) => (
-                <motion.div
-                  key={service.id}
-                  variants={scaleVariant}
-                  className="group p-8 bg-white rounded-2xl border border-slate-200 hover:border-cyan-300 hover:shadow-xl transition-all cursor-pointer"
-                  whileHover={{ y: -5 }}
-                >
-                  <motion.div
-                    className="w-14 h-14 bg-cyan-100 rounded-xl flex items-center justify-center mb-6 group-hover:bg-cyan-200 transition-colors"
-                    whileHover={{ scale: 1.1, rotate: 5 }}
-                  >
-                    <Zap className="w-7 h-7 text-cyan-600" />
-                  </motion.div>
-                  <h3 className="text-2xl font-bold text-slate-900 mb-4">{service.title}</h3>
-                  <p className="text-slate-600 text-lg mb-6 leading-relaxed line-clamp-3">{service.description}</p>
-                  <Link href={`/service/${service.id}`}>
-                    <a className="inline-flex items-center gap-2 px-6 py-3 bg-cyan-50 border-2 border-cyan-300 text-cyan-600 font-bold rounded-xl hover:bg-cyan-600 hover:text-white hover:border-cyan-600 transition-all group-hover:translate-x-1">
-                      View Details <ArrowRight className="w-5 h-5" />
+                <motion.div key={service.id} variants={itemVariants} className="p-8 bg-gray-50 rounded-xl border border-gray-200 hover:border-[#0891B2] hover:shadow-lg transition-all duration-300 group">
+                  <div className="w-14 h-14 bg-gradient-to-br from-[#0891B2] to-[#059669] text-white rounded-lg flex items-center justify-center mb-6 shadow-lg shadow-[#0891B2]/20 group-hover:scale-110 transition-transform">
+                    <ServiceIcon name={service.icon} className="w-7 h-7" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-[#0F172A] mb-4">{service.title}</h3>
+                  <p className="text-gray-600 text-lg mb-6 leading-relaxed">{service.description}</p>
+                  <Link href="/contact">
+                    <a className="text-[#0891B2] font-bold flex items-center gap-2 hover:gap-3 transition-all"> 
+                      Get Started <ArrowRight className="w-5 h-5" /> 
                     </a>
                   </Link>
                 </motion.div>
@@ -127,6 +129,7 @@ export default function Services() {
         </div>
       </section>
 
+      {/* Footer and other sections... */}
       <Footer />
     </div>
   );
