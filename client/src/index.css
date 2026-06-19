@@ -102,3 +102,26 @@
   .section-padding { @apply py-20 md:py-32; }
   .gradient-text { @apply bg-gradient-to-r from-[#0891B2] to-[#0E7490] bg-clip-text text-transparent; }
 }
+
+/* Accessibility: smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Accessibility: visible keyboard focus ring */
+:focus-visible {
+  outline: 2px solid #0891B2;
+  outline-offset: 2px;
+}
+
+/* Accessibility: respect OS reduced-motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
