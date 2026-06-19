@@ -70,14 +70,29 @@ export default function Home() {
 
   useEffect(() => {
     if (!db) return;
+
+    // Store unsubscribe functions and clean them up on unmount
     const docRef = doc(db, "site_content", "main");
-    onSnapshot(docRef, (docSnap) => {
+    const unsubContent = onSnapshot(docRef, (docSnap) => {
       if (docSnap.exists()) setContent({ ...DEFAULT_CONTENT, ...docSnap.data() as PageContent });
     });
+
     const qServices = query(collection(db, "services"), orderBy("order", "asc"), limit(6));
-    onSnapshot(qServices, (snapshot) => setServices(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Service))));
+    const unsubServices = onSnapshot(qServices, (snapshot) =>
+      setServices(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Service)))
+    );
+
     const qTestimonials = query(collection(db, "testimonials"), limit(3));
-    onSnapshot(qTestimonials, (snapshot) => setTestimonials(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Testimonial))));
+    const unsubTestimonials = onSnapshot(qTestimonials, (snapshot) =>
+      setTestimonials(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Testimonial)))
+    );
+
+    // Cleanup all listeners when the component unmounts
+    return () => {
+      unsubContent();
+      unsubServices();
+      unsubTestimonials();
+    };
   }, []);
 
   // Animation Variants
@@ -109,8 +124,9 @@ export default function Home() {
       {/* HERO SECTION */}
       <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-cyan-50/30 to-white -z-10" />
-        <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-100/20 rounded-full blur-3xl -z-10 animate-pulse" />
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-100/20 rounded-full blur-3xl -z-10 animate-pulse" style={{ animationDelay: "1s" }} />
+        {/* Replaced animate-pulse blobs with static blobs — no GPU drain */}
+        <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-100/20 rounded-full blur-3xl -z-10" />
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-100/20 rounded-full blur-3xl -z-10" />
         
         <div className="container">
           <motion.div 
@@ -339,9 +355,8 @@ export default function Home() {
 
       {/* FINAL CTA */}
       <section className="py-20 md:py-32 bg-gradient-to-br from-cyan-600 to-cyan-700 text-white relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-white rounded-full blur-3xl animate-pulse" />
-        </div>
+        {/* Replaced animate-pulse with static decorative blob */}
+        <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl" />
 
         <div className="container relative z-10">
           <motion.div 
