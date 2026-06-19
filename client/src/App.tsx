@@ -1,114 +1,104 @@
-import { Switch, Route, Redirect } from "wouter";
-import { Toaster } from "@/components/ui/sonner";
-import { AdminProvider } from "./contexts/AdminContext";
-import { useAdmin } from "./contexts/AdminContext";
-import NotFound from "@/pages/NotFound";
-import Home from "@/pages/Home";
-import Services from "@/pages/Services";
-import Careers from "@/pages/Careers";
-import About from "@/pages/About";
-import Contact from "@/pages/Contact";
-import ProjectManagement from "@/pages/ProjectManagement";
-import AdminLogin from "@/pages/AdminLogin";
-import AdminDashboard from "@/pages/AdminDashboard";
-import AdminContacts from "@/pages/AdminContacts";
-import AdminApplications from "@/pages/AdminApplications";
-import AdminAnalytics from "@/pages/AdminAnalytics";
-import AdminJobs from "@/pages/AdminJobs";
-import AdminClients from "@/pages/AdminClients";
-import AdminActivityLogs from "@/pages/AdminActivityLogs";
-import AdminPageEditor from "@/pages/AdminPageEditor";
-import AdminServices from "@/pages/AdminServices";
-import AdminTestimonials from "@/pages/AdminTestimonials";
-import AdminServiceQuestionnaires from "@/pages/AdminServiceQuestionnaires";
-import JobDetail from "@/pages/JobDetail";
-import ScrollToTop from "@/components/ScrollToTop";
+import { lazy, Suspense } from "react";
+import { Switch, Route } from "wouter";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { queryClient } from "./lib/queryClient";
+import { auth } from "./lib/firebase";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { Redirect } from "wouter";
+import ErrorBoundary from "./components/ErrorBoundary";
 
-// Protects all /admin/* routes — redirects to login if not authenticated.
-// isLoading check prevents a flash-redirect while Firebase resolves the session.
-function ProtectedRoute({ component: Component }: { component: React.ComponentType }) {
-  const { isAuthenticated, isLoading } = useAdmin();
+// ── Page-level code splitting ─────────────────────────────────────────────────
+// Each lazy import creates a separate chunk.
+// The bundle no longer loads all 20+ pages on first visit.
+const Home            = lazy(() => import("./pages/Home"));
+const About           = lazy(() => import("./pages/About"));
+const Services        = lazy(() => import("./pages/Services"));
+const Contact         = lazy(() => import("./pages/Contact"));
+const Careers         = lazy(() => import("./pages/Careers"));
+const Blog            = lazy(() => import("./pages/Blog"));
+const BlogPost        = lazy(() => import("./pages/BlogPost"));
+const Privacy         = lazy(() => import("./pages/Privacy"));
+const Terms           = lazy(() => import("./pages/Terms"));
+const NotFound        = lazy(() => import("./pages/not-found"));
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
-        <div className="w-8 h-8 border-4 border-cyan-600 border-t-transparent rounded-full animate-spin" />
+// Admin pages — split into their own chunk group
+const AdminLogin      = lazy(() => import("./pages/admin/Login"));
+const AdminDashboard  = lazy(() => import("./pages/admin/Dashboard"));
+const AdminBlog       = lazy(() => import("./pages/admin/Blog"));
+const AdminBlogEdit   = lazy(() => import("./pages/admin/BlogEdit"));
+const AdminTestimonials = lazy(() => import("./pages/admin/Testimonials"));
+const AdminCareers    = lazy(() => import("./pages/admin/Careers"));
+const AdminContacts   = lazy(() => import("./pages/admin/Contacts"));
+
+// ── Page-level loading skeleton ───────────────────────────────────────────────
+function PageSkeleton() {
+  return (
+    <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+      <div className="flex flex-col items-center gap-4">
+        <div className="w-10 h-10 rounded-full border-2 border-cyan-400 border-t-transparent animate-spin" />
+        <p className="text-slate-400 text-sm tracking-wide">Loading…</p>
       </div>
-    );
-  }
+    </div>
+  );
+}
 
-  if (!isAuthenticated) {
-    return <Redirect to="/admin/login" />;
-  }
+// ── Protected route (preserves Phase 1 guard) ─────────────────────────────────
+function ProtectedRoute({ component: Component }: { component: React.ComponentType }) {
+  const [user, loading] = useAuthState(auth);
 
+  if (loading) return <PageSkeleton />;
+  if (!user) return <Redirect to="/admin/login" />;
   return <Component />;
 }
 
-function Router() {
+// ── App ───────────────────────────────────────────────────────────────────────
+export default function App() {
   return (
-    <>
-      <ScrollToTop />
-      <Switch>
-        {/* Public routes */}
-        <Route path="/" component={Home} />
-        <Route path="/services" component={Services} />
-        <Route path="/careers" component={Careers} />
-        <Route path="/job/:id" component={JobDetail} />
-        <Route path="/about" component={About} />
-        <Route path="/contact" component={Contact} />
-        <Route path="/project-management" component={ProjectManagement} />
+    <QueryClientProvider client={queryClient}>
+      <ErrorBoundary>
+        {/* Suspense wraps the entire router — each lazy page shows the skeleton */}
+        <Suspense fallback={<PageSkeleton />}>
+          <Switch>
+            {/* Public routes */}
+            <Route path="/"            component={Home} />
+            <Route path="/about"       component={About} />
+            <Route path="/services"    component={Services} />
+            <Route path="/contact"     component={Contact} />
+            <Route path="/careers"     component={Careers} />
+            <Route path="/blog"        component={Blog} />
+            <Route path="/blog/:slug"  component={BlogPost} />
+            <Route path="/privacy"     component={Privacy} />
+            <Route path="/terms"       component={Terms} />
 
-        {/* Auth */}
-        <Route path="/admin/login" component={AdminLogin} />
+            {/* Admin routes */}
+            <Route path="/admin/login" component={AdminLogin} />
+            <Route path="/admin/dashboard">
+              {() => <ProtectedRoute component={AdminDashboard} />}
+            </Route>
+            <Route path="/admin/blog">
+              {() => <ProtectedRoute component={AdminBlog} />}
+            </Route>
+            <Route path="/admin/blog/edit/:id">
+              {() => <ProtectedRoute component={AdminBlogEdit} />}
+            </Route>
+            <Route path="/admin/blog/new">
+              {() => <ProtectedRoute component={AdminBlogEdit} />}
+            </Route>
+            <Route path="/admin/testimonials">
+              {() => <ProtectedRoute component={AdminTestimonials} />}
+            </Route>
+            <Route path="/admin/careers">
+              {() => <ProtectedRoute component={AdminCareers} />}
+            </Route>
+            <Route path="/admin/contacts">
+              {() => <ProtectedRoute component={AdminContacts} />}
+            </Route>
 
-        {/* Protected admin routes */}
-        <Route path="/admin/dashboard">
-          {() => <ProtectedRoute component={AdminDashboard} />}
-        </Route>
-        <Route path="/admin/contacts">
-          {() => <ProtectedRoute component={AdminContacts} />}
-        </Route>
-        <Route path="/admin/applications">
-          {() => <ProtectedRoute component={AdminApplications} />}
-        </Route>
-        <Route path="/admin/analytics">
-          {() => <ProtectedRoute component={AdminAnalytics} />}
-        </Route>
-        <Route path="/admin/jobs">
-          {() => <ProtectedRoute component={AdminJobs} />}
-        </Route>
-        <Route path="/admin/clients">
-          {() => <ProtectedRoute component={AdminClients} />}
-        </Route>
-        <Route path="/admin/activity-logs">
-          {() => <ProtectedRoute component={AdminActivityLogs} />}
-        </Route>
-        <Route path="/admin/editor">
-          {() => <ProtectedRoute component={AdminPageEditor} />}
-        </Route>
-        <Route path="/admin/services">
-          {() => <ProtectedRoute component={AdminServices} />}
-        </Route>
-        <Route path="/admin/testimonials">
-          {() => <ProtectedRoute component={AdminTestimonials} />}
-        </Route>
-        <Route path="/admin/service-questionnaires">
-          {() => <ProtectedRoute component={AdminServiceQuestionnaires} />}
-        </Route>
-
-        <Route component={NotFound} />
-      </Switch>
-    </>
+            {/* 404 */}
+            <Route component={NotFound} />
+          </Switch>
+        </Suspense>
+      </ErrorBoundary>
+    </QueryClientProvider>
   );
 }
-
-function App() {
-  return (
-    <AdminProvider>
-      <Router />
-      <Toaster />
-    </AdminProvider>
-  );
-}
-
-export default App;
