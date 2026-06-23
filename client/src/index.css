@@ -260,8 +260,7 @@
     position: relative;
   }
 
-  .hero-typewriter::after {
-    content: "";
+  .hero-type-caret {
     display: inline-block;
     width: 0.08em;
     height: 0.86em;

@@ -118,6 +118,7 @@ export default function Home() {
   const [content, setContent] = useState<PageContent>(DEFAULT_CONTENT);
   const [services, setServices] = useState<Service[]>([]);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [typedHeroLength, setTypedHeroLength] = useState(0);
 
   useEffect(() => {
     if (!db) return;
@@ -143,14 +144,28 @@ export default function Home() {
     };
   }, []);
 
+  useEffect(() => {
+    const totalLength = content.heroTitle.length;
+    const isComplete = typedHeroLength >= totalLength;
+    const nextDelay = isComplete ? 1250 : typedHeroLength === 0 ? 240 : 48;
+    const timeoutId = window.setTimeout(() => {
+      setTypedHeroLength((length) => (length >= totalLength ? 0 : length + 1));
+    }, nextDelay);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [content.heroTitle, typedHeroLength]);
+
+  useEffect(() => {
+    setTypedHeroLength(0);
+  }, [content.heroTitle]);
+
   const visibleServices = services.length > 0 ? services : servicesFallback.map((service, index) => ({
     id: String(index),
     title: service.title,
     description: service.description,
     icon: "",
   }));
-  const heroWords = content.heroTitle.split(" ");
-  let heroLetterIndex = 0;
+  const typedHeroTitle = content.heroTitle.slice(0, typedHeroLength);
 
   return (
     <div className="min-h-screen bg-[#FAF7F1]">
@@ -167,12 +182,18 @@ export default function Home() {
         />
         <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(18,25,41,0.97)_0%,rgba(31,42,68,0.88)_48%,rgba(31,42,68,0.60)_100%)]" aria-hidden="true" />
         <motion.div
-          className="absolute left-[7%] top-28 hidden h-20 w-20 rounded-lg border border-white/12 bg-white/8 backdrop-blur-md lg:block"
+          className="absolute left-[7%] top-28 hidden h-24 w-24 items-center justify-center rounded-lg border border-white/12 bg-white/10 p-3 shadow-2xl backdrop-blur-md lg:flex"
           initial={{ opacity: 0, y: -18, rotate: -4 }}
           animate={{ opacity: 1, y: [0, -10, 0], rotate: [-4, 2, -4] }}
           transition={{ opacity: { duration: 0.7, delay: 0.7 }, y: { duration: 5.6, repeat: Infinity, ease: "easeInOut" }, rotate: { duration: 5.6, repeat: Infinity, ease: "easeInOut" } }}
           aria-hidden="true"
-        />
+        >
+          <img
+            src="/brand/outsourcedge-mark.png"
+            alt=""
+            className="h-full w-full object-contain drop-shadow-[0_12px_28px_rgba(0,0,0,0.32)]"
+          />
+        </motion.div>
         <motion.div
           className="absolute bottom-10 right-[8%] hidden w-72 rounded-lg border border-white/14 bg-white/10 p-5 text-white shadow-2xl backdrop-blur-md lg:block"
           initial={{ opacity: 0, x: 42, y: 18 }}
@@ -207,29 +228,14 @@ export default function Home() {
             <motion.h1
               key={content.heroTitle}
               variants={fadeUp}
-              className="hero-typewriter max-w-4xl text-5xl font-bold leading-[1.05] text-white drop-shadow-[0_16px_42px_rgba(0,0,0,0.40)] md:text-7xl"
+              className="hero-typewriter relative max-w-4xl text-5xl font-bold leading-[1.05] text-white drop-shadow-[0_16px_42px_rgba(0,0,0,0.40)] md:text-7xl"
               aria-label={content.heroTitle}
             >
-              {heroWords.map((word, wordIndex) => (
-                <span key={`${word}-${wordIndex}`} className="inline-block whitespace-nowrap">
-                  {word.split("").map((letter, letterIndex) => {
-                    const delay = heroLetterIndex++ * 0.035;
-                    return (
-                      <motion.span
-                        key={`${word}-${letterIndex}`}
-                        aria-hidden="true"
-                        className="inline-block"
-                        initial={{ opacity: 0, y: 8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.16, delay, ease: "easeOut" }}
-                      >
-                        {letter}
-                      </motion.span>
-                    );
-                  })}
-                  {wordIndex < heroWords.length - 1 && <span aria-hidden="true">&nbsp;</span>}
-                </span>
-              ))}
+              <span className="invisible" aria-hidden="true">{content.heroTitle}</span>
+              <span className="absolute inset-0" aria-hidden="true">
+                {typedHeroTitle}
+                <span className="hero-type-caret" />
+              </span>
             </motion.h1>
             <motion.p variants={fadeUp} className="mt-7 max-w-2xl text-lg font-medium leading-8 text-white/86 md:text-xl">
               {content.heroSubtitle}
