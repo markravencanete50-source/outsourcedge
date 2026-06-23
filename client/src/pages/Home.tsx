@@ -156,19 +156,26 @@ export default function Home() {
 
       <section className="relative min-h-[92vh] overflow-hidden bg-[#1F2A44] pt-32 text-white md:pt-40">
         <div
-          className="absolute inset-0 scale-[1.03] bg-cover bg-center opacity-40"
+          className="drone-sweep absolute inset-0 bg-cover bg-center opacity-[0.38]"
           style={{
             backgroundImage:
               "url('https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=2200&q=82')",
           }}
           aria-hidden="true"
         />
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(31,42,68,0.94)_0%,rgba(31,42,68,0.82)_48%,rgba(31,42,68,0.56)_100%)]" aria-hidden="true" />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(18,25,41,0.97)_0%,rgba(31,42,68,0.88)_48%,rgba(31,42,68,0.60)_100%)]" aria-hidden="true" />
+        <motion.div
+          className="absolute left-[7%] top-28 hidden h-20 w-20 rounded-lg border border-white/12 bg-white/8 backdrop-blur-md lg:block"
+          initial={{ opacity: 0, y: -18, rotate: -4 }}
+          animate={{ opacity: 1, y: [0, -10, 0], rotate: [-4, 2, -4] }}
+          transition={{ opacity: { duration: 0.7, delay: 0.7 }, y: { duration: 5.6, repeat: Infinity, ease: "easeInOut" }, rotate: { duration: 5.6, repeat: Infinity, ease: "easeInOut" } }}
+          aria-hidden="true"
+        />
         <motion.div
           className="absolute bottom-10 right-[8%] hidden w-72 rounded-lg border border-white/14 bg-white/10 p-5 text-white shadow-2xl backdrop-blur-md lg:block"
           initial={{ opacity: 0, x: 42, y: 18 }}
-          animate={{ opacity: 1, x: 0, y: 0 }}
-          transition={{ duration: 0.85, delay: 0.55, ease: [0.16, 1, 0.3, 1] }}
+          animate={{ opacity: 1, x: 0, y: [0, -8, 0] }}
+          transition={{ opacity: { duration: 0.85, delay: 0.55, ease: [0.16, 1, 0.3, 1] }, x: { duration: 0.85, delay: 0.55, ease: [0.16, 1, 0.3, 1] }, y: { duration: 6, repeat: Infinity, ease: "easeInOut" } }}
           aria-hidden="true"
         >
           <div className="mb-4 flex items-center gap-3">
@@ -195,18 +202,24 @@ export default function Home() {
             <motion.p variants={fadeUp} className="eyebrow mb-5">
               Offshore talent. Onshore standards.
             </motion.p>
-            <motion.h1 variants={fadeUp} className="max-w-4xl text-5xl font-semibold leading-[1.05] text-white md:text-7xl">
+            <motion.p variants={fadeUp} className="mb-4 font-['Poppins'] text-2xl font-semibold leading-tight text-white md:text-4xl">
+              <span className="hero-word-pop">Your Growth Team, Ready Now</span>
+            </motion.p>
+            <motion.h1
+              variants={fadeUp}
+              className="max-w-4xl text-5xl font-bold leading-[1.05] text-white drop-shadow-[0_16px_42px_rgba(0,0,0,0.40)] md:text-7xl"
+            >
               {content.heroTitle}
             </motion.h1>
-            <motion.p variants={fadeUp} className="mt-7 max-w-2xl text-lg leading-8 text-white/78 md:text-xl">
+            <motion.p variants={fadeUp} className="mt-7 max-w-2xl text-lg font-medium leading-8 text-white/86 md:text-xl">
               {content.heroSubtitle}
             </motion.p>
             <motion.div variants={fadeUp} className="mt-9 flex flex-col gap-4 sm:flex-row">
               <Link href="/contact">
-                <Button className="btn-gold text-base">Book a Discovery Call</Button>
+                <Button className="btn-gold hero-shine text-base">Book a Discovery Call</Button>
               </Link>
               <Link href="/services">
-                <Button className="border border-white/25 bg-white/8 px-6 py-3.5 text-base font-bold text-white hover:bg-white/14">
+                <Button variant="ghost" className="border border-white/25 bg-white/10 px-6 py-3.5 text-base font-bold text-white shadow-[0_12px_28px_rgba(0,0,0,0.16)] hover:bg-white/18">
                   Explore Services
                 </Button>
               </Link>
@@ -259,6 +272,7 @@ export default function Home() {
                 whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                 viewport={smoothViewport}
                 transition={{ duration: 0.62, delay: index * 0.06, ease: [0.16, 1, 0.3, 1] }}
+                whileHover={{ y: -8, transition: { duration: 0.25 } }}
               >
                 <item.icon className="mb-6 h-7 w-7 text-[#C6A75E]" />
                 <h3 className="text-xl font-semibold">{item.title}</h3>
@@ -286,6 +300,7 @@ export default function Home() {
                   whileInView={{ opacity: 1, y: 0, scale: 1 }}
                   viewport={smoothViewport}
                   transition={{ duration: 0.62, delay: index * 0.06, ease: [0.16, 1, 0.3, 1] }}
+                  whileHover={{ y: -8, scale: 1.01, transition: { duration: 0.24 } }}
                 >
                   <div className="mb-7 flex h-12 w-12 items-center justify-center rounded-lg bg-[#1F2A44] text-[#C6A75E]">
                     <FallbackIcon className="h-6 w-6" />
@@ -321,6 +336,7 @@ export default function Home() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={smoothViewport}
                 transition={{ duration: 0.66, delay: index * 0.08, ease: [0.16, 1, 0.3, 1] }}
+                whileHover={{ y: -8, transition: { duration: 0.24 } }}
               >
                 <div
                   className="h-56 bg-cover bg-center transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.04]"
@@ -401,7 +417,7 @@ export default function Home() {
                 </p>
               </div>
               <Link href="/contact">
-                <Button className="btn-gold">Book a Discovery Call</Button>
+                <Button className="btn-gold hero-shine">Book a Discovery Call</Button>
               </Link>
             </div>
           </div>

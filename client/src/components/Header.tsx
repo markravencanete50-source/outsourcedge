@@ -19,13 +19,12 @@ export default function Header() {
     <header className="fixed inset-x-0 top-0 z-50 border-b border-[#1F2A44]/10 bg-[#FAF7F1]/92 backdrop-blur-xl">
       <div className="container flex h-20 items-center justify-between">
         <Link href="/">
-          <a className="flex items-center gap-3 transition hover:opacity-85" aria-label="OutsourcEdge home">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#1F2A44] text-sm font-bold text-[#C6A75E]">
-              OE
-            </div>
-            <span className="font-['Poppins'] text-xl font-semibold text-[#1F2A44]">
-              OutsourcEdge
-            </span>
+          <a className="flex items-center transition hover:opacity-85" aria-label="OutsourcEdge home">
+            <img
+              src="/brand/outsourcedge-wordmark.png"
+              alt="OutsourcEdge"
+              className="h-9 w-auto object-contain md:h-10"
+            />
           </a>
         </Link>
 

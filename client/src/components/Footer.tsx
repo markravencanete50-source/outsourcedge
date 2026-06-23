@@ -10,8 +10,13 @@ export default function Footer() {
         <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-4">
           <div>
             <div className="mb-6 flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white text-sm font-bold text-[#1F2A44]">
-                OE
+              <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-white p-1.5">
+                <img
+                  src="/brand/outsourcedge-mark.png"
+                  alt=""
+                  className="h-full w-full object-contain"
+                  aria-hidden="true"
+                />
               </div>
               <span className="font-['Poppins'] text-xl font-semibold">OutsourcEdge</span>
             </div>

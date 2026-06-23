@@ -62,7 +62,7 @@ export default function ProjectManagement() {
 
         <section className="relative min-h-screen overflow-hidden bg-[#1F2A44] pt-32 text-white md:pt-40">
           <div
-            className="absolute inset-0 bg-cover bg-center"
+            className="drone-sweep absolute inset-0 bg-cover bg-center"
             style={{
               backgroundImage:
                 "url('https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=2200&q=82')",
@@ -70,7 +70,7 @@ export default function ProjectManagement() {
             aria-hidden="true"
           />
           <video
-            className="absolute inset-0 h-full w-full object-cover opacity-55"
+            className="absolute inset-0 h-full w-full object-cover opacity-60"
             autoPlay
             muted
             loop
@@ -80,7 +80,32 @@ export default function ProjectManagement() {
           >
             <source src="/media/property-drone.mp4" type="video/mp4" />
           </video>
-          <div className="absolute inset-0 bg-[#1F2A44]/74" aria-hidden="true" />
+          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(18,25,41,0.90)_0%,rgba(31,42,68,0.72)_48%,rgba(31,42,68,0.46)_100%)]" aria-hidden="true" />
+          <motion.div
+            className="absolute right-[7%] top-32 hidden w-80 rounded-lg border border-white/14 bg-white/10 p-5 shadow-2xl backdrop-blur-md xl:block"
+            initial={{ opacity: 0, x: 38, y: 18 }}
+            animate={{ opacity: 1, x: 0, y: [0, -9, 0] }}
+            transition={{ opacity: { duration: 0.85, delay: 0.55 }, x: { duration: 0.85, delay: 0.55, ease: [0.16, 1, 0.3, 1] }, y: { duration: 6.4, repeat: Infinity, ease: "easeInOut" } }}
+            aria-hidden="true"
+          >
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#F4D98B]">Portfolio view</p>
+            <div className="mt-4 grid grid-cols-3 gap-2">
+              {["Listings", "Requests", "Owners"].map((label, index) => (
+                <div key={label} className="rounded-lg border border-white/12 bg-white/8 p-3 text-center">
+                  <p className="font-['Poppins'] text-lg font-semibold text-white">{index === 0 ? "18" : index === 1 ? "7" : "4"}</p>
+                  <p className="mt-1 text-[11px] font-semibold text-white/60">{label}</p>
+                </div>
+              ))}
+            </div>
+            <div className="mt-4 h-2 overflow-hidden rounded-full bg-white/12">
+              <motion.div
+                className="h-full rounded-full bg-[#C6A75E]"
+                initial={{ width: "18%" }}
+                animate={{ width: ["18%", "82%", "56%", "92%"] }}
+                transition={{ duration: 5.8, repeat: Infinity, ease: "easeInOut" }}
+              />
+            </div>
+          </motion.div>
           <div className="absolute inset-x-0 bottom-0 h-36 bg-gradient-to-t from-[#FAF7F1] to-transparent" aria-hidden="true" />
 
           <div className="container relative z-10 flex min-h-[calc(100vh-8rem)] items-center pb-24">
@@ -89,10 +114,10 @@ export default function ProjectManagement() {
               <motion.p variants={fadeUp} className="eyebrow mb-5">
                 Property management support
               </motion.p>
-              <motion.h1 variants={fadeUp} className="text-5xl font-semibold leading-[1.04] text-white md:text-7xl">
+              <motion.h1 variants={fadeUp} className="text-5xl font-bold leading-[1.04] text-white drop-shadow-[0_16px_42px_rgba(0,0,0,0.40)] md:text-7xl">
                 The team behind your properties, without the payroll.
               </motion.h1>
-              <motion.p variants={fadeUp} className="mt-7 max-w-2xl text-lg leading-8 text-white/78 md:text-xl">
+              <motion.p variants={fadeUp} className="mt-7 max-w-2xl text-lg font-medium leading-8 text-white/86 md:text-xl">
                 Offshore property talent for US landlords, realtors, and STR hosts who need listings, tenants, maintenance, and reporting handled every day.
               </motion.p>
               <motion.div variants={fadeUp} className="mt-9 flex flex-col gap-4 sm:flex-row">
@@ -157,6 +182,7 @@ export default function ProjectManagement() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, margin: "-80px" }}
                     transition={{ duration: 0.55, delay: index * 0.05 }}
+                    whileHover={{ y: -8, transition: { duration: 0.24 } }}
                   >
                     <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-lg bg-[#1F2A44] text-[#C6A75E]">
                       <Icon className="h-6 w-6" />
@@ -198,6 +224,7 @@ export default function ProjectManagement() {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true, margin: "-80px" }}
                   transition={{ duration: 0.55, delay: index * 0.05 }}
+                  whileHover={{ x: -6, transition: { duration: 0.24 } }}
                 >
                   <span className="font-['Poppins'] text-xl font-semibold text-[#C6A75E]">0{index + 1}</span>
                   <p className="leading-7 text-white/78">{step}</p>
