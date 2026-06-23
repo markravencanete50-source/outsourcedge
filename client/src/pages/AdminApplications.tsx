@@ -203,7 +203,7 @@ export default function AdminApplications() {
                   <TableCell>
                     <div className="flex gap-2">
                       {app.resumeUrl && (
-                        <a href={app.resumeUrl} target="_blank" rel="noreferrer" title="Resume" className="p-1 text-[#0891B2] hover:bg-[#0891B2]/10 rounded">
+                        <a href={app.resumeUrl} target="_blank" rel="noreferrer" title="Resume" className="p-1 text-[#1B3A4B] hover:bg-[#1B3A4B]/10 rounded">
                           <FileText size={18} />
                         </a>
                       )}
@@ -244,28 +244,28 @@ export default function AdminApplications() {
                 <div className="space-y-1">
                   <Label className="text-slate-500">Full Name</Label>
                   <div className="flex items-center gap-2 font-medium">
-                    <User size={16} className="text-[#0891B2]" />
+                    <User size={16} className="text-[#1B3A4B]" />
                     {currentApplication.fullName}
                   </div>
                 </div>
                 <div className="space-y-1">
                   <Label className="text-slate-500">Email Address</Label>
                   <div className="flex items-center gap-2 font-medium">
-                    <Mail size={16} className="text-[#0891B2]" />
+                    <Mail size={16} className="text-[#1B3A4B]" />
                     {currentApplication.email}
                   </div>
                 </div>
                 <div className="space-y-1">
                   <Label className="text-slate-500">Phone Number</Label>
                   <div className="flex items-center gap-2 font-medium">
-                    <Phone size={16} className="text-[#0891B2]" />
+                    <Phone size={16} className="text-[#1B3A4B]" />
                     {currentApplication.phone}
                   </div>
                 </div>
                 <div className="space-y-1">
                   <Label className="text-slate-500">Applied Position</Label>
                   <div className="flex items-center gap-2 font-medium">
-                    <Briefcase size={16} className="text-[#0891B2]" />
+                    <Briefcase size={16} className="text-[#1B3A4B]" />
                     {currentApplication.jobTitle}
                   </div>
                 </div>
@@ -318,7 +318,7 @@ export default function AdminApplications() {
 
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsDialogOpen(false)}>Close</Button>
-            <Button className="bg-[#0891B2] hover:bg-[#0891B2]/90" onClick={handleSaveApplication}>Save Changes</Button>
+            <Button className="bg-[#1B3A4B] hover:bg-[#1B3A4B]/90" onClick={handleSaveApplication}>Save Changes</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

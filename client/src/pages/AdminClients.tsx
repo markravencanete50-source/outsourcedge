@@ -216,7 +216,7 @@ export default function AdminClients() {
                 setCurrentOpportunity({ stage: 'new-lead', priority: 'warm', estimatedValue: 0 });
                 setIsDialogOpen(true);
               }}
-              className="bg-[#0891B2] hover:bg-[#06748F]"
+              className="bg-[#1B3A4B] hover:bg-[#06748F]"
             >
               <Plus className="w-4 h-4 mr-2" /> New Opportunity
             </Button>
@@ -284,7 +284,7 @@ export default function AdminClients() {
                           </p>
 
                           <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
-                            <div className="flex items-center gap-1.5 text-[#0891B2] font-bold text-sm">
+                            <div className="flex items-center gap-1.5 text-[#1B3A4B] font-bold text-sm">
                               <DollarSign className="w-3.5 h-3.5" />
                               {opp.estimatedValue?.toLocaleString() || '0'}
                             </div>
@@ -387,7 +387,7 @@ export default function AdminClients() {
               <Button variant="outline" onClick={() => setIsDialogOpen(false)}>Cancel</Button>
               <Button 
                 onClick={handleSaveOpportunity}
-                className="bg-[#0891B2] hover:bg-[#06748F]"
+                className="bg-[#1B3A4B] hover:bg-[#06748F]"
               >
                 {currentOpportunity?.id ? 'Save Changes' : 'Create Opportunity'}
               </Button>

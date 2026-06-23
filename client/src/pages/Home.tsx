@@ -123,9 +123,9 @@ export default function Home() {
       
       {/* HERO SECTION */}
       <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-cyan-50/30 to-white -z-10" />
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-slate-50/30 to-white -z-10" />
         {/* Replaced animate-pulse blobs with static blobs — no GPU drain */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-100/20 rounded-full blur-3xl -z-10" />
+        <div className="absolute top-0 right-0 w-96 h-96 bg-[#1B3A4B]/10 rounded-full blur-3xl -z-10" />
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-100/20 rounded-full blur-3xl -z-10" />
         
         <div className="container">
@@ -137,10 +137,10 @@ export default function Home() {
           >
             <motion.div 
               variants={fadeUpVariant}
-              className="inline-flex items-center gap-2 mb-6 px-4 py-2 bg-cyan-50 rounded-full border border-cyan-200/50"
+              className="inline-flex items-center gap-2 mb-6 px-4 py-2 bg-[#EEF2F5] rounded-full border border-[#1B3A4B]/20"
             >
-              <Zap className="w-4 h-4 text-cyan-600" />
-              <span className="text-sm font-bold text-cyan-900">Trusted by leading businesses worldwide</span>
+              <Zap className="w-4 h-4 text-[#1B3A4B]" />
+              <span className="text-sm font-bold text-[#1B3A4B]">Trusted by leading businesses worldwide</span>
             </motion.div>
 
             <motion.h1 
@@ -186,7 +186,7 @@ export default function Home() {
                   transition={{ delay: 0.6 + i * 0.1, duration: 0.6 }}
                   className="text-center"
                 >
-                  <div className="text-3xl md:text-4xl font-bold text-cyan-600 mb-2">{stat.value}</div>
+                  <div className="text-3xl md:text-4xl font-bold text-[#1B3A4B] mb-2">{stat.value}</div>
                   <div className="text-sm text-slate-600">{stat.label}</div>
                 </motion.div>
               ))}
@@ -230,14 +230,14 @@ export default function Home() {
               <motion.div 
                 key={i}
                 variants={scaleVariant}
-                className="group p-8 bg-white rounded-2xl border border-slate-200 hover:border-cyan-300 hover:shadow-xl transition-all duration-300 cursor-pointer"
+                className="group p-8 bg-white rounded-2xl border border-slate-200 hover:border-[#B8973E]/50 hover:shadow-xl transition-all duration-300 cursor-pointer"
                 whileHover={{ y: -5 }}
               >
                 <motion.div 
-                  className="w-14 h-14 bg-cyan-100 rounded-xl flex items-center justify-center mb-6 group-hover:bg-cyan-200 transition-colors"
+                  className="w-14 h-14 bg-[#D6E0E5] rounded-xl flex items-center justify-center mb-6 group-hover:bg-[#B8D0DA] transition-colors"
                   whileHover={{ scale: 1.1, rotate: 5 }}
                 >
-                  <item.icon className="w-7 h-7 text-cyan-600" />
+                  <item.icon className="w-7 h-7 text-[#1B3A4B]" />
                 </motion.div>
                 <h3 className="text-xl font-bold text-slate-900 mb-3">{item.title}</h3>
                 <p className="text-slate-600 leading-relaxed">{item.description}</p>
@@ -282,12 +282,12 @@ export default function Home() {
               <motion.div 
                 key={i}
                 variants={fadeUpVariant}
-                className="p-8 bg-slate-50 rounded-2xl border border-slate-200 hover:border-cyan-300 hover:shadow-lg transition-all flex gap-4"
+                className="p-8 bg-slate-50 rounded-2xl border border-slate-200 hover:border-[#B8973E]/50 hover:shadow-lg transition-all flex gap-4"
                 whileHover={{ x: 5 }}
               >
                 <motion.div 
                   whileHover={{ scale: 1.15, rotate: -5 }}
-                  className="w-12 h-12 bg-cyan-600 rounded-xl flex items-center justify-center flex-shrink-0"
+                  className="w-12 h-12 bg-[#1B3A4B] rounded-xl flex items-center justify-center flex-shrink-0"
                 >
                   <item.icon className="w-6 h-6 text-white" />
                 </motion.div>
@@ -339,7 +339,7 @@ export default function Home() {
                 className="text-center"
               >
                 <motion.div 
-                  className="w-12 h-12 bg-cyan-600 text-white rounded-full flex items-center justify-center font-bold mx-auto mb-4 shadow-lg"
+                  className="w-12 h-12 bg-[#1B3A4B] text-white rounded-full flex items-center justify-center font-bold mx-auto mb-4 shadow-lg"
                   whileHover={{ scale: 1.2, rotate: 360 }}
                   transition={{ duration: 0.6 }}
                 >
@@ -354,7 +354,7 @@ export default function Home() {
       </section>
 
       {/* FINAL CTA */}
-      <section className="py-20 md:py-32 bg-gradient-to-br from-cyan-600 to-cyan-700 text-white relative overflow-hidden">
+      <section className="py-20 md:py-32 bg-gradient-to-br from-[#1B3A4B] to-[#254F63] text-white relative overflow-hidden">
         {/* Replaced animate-pulse with static decorative blob */}
         <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl" />
 
@@ -383,7 +383,7 @@ export default function Home() {
               className="flex flex-col sm:flex-row gap-4 justify-center"
             >
               <Link href="/contact">
-                <Button className="bg-white text-cyan-600 hover:bg-slate-100 text-lg px-8 py-6 font-bold">
+                <Button className="bg-white text-[#1B3A4B] hover:bg-slate-100 text-lg px-8 py-6 font-bold">
                   Book a Consultation
                 </Button>
               </Link>

@@ -154,7 +154,7 @@ export default function AdminJobs() {
           </div>
           <button
             onClick={() => setIsAdding(!isAdding)}
-            className="flex items-center gap-2 bg-[#0891B2] text-white px-4 py-2 rounded-lg hover:bg-[#0891B2]/90 transition-colors"
+            className="flex items-center gap-2 bg-[#1B3A4B] text-white px-4 py-2 rounded-lg hover:bg-[#1B3A4B]/90 transition-colors"
           >
             {isAdding ? <XCircle size={20} /> : <Plus size={20} />}
             {isAdding ? 'Cancel' : 'Post a New Job'}
@@ -255,7 +255,7 @@ export default function AdminJobs() {
               <div className="md:col-span-2">
                 <button
                   type="submit"
-                  className="w-full bg-[#0891B2] text-white py-2 rounded-lg font-semibold hover:bg-[#0891B2]/90"
+                  className="w-full bg-[#1B3A4B] text-white py-2 rounded-lg font-semibold hover:bg-[#1B3A4B]/90"
                 >
                   Publish Position
                 </button>

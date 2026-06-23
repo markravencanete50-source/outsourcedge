@@ -92,7 +92,7 @@ export default function ServiceDetail() {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#0891B2]"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1B3A4B]"></div>
       </div>
     );
   }
@@ -102,7 +102,7 @@ export default function ServiceDetail() {
       <div className="min-h-screen flex flex-col items-center justify-center">
         <h2 className="text-2xl font-bold mb-4">Service not found</h2>
         <Link href="/services">
-          <a className="text-[#0891B2] hover:underline">Back to Services</a>
+          <a className="text-[#1B3A4B] hover:underline">Back to Services</a>
         </Link>
       </div>
     );
@@ -115,7 +115,7 @@ export default function ServiceDetail() {
       <main className="pt-32 pb-20 px-4">
         <div className="max-w-4xl mx-auto">
           <Link href="/services">
-            <a className="inline-flex items-center text-slate-500 hover:text-[#0891B2] mb-8 transition-colors">
+            <a className="inline-flex items-center text-slate-500 hover:text-[#1B3A4B] mb-8 transition-colors">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Services
             </a>
@@ -123,7 +123,7 @@ export default function ServiceDetail() {
 
           <div className="bg-white rounded-3xl p-8 md:p-12 shadow-sm border border-slate-100 mb-8">
             <div className="flex items-center gap-4 mb-6">
-              <div className="w-12 h-12 bg-[#0891B2] text-white rounded-xl flex items-center justify-center shadow-lg shadow-[#0891B2]/20">
+              <div className="w-12 h-12 bg-[#1B3A4B] text-white rounded-xl flex items-center justify-center shadow-lg shadow-[#1B3A4B]/20">
                 <Zap className="w-6 h-6" />
               </div>
               <h1 className="text-3xl md:text-4xl font-bold text-slate-900">{service.title}</h1>
@@ -139,7 +139,7 @@ export default function ServiceDetail() {
 
             <section id="questionnaire">
               <div className="flex items-center gap-3 mb-8">
-                <MessageSquare className="w-6 h-6 text-[#0891B2]" />
+                <MessageSquare className="w-6 h-6 text-[#1B3A4B]" />
                 <h2 className="text-2xl font-bold text-slate-900">Tell us more about your needs</h2>
               </div>
               
@@ -150,7 +150,7 @@ export default function ServiceDetail() {
                     <input
                       required
                       type="text"
-                      className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0891B2] focus:border-transparent transition-all"
+                      className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#1B3A4B] focus:border-transparent transition-all"
                       placeholder="John Doe"
                       value={formData.name}
                       onChange={e => setFormData({...formData, name: e.target.value})}
@@ -161,7 +161,7 @@ export default function ServiceDetail() {
                     <input
                       required
                       type="email"
-                      className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0891B2] focus:border-transparent transition-all"
+                      className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#1B3A4B] focus:border-transparent transition-all"
                       placeholder="john@example.com"
                       value={formData.email}
                       onChange={e => setFormData({...formData, email: e.target.value})}
@@ -176,7 +176,7 @@ export default function ServiceDetail() {
                         <label className="text-sm font-semibold text-slate-700">{q}</label>
                         <textarea
                           rows={3}
-                          className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0891B2] focus:border-transparent transition-all"
+                          className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#1B3A4B] focus:border-transparent transition-all"
                           placeholder="Your answer..."
                           value={formData.answers[q] || ''}
                           onChange={e => handleAnswerChange(q, e.target.value)}
@@ -186,13 +186,13 @@ export default function ServiceDetail() {
                   </div>
                 )}
 
-                <div className="bg-[#0891B2]/5 p-6 rounded-2xl border border-[#0891B2]/10">
+                <div className="bg-[#1B3A4B]/5 p-6 rounded-2xl border border-[#1B3A4B]/10">
                   <div className="flex items-start gap-4">
-                    <Mail className="w-6 h-6 text-[#0891B2] mt-1" />
+                    <Mail className="w-6 h-6 text-[#1B3A4B] mt-1" />
                     <div>
                       <h3 className="font-bold text-slate-900 mb-1">Prefer to email us?</h3>
                       <p className="text-slate-600 text-sm mb-3">You can also reach out directly to our team for any specific inquiries.</p>
-                      <a href="mailto:hello@outsourcedge.com" className="text-[#0891B2] font-bold hover:underline">
+                      <a href="mailto:hello@outsourcedge.com" className="text-[#1B3A4B] font-bold hover:underline">
                         hello@outsourcedge.com
                       </a>
                     </div>
@@ -202,7 +202,7 @@ export default function ServiceDetail() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-[#0891B2] text-white py-4 rounded-xl font-bold text-lg hover:bg-[#0891B2]/90 transition-all flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-[#0891B2]/20"
+                  className="w-full bg-[#1B3A4B] text-white py-4 rounded-xl font-bold text-lg hover:bg-[#1B3A4B]/90 transition-all flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-[#1B3A4B]/20"
                 >
                   {isSubmitting ? (
                     <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>

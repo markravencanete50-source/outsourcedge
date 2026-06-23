@@ -156,7 +156,7 @@ export default function AdminServices() {
           <h1 className="text-3xl font-bold text-slate-900">Service Manager</h1>
           <p className="text-slate-500">Manage the services displayed on your website</p>
         </div>
-        <Button onClick={() => { resetForm(); setIsDialogOpen(true); }} className="bg-[#0891B2] hover:bg-[#0891B2]/90">
+        <Button onClick={() => { resetForm(); setIsDialogOpen(true); }} className="bg-[#1B3A4B] hover:bg-[#1B3A4B]/90">
           <Plus className="w-4 h-4 mr-2" /> Add New Service
         </Button>
       </div>
@@ -228,7 +228,7 @@ export default function AdminServices() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsDialogOpen(false)}>Cancel</Button>
-            <Button type="submit" onClick={currentService ? handleUpdateService : handleAddService} className="bg-[#0891B2] hover:bg-[#0891B2]/90">
+            <Button type="submit" onClick={currentService ? handleUpdateService : handleAddService} className="bg-[#1B3A4B] hover:bg-[#1B3A4B]/90">
               {currentService ? 'Save Changes' : 'Add Service'}
             </Button>
           </DialogFooter>

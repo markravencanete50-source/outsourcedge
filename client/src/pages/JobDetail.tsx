@@ -92,7 +92,7 @@ export default function JobDetail() {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#0891B2]"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1B3A4B]"></div>
       </div>
     );
   }
@@ -102,7 +102,7 @@ export default function JobDetail() {
       <div className="min-h-screen flex flex-col items-center justify-center">
         <h2 className="text-2xl font-bold mb-4">Job not found</h2>
         <Link href="/careers">
-          <a className="text-[#0891B2] hover:underline">Back to Careers</a>
+          <a className="text-[#1B3A4B] hover:underline">Back to Careers</a>
         </Link>
       </div>
     );
@@ -115,7 +115,7 @@ export default function JobDetail() {
       <main className="pt-32 pb-20 px-4">
         <div className="max-w-4xl mx-auto">
           <Link href="/careers">
-            <a className="inline-flex items-center text-slate-500 hover:text-[#0891B2] mb-8 transition-colors">
+            <a className="inline-flex items-center text-slate-500 hover:text-[#1B3A4B] mb-8 transition-colors">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Careers
             </a>
@@ -127,19 +127,19 @@ export default function JobDetail() {
                 <h1 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">{job.title}</h1>
                 <div className="flex flex-wrap gap-4 text-slate-500">
                   <div className="flex items-center bg-slate-50 px-3 py-1 rounded-full text-sm">
-                    <Briefcase className="w-4 h-4 mr-2 text-[#0891B2]" />
+                    <Briefcase className="w-4 h-4 mr-2 text-[#1B3A4B]" />
                     {job.type}
                   </div>
                   <div className="flex items-center bg-slate-50 px-3 py-1 rounded-full text-sm">
-                    <MapPin className="w-4 h-4 mr-2 text-[#0891B2]" />
+                    <MapPin className="w-4 h-4 mr-2 text-[#1B3A4B]" />
                     {job.location}
                   </div>
                   <div className="flex items-center bg-slate-50 px-3 py-1 rounded-full text-sm">
-                    <Clock className="w-4 h-4 mr-2 text-[#0891B2]" />
+                    <Clock className="w-4 h-4 mr-2 text-[#1B3A4B]" />
                     {job.category}
                   </div>
                   {job.hiringTimeline && (
-                    <div className="flex items-center bg-[#0891B2]/10 px-3 py-1 rounded-full text-sm text-[#0891B2] font-medium">
+                    <div className="flex items-center bg-[#1B3A4B]/10 px-3 py-1 rounded-full text-sm text-[#1B3A4B] font-medium">
                       <Calendar className="w-4 h-4 mr-2" />
                       Hiring: {job.hiringTimeline}
                     </div>
@@ -166,7 +166,7 @@ export default function JobDetail() {
                     <input
                       required
                       type="text"
-                      className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0891B2] focus:border-transparent transition-all"
+                      className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#1B3A4B] focus:border-transparent transition-all"
                       placeholder="John Doe"
                       value={formData.fullName}
                       onChange={e => setFormData({...formData, fullName: e.target.value})}
@@ -177,7 +177,7 @@ export default function JobDetail() {
                     <input
                       required
                       type="email"
-                      className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0891B2] focus:border-transparent transition-all"
+                      className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#1B3A4B] focus:border-transparent transition-all"
                       placeholder="john@example.com"
                       value={formData.email}
                       onChange={e => setFormData({...formData, email: e.target.value})}
@@ -188,7 +188,7 @@ export default function JobDetail() {
                     <input
                       required
                       type="tel"
-                      className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0891B2] focus:border-transparent transition-all"
+                      className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#1B3A4B] focus:border-transparent transition-all"
                       placeholder="+1 (555) 000-0000"
                       value={formData.phone}
                       onChange={e => setFormData({...formData, phone: e.target.value})}
@@ -198,7 +198,7 @@ export default function JobDetail() {
                     <label className="text-sm font-semibold text-slate-700">Portfolio Link (Optional)</label>
                     <input
                       type="url"
-                      className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0891B2] focus:border-transparent transition-all"
+                      className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#1B3A4B] focus:border-transparent transition-all"
                       placeholder="https://behance.net/johndoe"
                       value={formData.portfolioUrl}
                       onChange={e => setFormData({...formData, portfolioUrl: e.target.value} )}
@@ -211,7 +211,7 @@ export default function JobDetail() {
                   <textarea
                     required
                     rows={3}
-                    className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0891B2] focus:border-transparent transition-all"
+                    className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#1B3A4B] focus:border-transparent transition-all"
                     placeholder="Briefly describe your experience related to this role..."
                     value={formData.experience}
                     onChange={e => setFormData({...formData, experience: e.target.value})}
@@ -223,7 +223,7 @@ export default function JobDetail() {
                   <textarea
                     required
                     rows={5}
-                    className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0891B2] focus:border-transparent transition-all"
+                    className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#1B3A4B] focus:border-transparent transition-all"
                     placeholder="Why are you a great fit for OutsourceEdge?"
                     value={formData.coverLetter}
                     onChange={e => setFormData({...formData, coverLetter: e.target.value})}
@@ -233,13 +233,13 @@ export default function JobDetail() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <label className="text-sm font-semibold text-slate-700 flex items-center">
-                      <Upload className="w-4 h-4 mr-2 text-[#0891B2]" />
+                      <Upload className="w-4 h-4 mr-2 text-[#1B3A4B]" />
                       Resume URL (Google Drive/Dropbox) *
                     </label>
                     <input
                       required
                       type="url"
-                      className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0891B2] focus:border-transparent transition-all"
+                      className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#1B3A4B] focus:border-transparent transition-all"
                       placeholder="Link to your resume..."
                       value={formData.resumeUrl}
                       onChange={e => setFormData({...formData, resumeUrl: e.target.value})}
@@ -247,12 +247,12 @@ export default function JobDetail() {
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-semibold text-slate-700 flex items-center">
-                      <Video className="w-4 h-4 mr-2 text-[#0891B2]" />
+                      <Video className="w-4 h-4 mr-2 text-[#1B3A4B]" />
                       Short Video Intro Link (Optional)
                     </label>
                     <input
                       type="url"
-                      className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0891B2] focus:border-transparent transition-all"
+                      className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#1B3A4B] focus:border-transparent transition-all"
                       placeholder="Loom or Drive link (30s - 1min)"
                       value={formData.videoIntroUrl}
                       onChange={e => setFormData({...formData, videoIntroUrl: e.target.value})}
@@ -263,7 +263,7 @@ export default function JobDetail() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-[#0891B2] text-white py-4 rounded-xl font-bold text-lg hover:bg-[#0891B2]/90 transition-all flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-[#0891B2]/20"
+                  className="w-full bg-[#1B3A4B] text-white py-4 rounded-xl font-bold text-lg hover:bg-[#1B3A4B]/90 transition-all flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-[#1B3A4B]/20"
                 >
                   {isSubmitting ? (
                     <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>

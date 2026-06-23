@@ -20,7 +20,7 @@ function TypingDots() {
       {[0, 1, 2].map((i) => (
         <motion.div
           key={i}
-          className="w-2 h-2 bg-[#0891B2] rounded-full"
+          className="w-2 h-2 bg-[#1B3A4B] rounded-full"
           animate={{ y: [0, -5, 0] }}
           transition={{ duration: 0.6, repeat: Infinity, delay: i * 0.15 }}
         />
@@ -41,21 +41,21 @@ function MessageBubble({ msg }: { msg: Message }) {
       <div
         className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 ${
           isUser
-            ? "bg-gradient-to-br from-[#0891B2] to-[#059669]"
+            ? "bg-gradient-to-br from-[#1B3A4B] to-[#059669]"
             : "bg-gray-100 border border-gray-200"
         }`}
       >
         {isUser ? (
           <User className="w-3.5 h-3.5 text-white" />
         ) : (
-          <Bot className="w-3.5 h-3.5 text-[#0891B2]" />
+          <Bot className="w-3.5 h-3.5 text-[#1B3A4B]" />
         )}
       </div>
 
       <div
         className={`max-w-[80%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap ${
           isUser
-            ? "bg-gradient-to-br from-[#0891B2] to-[#059669] text-white rounded-br-sm"
+            ? "bg-gradient-to-br from-[#1B3A4B] to-[#059669] text-white rounded-br-sm"
             : "bg-gray-100 text-gray-800 rounded-bl-sm"
         }`}
       >
@@ -164,7 +164,7 @@ export default function AiAssistant() {
           onClick={() => setOpen((v) => !v)}
           whileHover={{ scale: 1.08 }}
           whileTap={{ scale: 0.94 }}
-          className="relative w-14 h-14 bg-gradient-to-br from-[#0891B2] to-[#059669] rounded-full shadow-xl flex items-center justify-center text-white"
+          className="relative w-14 h-14 bg-gradient-to-br from-[#1B3A4B] to-[#059669] rounded-full shadow-xl flex items-center justify-center text-white"
           aria-label="Open AI Assistant"
         >
           <AnimatePresence mode="wait">
@@ -192,7 +192,7 @@ export default function AiAssistant() {
           </AnimatePresence>
 
           {!open && (
-            <span className="absolute inset-0 rounded-full animate-ping bg-[#0891B2] opacity-20" />
+            <span className="absolute inset-0 rounded-full animate-ping bg-[#1B3A4B] opacity-20" />
           )}
         </motion.button>
       </div>
@@ -209,7 +209,7 @@ export default function AiAssistant() {
             style={{ maxHeight: "520px" }}
           >
             {/* Header */}
-            <div className="bg-gradient-to-r from-[#0891B2] to-[#059669] px-5 py-4 flex items-center justify-between flex-shrink-0">
+            <div className="bg-gradient-to-r from-[#1B3A4B] to-[#059669] px-5 py-4 flex items-center justify-between flex-shrink-0">
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 bg-white/20 rounded-full flex items-center justify-center">
                   <Bot className="w-5 h-5 text-white" />
@@ -239,7 +239,7 @@ export default function AiAssistant() {
               {loading && (
                 <div className="flex items-end gap-2">
                   <div className="w-7 h-7 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center flex-shrink-0">
-                    <Bot className="w-3.5 h-3.5 text-[#0891B2]" />
+                    <Bot className="w-3.5 h-3.5 text-[#1B3A4B]" />
                   </div>
                   <div className="bg-gray-100 rounded-2xl rounded-bl-sm">
                     <TypingDots />
@@ -256,7 +256,7 @@ export default function AiAssistant() {
                   <button
                     key={q}
                     onClick={() => sendMessage(q)}
-                    className="text-xs bg-blue-50 text-[#0891B2] border border-blue-100 px-3 py-1.5 rounded-full hover:bg-blue-100 transition font-medium"
+                    className="text-xs bg-blue-50 text-[#1B3A4B] border border-blue-100 px-3 py-1.5 rounded-full hover:bg-blue-100 transition font-medium"
                   >
                     {q}
                   </button>
@@ -274,12 +274,12 @@ export default function AiAssistant() {
                 onKeyDown={handleKey}
                 placeholder="Ask me anything…"
                 disabled={loading}
-                className="flex-1 text-sm bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 outline-none focus:border-[#0891B2] focus:ring-2 focus:ring-[#0891B2]/10 transition placeholder-gray-400 disabled:opacity-50"
+                className="flex-1 text-sm bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 outline-none focus:border-[#1B3A4B] focus:ring-2 focus:ring-[#1B3A4B]/10 transition placeholder-gray-400 disabled:opacity-50"
               />
               <button
                 onClick={() => sendMessage(input)}
                 disabled={loading || !input.trim()}
-                className="w-9 h-9 bg-gradient-to-br from-[#0891B2] to-[#059669] rounded-xl flex items-center justify-center text-white disabled:opacity-40 hover:opacity-90 transition flex-shrink-0"
+                className="w-9 h-9 bg-gradient-to-br from-[#1B3A4B] to-[#059669] rounded-xl flex items-center justify-center text-white disabled:opacity-40 hover:opacity-90 transition flex-shrink-0"
                 aria-label="Send message"
               >
                 {loading ? (
@@ -293,7 +293,7 @@ export default function AiAssistant() {
             {/* Footer */}
             <p className="text-center text-[10px] text-gray-400 pb-2 flex-shrink-0">
               Powered by OutsourcEdge AI •{" "}
-              <a href="/contact" className="underline hover:text-[#0891B2]">
+              <a href="/contact" className="underline hover:text-[#1B3A4B]">
                 Talk to a human
               </a>
             </p>

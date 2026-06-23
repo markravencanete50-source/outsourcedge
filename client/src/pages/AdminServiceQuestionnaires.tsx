@@ -111,7 +111,7 @@ export default function AdminServiceQuestionnaires() {
               <input
                 type="text"
                 placeholder="Search by name, email or service..."
-                className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0891B2]/20 focus:border-[#0891B2] transition"
+                className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1B3A4B]/20 focus:border-[#1B3A4B] transition"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -119,7 +119,7 @@ export default function AdminServiceQuestionnaires() {
             <div className="flex items-center gap-2">
               <Filter className="w-4 h-4 text-slate-400" />
               <select
-                className="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0891B2]/20"
+                className="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1B3A4B]/20"
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
               >
@@ -182,7 +182,7 @@ export default function AdminServiceQuestionnaires() {
                           {resp.createdAt?.toDate ? resp.createdAt.toDate().toLocaleDateString() : 'Recent'}
                         </td>
                         <td className="px-6 py-4 text-right">
-                          <button className="text-[#0891B2] hover:text-[#0891B2]/80 transition">
+                          <button className="text-[#1B3A4B] hover:text-[#1B3A4B]/80 transition">
                             <Eye className="w-5 h-5" />
                           </button>
                         </td>
@@ -218,7 +218,7 @@ export default function AdminServiceQuestionnaires() {
 
                 <div>
                   <p className="text-xs text-slate-500 uppercase font-bold mb-1">Email</p>
-                  <a href={`mailto:${selectedResponse.email}`} className="text-[#0891B2] hover:underline block truncate">
+                  <a href={`mailto:${selectedResponse.email}`} className="text-[#1B3A4B] hover:underline block truncate">
                     {selectedResponse.email}
                   </a>
                 </div>
@@ -250,7 +250,7 @@ export default function AdminServiceQuestionnaires() {
                   <select
                     value={selectedResponse.status}
                     onChange={(e) => handleStatusChange(selectedResponse.id, e.target.value as QuestionnaireResponse['status'])}
-                    className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-[#0891B2]"
+                    className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-[#1B3A4B]"
                   >
                     <option value="new">New</option>
                     <option value="reviewed">Reviewed</option>

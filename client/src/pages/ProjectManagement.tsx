@@ -129,11 +129,11 @@ function ServiceCard({ service, index }: { service: typeof services[0]; index: n
       initial="hidden"
       animate={inView ? "visible" : "hidden"}
       variants={slideIn(index % 2 === 0 ? "left" : "right")}
-      className="group relative bg-white rounded-2xl border border-gray-200 hover:border-[#0891B2] hover:shadow-xl transition-all duration-500 overflow-hidden"
+      className="group relative bg-white rounded-2xl border border-gray-200 hover:border-[#1B3A4B] hover:shadow-xl transition-all duration-500 overflow-hidden"
       aria-label={service.title}
     >
       {/* Accent bar */}
-      <div className="h-1 w-full bg-gradient-to-r from-[#0891B2] to-[#059669] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      <div className="h-1 w-full bg-gradient-to-r from-[#1B3A4B] to-[#059669] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
       <div className="p-8 md:p-10">
         {/* Header row */}
@@ -141,12 +141,12 @@ function ServiceCard({ service, index }: { service: typeof services[0]; index: n
           <motion.div
             whileHover={{ scale: 1.08, rotate: 3 }}
             transition={{ type: "spring", stiffness: 300 }}
-            className="w-14 h-14 bg-gradient-to-br from-[#0891B2] to-[#059669] rounded-xl flex items-center justify-center flex-shrink-0 shadow-md"
+            className="w-14 h-14 bg-gradient-to-br from-[#1B3A4B] to-[#059669] rounded-xl flex items-center justify-center flex-shrink-0 shadow-md"
           >
             <Icon className="w-7 h-7 text-white" />
           </motion.div>
           <div>
-            <span className="text-xs font-bold text-[#0891B2] tracking-widest uppercase">{service.tag}</span>
+            <span className="text-xs font-bold text-[#1B3A4B] tracking-widest uppercase">{service.tag}</span>
             <h2 className="text-2xl md:text-3xl font-bold text-[#0F172A] mt-0.5 leading-tight">
               {service.title}
             </h2>
@@ -185,7 +185,7 @@ function FaqItem({ q, a, index }: { q: string; a: string; index: number }) {
     <motion.div
       custom={index * 0.07}
       variants={fadeUp}
-      className="border border-gray-200 rounded-xl overflow-hidden bg-white hover:border-[#0891B2] transition-colors duration-300"
+      className="border border-gray-200 rounded-xl overflow-hidden bg-white hover:border-[#1B3A4B] transition-colors duration-300"
     >
       <button
         className="w-full flex items-center justify-between gap-4 p-6 text-left"
@@ -194,7 +194,7 @@ function FaqItem({ q, a, index }: { q: string; a: string; index: number }) {
       >
         <span className="text-base font-semibold text-[#0F172A]">{q}</span>
         <ChevronDown
-          className={`w-5 h-5 text-[#0891B2] flex-shrink-0 transition-transform duration-300 ${open ? "rotate-180" : ""}`}
+          className={`w-5 h-5 text-[#1B3A4B] flex-shrink-0 transition-transform duration-300 ${open ? "rotate-180" : ""}`}
         />
       </button>
       <motion.div
@@ -231,7 +231,7 @@ export default function ProjectManagement() {
         {/* ── Hero ── */}
         <section className="relative pt-36 pb-24 md:pt-52 md:pb-36 bg-gradient-to-br from-white via-blue-50 to-white overflow-hidden">
           {/* Decorative blobs */}
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#0891B2]/8 rounded-full blur-3xl -translate-y-1/2 pointer-events-none" />
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#1B3A4B]/8 rounded-full blur-3xl -translate-y-1/2 pointer-events-none" />
           <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-[#059669]/8 rounded-full blur-3xl translate-y-1/2 pointer-events-none" />
 
           <div className="container relative">
@@ -244,7 +244,7 @@ export default function ProjectManagement() {
               <motion.span
                 variants={fadeUp}
                 custom={0}
-                className="inline-block text-xs font-bold text-[#0891B2] uppercase tracking-[0.2em] mb-5 px-4 py-1.5 bg-[#0891B2]/10 rounded-full"
+                className="inline-block text-xs font-bold text-[#1B3A4B] uppercase tracking-[0.2em] mb-5 px-4 py-1.5 bg-[#1B3A4B]/10 rounded-full"
               >
                 Property Management Solutions
               </motion.span>
@@ -255,7 +255,7 @@ export default function ProjectManagement() {
                 className="text-5xl md:text-6xl font-bold text-[#0F172A] mb-6 leading-tight"
               >
                 Project Management{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0891B2] to-[#059669]">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#1B3A4B] to-[#059669]">
                   Services
                 </span>
               </motion.h1>
@@ -314,7 +314,7 @@ export default function ProjectManagement() {
         </section>
 
         {/* ── Stats ── */}
-        <section className="py-20 bg-gradient-to-r from-[#0891B2] to-[#059669]">
+        <section className="py-20 bg-gradient-to-r from-[#1B3A4B] to-[#059669]">
           <div className="container">
             <motion.div
               className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center text-white"
@@ -398,14 +398,14 @@ export default function ProjectManagement() {
                 whileInView={{ opacity: 1 }}
                 transition={{ delay: 0.2 }}
                 viewport={{ once: true }}
-                className="inline-block text-xs font-bold text-[#0891B2] uppercase tracking-[0.2em] mb-5 px-4 py-1.5 bg-[#0891B2]/10 rounded-full"
+                className="inline-block text-xs font-bold text-[#1B3A4B] uppercase tracking-[0.2em] mb-5 px-4 py-1.5 bg-[#1B3A4B]/10 rounded-full"
               >
                 Let's Work Together
               </motion.span>
 
               <h2 className="text-4xl md:text-5xl font-bold text-[#0F172A] mb-6 leading-tight">
                 Ready to Hand Off Your{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0891B2] to-[#059669]">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#1B3A4B] to-[#059669]">
                   Property Operations?
                 </span>
               </h2>

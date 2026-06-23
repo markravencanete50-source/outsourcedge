@@ -84,7 +84,7 @@ export default function AdminAnalytics() {
     return Object.entries(services).map(([name, value]) => ({ name, value }));
   };
 
-  const COLORS = ['#0891B2', '#059669', '#0F172A', '#64748B', '#94A3B8'];
+  const COLORS = ['#1B3A4B', '#059669', '#0F172A', '#64748B', '#94A3B8'];
 
   if (isLoading) {
     return (
@@ -151,8 +151,8 @@ export default function AdminAnalytics() {
                 <AreaChart data={getTrendData()}>
                   <defs>
                     <linearGradient id="colorLeads" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#0891B2" stopOpacity={0.1}/>
-                      <stop offset="95%" stopColor="#0891B2" stopOpacity={0}/>
+                      <stop offset="5%" stopColor="#1B3A4B" stopOpacity={0.1}/>
+                      <stop offset="95%" stopColor="#1B3A4B" stopOpacity={0}/>
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
@@ -161,7 +161,7 @@ export default function AdminAnalytics() {
                   <Tooltip 
                     contentStyle={{borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'}}
                   />
-                  <Area type="monotone" dataKey="leads" name="Inquiries" stroke="#0891B2" fillOpacity={1} fill="url(#colorLeads)" strokeWidth={2} />
+                  <Area type="monotone" dataKey="leads" name="Inquiries" stroke="#1B3A4B" fillOpacity={1} fill="url(#colorLeads)" strokeWidth={2} />
                   <Area type="monotone" dataKey="apps" name="Applications" stroke="#059669" fillOpacity={0} strokeWidth={2} strokeDasharray="5 5" />
                 </AreaChart>
               </ResponsiveContainer>

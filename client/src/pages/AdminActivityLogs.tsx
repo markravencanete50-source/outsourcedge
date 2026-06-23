@@ -98,7 +98,7 @@ export default function AdminActivityLogs() {
             <h1 className="text-3xl font-bold text-slate-900">Activity Logs</h1>
             <p className="text-slate-500 mt-1">Full audit trail of all administrative actions and system heartbeats.</p>
           </div>
-          <Button onClick={exportToCSV} className="bg-[#0891B2] hover:bg-[#06748F]">
+          <Button onClick={exportToCSV} className="bg-[#1B3A4B] hover:bg-[#06748F]">
             <Download className="w-4 h-4 mr-2" /> Export to CSV
           </Button>
         </div>

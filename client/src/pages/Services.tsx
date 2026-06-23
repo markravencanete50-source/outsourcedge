@@ -51,7 +51,7 @@ export default function Services() {
       {/* Skip nav */}
       <a
         href="#services-list"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-cyan-600 focus:text-white focus:rounded-lg focus:font-semibold"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-[#1B3A4B] focus:text-white focus:rounded-lg focus:font-semibold"
       >
         Skip to services
       </a>
@@ -80,7 +80,7 @@ export default function Services() {
 
           {isLoading && (
             <div className="flex flex-col items-center justify-center py-20" role="status" aria-label="Loading services">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#0891B2] mb-4" aria-hidden="true" />
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1B3A4B] mb-4" aria-hidden="true" />
               <p className="text-gray-500">Loading our services…</p>
             </div>
           )}
@@ -104,10 +104,10 @@ export default function Services() {
                 <motion.li
                   key={service.id}
                   variants={fastItemVariants}
-                  className="p-8 bg-gray-50 rounded-xl border border-gray-200 hover:border-[#0891B2] hover:shadow-lg transition-all duration-300 group"
+                  className="p-8 bg-gray-50 rounded-xl border border-gray-200 hover:border-[#1B3A4B] hover:shadow-lg transition-all duration-300 group"
                 >
                   <div
-                    className="w-14 h-14 bg-gradient-to-br from-[#0891B2] to-[#059669] text-white rounded-lg flex items-center justify-center mb-6 shadow-lg shadow-[#0891B2]/20 group-hover:scale-110 transition-transform"
+                    className="w-14 h-14 bg-gradient-to-br from-[#1B3A4B] to-[#059669] text-white rounded-lg flex items-center justify-center mb-6 shadow-lg shadow-[#1B3A4B]/20 group-hover:scale-110 transition-transform"
                     aria-hidden="true"
                   >
                     <ServiceIcon name={service.icon} className="w-7 h-7" />
@@ -116,7 +116,7 @@ export default function Services() {
                   <p className="text-gray-600 text-lg mb-6 leading-relaxed">{service.description}</p>
                   <Link href="/contact">
                     <a
-                      className="text-[#0891B2] font-bold flex items-center gap-2 hover:gap-3 transition-all focus:outline-none focus:underline"
+                      className="text-[#1B3A4B] font-bold flex items-center gap-2 hover:gap-3 transition-all focus:outline-none focus:underline"
                       aria-label={`Get started with ${service.title}`}
                     >
                       Get Started <ArrowRight className="w-5 h-5" aria-hidden="true" />

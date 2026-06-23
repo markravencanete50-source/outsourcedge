@@ -80,7 +80,7 @@ export default function Contact() {
       {/* Skip navigation */}
       <a
         href="#contact-form"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-cyan-600 focus:text-white focus:rounded-lg focus:font-semibold"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-[#1B3A4B] focus:text-white focus:rounded-lg focus:font-semibold"
       >
         Skip to contact form
       </a>
@@ -125,12 +125,12 @@ export default function Contact() {
 
               <address className="not-italic space-y-6">
                 <div className="flex items-center gap-4">
-                  <Mail className="w-6 h-6 text-[#0891B2] flex-shrink-0" aria-hidden="true" />
+                  <Mail className="w-6 h-6 text-[#1B3A4B] flex-shrink-0" aria-hidden="true" />
                   <div>
                     <h3 className="text-xl font-semibold text-[#0F172A]">Email Us</h3>
                     <a
                       href={`mailto:${content.contactEmail}`}
-                      className="text-gray-600 hover:text-[#0891B2] transition-colors underline underline-offset-2"
+                      className="text-gray-600 hover:text-[#1B3A4B] transition-colors underline underline-offset-2"
                     >
                       {content.contactEmail}
                     </a>
@@ -138,12 +138,12 @@ export default function Contact() {
                 </div>
 
                 <div className="flex items-center gap-4">
-                  <Phone className="w-6 h-6 text-[#0891B2] flex-shrink-0" aria-hidden="true" />
+                  <Phone className="w-6 h-6 text-[#1B3A4B] flex-shrink-0" aria-hidden="true" />
                   <div>
                     <h3 className="text-xl font-semibold text-[#0F172A]">Call Us</h3>
                     <a
                       href={`tel:${content.contactPhone.replace(/\D/g, "")}`}
-                      className="text-gray-600 hover:text-[#0891B2] transition-colors underline underline-offset-2"
+                      className="text-gray-600 hover:text-[#1B3A4B] transition-colors underline underline-offset-2"
                     >
                       {content.contactPhone}
                     </a>
@@ -151,7 +151,7 @@ export default function Contact() {
                 </div>
 
                 <div className="flex items-center gap-4">
-                  <MapPin className="w-6 h-6 text-[#0891B2] flex-shrink-0" aria-hidden="true" />
+                  <MapPin className="w-6 h-6 text-[#1B3A4B] flex-shrink-0" aria-hidden="true" />
                   <div>
                     <h3 className="text-xl font-semibold text-[#0F172A]">Our Office</h3>
                     <p className="text-gray-600">{content.address}</p>
@@ -276,7 +276,7 @@ export default function Contact() {
 
                 <Button
                   type="submit"
-                  className="w-full bg-[#0891B2] hover:bg-[#0891B2]/90 text-white py-3 rounded-lg flex items-center justify-center gap-2"
+                  className="w-full bg-[#1B3A4B] hover:bg-[#1B3A4B]/90 text-white py-3 rounded-lg flex items-center justify-center gap-2"
                   disabled={loading}
                   aria-label={loading ? "Sending your message…" : "Send message"}
                 >
@@ -299,7 +299,7 @@ export default function Contact() {
       </section>
 
       {/* CTA */}
-      <section aria-labelledby="contact-cta-heading" className="py-20 md:py-32 bg-gradient-to-r from-[#0891B2] to-[#059669]">
+      <section aria-labelledby="contact-cta-heading" className="py-20 md:py-32 bg-gradient-to-r from-[#1B3A4B] to-[#059669]">
         <div className="container text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -315,7 +315,7 @@ export default function Contact() {
             </p>
             <Link
               href="/contact"
-              className="inline-block bg-white text-[#0891B2] px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[#0891B2]"
+              className="inline-block bg-white text-[#1B3A4B] px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[#1B3A4B]"
               aria-label="Get in touch with OutsourcEdge"
             >
               Get in Touch

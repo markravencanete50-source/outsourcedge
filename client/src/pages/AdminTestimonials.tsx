@@ -60,7 +60,7 @@ export default function AdminTestimonials() {
     <AdminLayout>
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold">Testimonial Manager</h1>
-        <Button onClick={() => { setCurrent({ name: '', company: '', content: '', rating: 5 }); setIsDialogOpen(true); }} className="bg-[#0891B2]">
+        <Button onClick={() => { setCurrent({ name: '', company: '', content: '', rating: 5 }); setIsDialogOpen(true); }} className="bg-[#1B3A4B]">
           <Plus className="w-4 h-4 mr-2" /> Add Testimonial
         </Button>
       </div>
@@ -100,7 +100,7 @@ export default function AdminTestimonials() {
             <div className="space-y-2"><Label>Review Content</Label><Textarea value={current.content} onChange={e => setCurrent({...current, content: e.target.value})} /></div>
             <div className="space-y-2"><Label>Rating (1-5)</Label><Input type="number" min="1" max="5" value={current.rating} onChange={e => setCurrent({...current, rating: parseInt(e.target.value)})} /></div>
           </div>
-          <DialogFooter><Button onClick={handleSave} className="bg-[#0891B2]">Save Testimonial</Button></DialogFooter>
+          <DialogFooter><Button onClick={handleSave} className="bg-[#1B3A4B]">Save Testimonial</Button></DialogFooter>
         </DialogContent>
       </Dialog>
     </AdminLayout>

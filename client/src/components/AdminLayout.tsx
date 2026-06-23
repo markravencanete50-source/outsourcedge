@@ -87,7 +87,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         <div className="p-6 border-b border-gray-700 flex items-center justify-between">
           {sidebarOpen && (
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-[#0891B2] rounded-lg flex items-center justify-center font-bold">OE</div>
+              <div className="w-10 h-10 bg-[#1B3A4B] rounded-lg flex items-center justify-center font-bold">OE</div>
               <span className="font-bold">OutsourceEdge</span>
             </div>
           )}
@@ -101,7 +101,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             {menuItems.map((item) => (
               <li key={item.href}>
                 <Link href={item.href}>
-                  <a className={`flex items-center gap-3 p-3 rounded-lg transition-colors ${isActive(item.href) ? 'bg-[#0891B2] text-white' : 'text-gray-400 hover:bg-gray-800 hover:text-white'}`}>
+                  <a className={`flex items-center gap-3 p-3 rounded-lg transition-colors ${isActive(item.href) ? 'bg-[#1B3A4B] text-white' : 'text-gray-400 hover:bg-gray-800 hover:text-white'}`}>
                     <item.icon className="w-5 h-5" />
                     {sidebarOpen && <span>{item.label}</span>}
                   </a>

@@ -135,7 +135,7 @@ export default function AdminDashboard() {
           <div className="lg:col-span-2 bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
             <div className="p-6 border-b border-slate-100 flex items-center justify-between">
               <h3 className="font-bold text-slate-900 flex items-center gap-2">
-                <Activity className="w-5 h-5 text-[#0891B2]" /> Recent Admin Activity
+                <Activity className="w-5 h-5 text-[#1B3A4B]" /> Recent Admin Activity
               </h3>
               <Badge variant="secondary">Live Feed</Badge>
             </div>

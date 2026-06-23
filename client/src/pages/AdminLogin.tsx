@@ -30,12 +30,12 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0891B2] to-[#059669] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-[#1B3A4B] to-[#059669] flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-white rounded-lg mb-4">
-            <Lock className="w-8 h-8 text-[#0891B2]" />
+            <Lock className="w-8 h-8 text-[#1B3A4B]" />
           </div>
           <h1 className="text-3xl font-bold text-white mb-2">Admin Portal</h1>
           <p className="text-white/80">OutsourcEdge Dashboard</p>
@@ -56,7 +56,7 @@ export default function AdminLogin() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="admin@outsourcedge.com"
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-[#0891B2] transition"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-[#1B3A4B] transition"
                   required
                 />
               </div>
@@ -74,7 +74,7 @@ export default function AdminLogin() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-[#0891B2] transition"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-[#1B3A4B] transition"
                   required
                 />
               </div>
@@ -84,7 +84,7 @@ export default function AdminLogin() {
             <Button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-[#0891B2] text-white py-3 rounded-lg font-semibold hover:bg-[#0891B2]/90 transition disabled:opacity-50"
+              className="w-full bg-[#1B3A4B] text-white py-3 rounded-lg font-semibold hover:bg-[#1B3A4B]/90 transition disabled:opacity-50"
             >
               {isLoading ? 'Logging in...' : 'Login to Dashboard'}
             </Button>

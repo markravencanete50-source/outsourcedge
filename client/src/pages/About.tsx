@@ -56,7 +56,7 @@ export default function About() {
       {/* Skip navigation link for keyboard/screen reader users */}
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-cyan-600 focus:text-white focus:rounded-lg focus:font-semibold"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-[#1B3A4B] focus:text-white focus:rounded-lg focus:font-semibold"
       >
         Skip to main content
       </a>
@@ -68,9 +68,9 @@ export default function About() {
       >
         {/* Mesh gradient background */}
         <div className="absolute inset-0 -z-10" aria-hidden="true">
-          <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-cyan-50/30 to-white" />
+          <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-slate-50/30 to-white" />
           {/* Static decorative blobs — no animate-pulse */}
-          <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-100/20 rounded-full blur-3xl" />
+          <div className="absolute top-0 right-0 w-96 h-96 bg-[#1B3A4B]/10 rounded-full blur-3xl" />
           <div className="absolute bottom-0 left-1/4 w-64 h-64 bg-blue-100/15 rounded-full blur-3xl" />
         </div>
 
@@ -83,10 +83,10 @@ export default function About() {
           >
             <motion.div
               variants={fadeUpVariant}
-              className="inline-flex items-center gap-2 mb-6 px-4 py-2 bg-cyan-50 rounded-full border border-cyan-200/50"
+              className="inline-flex items-center gap-2 mb-6 px-4 py-2 bg-[#EEF2F5] rounded-full border border-[#1B3A4B]/20"
             >
-              <Zap className="w-4 h-4 text-cyan-600" aria-hidden="true" />
-              <span className="text-sm font-bold text-cyan-900">Our Story</span>
+              <Zap className="w-4 h-4 text-[#1B3A4B]" aria-hidden="true" />
+              <span className="text-sm font-bold text-[#1B3A4B]">Our Story</span>
             </motion.div>
 
             <motion.h1
@@ -130,7 +130,7 @@ export default function About() {
             viewport={{ once: true, margin: "-100px" }}
           >
             <motion.div variants={fadeUpVariant} className="p-8 bg-white rounded-2xl border border-slate-200">
-              <Target className="w-12 h-12 text-cyan-600 mb-6" aria-hidden="true" />
+              <Target className="w-12 h-12 text-[#1B3A4B] mb-6" aria-hidden="true" />
               <h2 id="mission-heading" className="text-3xl font-bold text-slate-900 mb-4">Our Mission</h2>
               <p className="text-lg text-slate-600 leading-relaxed">
                 To empower businesses with world-class outsourcing solutions that streamline operations,
@@ -139,7 +139,7 @@ export default function About() {
             </motion.div>
 
             <motion.div variants={fadeUpVariant} className="p-8 bg-white rounded-2xl border border-slate-200">
-              <Globe className="w-12 h-12 text-cyan-600 mb-6" aria-hidden="true" />
+              <Globe className="w-12 h-12 text-[#1B3A4B] mb-6" aria-hidden="true" />
               <h2 className="text-3xl font-bold text-slate-900 mb-4">Our Vision</h2>
               <p className="text-lg text-slate-600 leading-relaxed">
                 To become the most trusted outsourcing partner globally, recognized for operational
@@ -184,15 +184,15 @@ export default function About() {
               <motion.li
                 key={i}
                 variants={scaleVariant}
-                className="group p-8 bg-slate-50 rounded-2xl border border-slate-200 hover:border-cyan-300 hover:shadow-xl transition-all cursor-pointer"
+                className="group p-8 bg-slate-50 rounded-2xl border border-slate-200 hover:border-[#B8973E]/50 hover:shadow-xl transition-all cursor-pointer"
                 whileHover={{ y: -5 }}
               >
                 <motion.div
-                  className="w-12 h-12 bg-cyan-100 rounded-xl flex items-center justify-center mb-6 group-hover:bg-cyan-200 transition-colors"
+                  className="w-12 h-12 bg-[#D6E0E5] rounded-xl flex items-center justify-center mb-6 group-hover:bg-[#B8D0DA] transition-colors"
                   whileHover={{ scale: 1.1, rotate: 5 }}
                   aria-hidden="true"
                 >
-                  <value.icon className="w-6 h-6 text-cyan-600" />
+                  <value.icon className="w-6 h-6 text-[#1B3A4B]" />
                 </motion.div>
                 <h3 className="text-xl font-bold text-slate-900 mb-3">{value.title}</h3>
                 <p className="text-slate-600 leading-relaxed">{value.description}</p>
@@ -228,7 +228,7 @@ export default function About() {
           <ol className="relative max-w-3xl mx-auto" aria-label="Company history timeline">
             {/* Vertical connecting line */}
             <div
-              className="absolute left-9 top-0 bottom-0 w-0.5 bg-gradient-to-b from-cyan-300 via-cyan-500 to-cyan-300"
+              className="absolute left-9 top-0 bottom-0 w-0.5 bg-gradient-to-b from-[#B8973E]/40 via-[#1B3A4B] to-[#B8973E]/40"
               aria-hidden="true"
             />
 
@@ -247,7 +247,7 @@ export default function About() {
                 >
                   {/* Year circle — sits on top of the line */}
                   <motion.div
-                    className="relative z-10 w-[4.5rem] h-[4.5rem] bg-cyan-600 text-white rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0 shadow-lg shadow-cyan-200 ring-4 ring-white"
+                    className="relative z-10 w-[4.5rem] h-[4.5rem] bg-[#1B3A4B] text-white rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0 shadow-lg shadow-[#1B3A4B]/20 ring-4 ring-white"
                     whileHover={{ scale: 1.1 }}
                     aria-label={`Year ${item.year}`}
                   >

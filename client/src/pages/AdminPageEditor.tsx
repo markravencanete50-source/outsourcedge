@@ -97,7 +97,7 @@ export default function AdminPageEditor() {
         <Button 
           onClick={handleSave} 
           disabled={isSaving}
-          className="bg-[#0891B2] hover:bg-[#0891B2]/90"
+          className="bg-[#1B3A4B] hover:bg-[#1B3A4B]/90"
         >
           {isSaving ? <RefreshCcw className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
           Save Changes

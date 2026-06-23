@@ -21,7 +21,7 @@ export default function Header() {
         {/* Logo */}
         <Link href="/">
           <a className="flex items-center gap-3 font-bold text-2xl hover:opacity-80 transition">
-            <div className="w-10 h-10 bg-gradient-to-br from-[#0891B2] to-[#059669] rounded-lg flex items-center justify-center">
+            <div className="w-10 h-10 bg-gradient-to-br from-[#1B3A4B] to-[#059669] rounded-lg flex items-center justify-center">
               <span className="text-white font-bold">OE</span>
             </div>
             <span className="text-[#0F172A]">OutsourcEdge</span>
@@ -32,7 +32,7 @@ export default function Header() {
         <nav className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => (
             <Link key={link.href} href={link.href}>
-              <a className="text-[#0F172A] hover:text-[#0891B2] transition font-medium whitespace-nowrap">
+              <a className="text-[#0F172A] hover:text-[#1B3A4B] transition font-medium whitespace-nowrap">
                 {link.label}
               </a>
             </Link>
@@ -67,7 +67,7 @@ export default function Header() {
             {navLinks.map((link) => (
               <Link key={link.href} href={link.href}>
                 <a
-                  className="text-[#0F172A] hover:text-[#0891B2] transition font-medium py-2 px-2 rounded-lg hover:bg-gray-50 block"
+                  className="text-[#0F172A] hover:text-[#1B3A4B] transition font-medium py-2 px-2 rounded-lg hover:bg-gray-50 block"
                   onClick={() => setIsOpen(false)}
                 >
                   {link.label}
