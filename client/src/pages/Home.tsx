@@ -2,7 +2,20 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import AiAssistant from "@/components/AiAssistant";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, CheckCircle, ClipboardCheck, Home as HomeIcon, Shield, Star, Users, Wrench } from "lucide-react";
+import {
+  ArrowRight,
+  BarChart3,
+  CheckCircle,
+  ClipboardCheck,
+  FileText,
+  Headphones,
+  Home as HomeIcon,
+  MailCheck,
+  Shield,
+  Sparkles,
+  Star,
+  Users,
+} from "lucide-react";
 import { Link } from "wouter";
 import { motion, type Variants } from "framer-motion";
 import { useEffect, useState } from "react";
@@ -31,52 +44,75 @@ interface Testimonial {
 }
 
 const DEFAULT_CONTENT: PageContent = {
-  heroTitle: "Your listings, expertly managed.",
-  heroSubtitle: "OutsourcEdge places vetted offshore property talent with US realtors, landlords, and STR hosts who want calm operations without in-house overhead.",
-  servicesTitle: "Property support built around the work owners actually need done",
+  heroTitle: "Outsourcing that gives your business an operational edge.",
+  heroSubtitle: "OutsourcEdge connects growing teams with vetted offshore talent for admin, operations, customer support, and property management work without adding in-house overhead.",
+  servicesTitle: "Outsourcing support built around the work your team needs off its plate",
 };
 
 const highlights = [
-  { value: "5-7", label: "days to onboard" },
-  { value: "24/7", label: "request intake" },
+  { value: "5-7", label: "days to launch" },
+  { value: "24/7", label: "global coverage" },
   { value: "40-60%", label: "lower ops overhead" },
-  { value: "US", label: "property owner focus" },
+  { value: "1:1", label: "dedicated talent" },
 ];
 
 const servicesFallback = [
   {
+    icon: Users,
+    title: "Virtual Assistant Teams",
+    description: "Inbox, calendar, CRM, research, documentation, and repeatable admin work handled by dependable offshore support.",
+  },
+  {
+    icon: Headphones,
+    title: "Customer & Client Support",
+    description: "Professional response coverage, ticket triage, follow-ups, and escalation rules that protect your customer experience.",
+  },
+  {
     icon: HomeIcon,
-    title: "Listing Operations",
-    description: "Calendar, listing, guest, and tenant coordination handled with clean daily communication.",
-  },
-  {
-    icon: Wrench,
-    title: "Maintenance Coordination",
-    description: "Request intake, vendor follow-up, status updates, and documentation before problems get expensive.",
-  },
-  {
-    icon: ClipboardCheck,
-    title: "Owner Reporting",
-    description: "Reliable summaries, task tracking, rent follow-up, and portfolio visibility without more admin work.",
+    title: "Property Management Support",
+    description: "Tenant coordination, maintenance follow-up, listing support, and owner reporting for real estate operators.",
   },
 ];
 
 const processSteps = [
-  "Map the work",
-  "Match the right talent",
+  "Define the role",
+  "Match vetted talent",
   "Onboard into your tools",
   "Report results weekly",
 ];
 
+const outsourcingLanes = [
+  {
+    icon: MailCheck,
+    title: "Admin execution",
+    copy: "Email, calendars, CRM updates, task follow-up, research, and documentation handled with clean daily rhythm.",
+    image: "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1200&q=82",
+  },
+  {
+    icon: BarChart3,
+    title: "Operations support",
+    copy: "Process tracking, reports, SOPs, QA checklists, and recurring work kept visible for managers.",
+    image: "https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&w=1200&q=82",
+  },
+  {
+    icon: ClipboardCheck,
+    title: "Specialized service lanes",
+    copy: "Property management, client support, back-office coordination, and role-specific workflows built around your business.",
+    image: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1200&q=82",
+  },
+];
+
 const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 24 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.65, ease: [0.16, 1, 0.3, 1] } },
+  hidden: { opacity: 0, y: 28, filter: "blur(8px)" },
+  visible: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 0.72, ease: [0.16, 1, 0.3, 1] } },
 };
 
 const stagger: Variants = {
   hidden: {},
-  visible: { transition: { staggerChildren: 0.1 } },
+  visible: { transition: { staggerChildren: 0.09, delayChildren: 0.04 } },
 };
+
+const smoothViewport = { once: true, amount: 0.28, margin: "0px 0px -80px 0px" };
 
 export default function Home() {
   const [content, setContent] = useState<PageContent>(DEFAULT_CONTENT);
@@ -120,19 +156,44 @@ export default function Home() {
 
       <section className="relative min-h-[92vh] overflow-hidden bg-[#1F2A44] pt-32 text-white md:pt-40">
         <div
-          className="absolute inset-0 bg-cover bg-center opacity-42"
+          className="absolute inset-0 scale-[1.03] bg-cover bg-center opacity-40"
           style={{
             backgroundImage:
-              "url('https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=2200&q=82')",
+              "url('https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=2200&q=82')",
           }}
           aria-hidden="true"
         />
-        <div className="absolute inset-0 bg-[#1F2A44]/72" aria-hidden="true" />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(31,42,68,0.94)_0%,rgba(31,42,68,0.82)_48%,rgba(31,42,68,0.56)_100%)]" aria-hidden="true" />
+        <motion.div
+          className="absolute bottom-10 right-[8%] hidden w-72 rounded-lg border border-white/14 bg-white/10 p-5 text-white shadow-2xl backdrop-blur-md lg:block"
+          initial={{ opacity: 0, x: 42, y: 18 }}
+          animate={{ opacity: 1, x: 0, y: 0 }}
+          transition={{ duration: 0.85, delay: 0.55, ease: [0.16, 1, 0.3, 1] }}
+          aria-hidden="true"
+        >
+          <div className="mb-4 flex items-center gap-3">
+            <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#C6A75E] text-[#1F2A44]">
+              <Sparkles className="h-5 w-5" />
+            </span>
+            <div>
+              <p className="text-sm font-bold text-white">Dedicated talent</p>
+              <p className="text-xs text-white/68">Matched to your workflow</p>
+            </div>
+          </div>
+          <div className="space-y-3 text-sm text-white/78">
+            <div className="flex items-center justify-between border-t border-white/12 pt-3">
+              <span>Admin backlog</span><span className="font-bold text-[#F4D98B]">Handled</span>
+            </div>
+            <div className="flex items-center justify-between border-t border-white/12 pt-3">
+              <span>Client follow-up</span><span className="font-bold text-[#F4D98B]">Daily</span>
+            </div>
+          </div>
+        </motion.div>
         <div className="container relative z-10 flex min-h-[calc(92vh-8rem)] items-center pb-16">
           <motion.div className="max-w-4xl" initial="hidden" animate="visible" variants={stagger}>
             <motion.div variants={fadeUp} className="mb-6 h-px w-24 bg-[#C6A75E]" />
             <motion.p variants={fadeUp} className="eyebrow mb-5">
-              Offshore property talent. On-shore standards.
+              Offshore talent. Onshore standards.
             </motion.p>
             <motion.h1 variants={fadeUp} className="max-w-4xl text-5xl font-semibold leading-[1.05] text-white md:text-7xl">
               {content.heroTitle}
@@ -144,9 +205,9 @@ export default function Home() {
               <Link href="/contact">
                 <Button className="btn-gold text-base">Book a Discovery Call</Button>
               </Link>
-              <Link href="/project-management">
+              <Link href="/services">
                 <Button className="border border-white/25 bg-white/8 px-6 py-3.5 text-base font-bold text-white hover:bg-white/14">
-                  View Property Services
+                  Explore Services
                 </Button>
               </Link>
             </motion.div>
@@ -168,36 +229,36 @@ export default function Home() {
       <section className="section-padding bg-[#FAF7F1]">
         <div className="container">
           <div className="grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
-            <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-80px" }} variants={stagger}>
-              <motion.p variants={fadeUp} className="eyebrow mb-4">Why owners delegate to us</motion.p>
+            <motion.div initial="hidden" whileInView="visible" viewport={smoothViewport} variants={stagger}>
+              <motion.p variants={fadeUp} className="eyebrow mb-4">Why teams outsource to us</motion.p>
               <motion.h2 variants={fadeUp} className="text-4xl font-semibold leading-tight md:text-5xl">
-                Calm support for the tasks that keep portfolios moving.
+                Reliable people for the work that slows your team down.
               </motion.h2>
             </motion.div>
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-80px" }}
-              transition={{ duration: 0.65 }}
+              viewport={smoothViewport}
+              transition={{ duration: 0.68, ease: [0.16, 1, 0.3, 1] }}
               className="text-lg leading-8 text-[#1B1F2A]/68"
             >
-              The brand should feel trustworthy enough to hand the keys to. That means clear owners, documented work, responsive updates, and no noisy sales language.
+              The brand should feel trustworthy enough to hand important work to. That means clear ownership, documented workflows, responsive communication, and talent that fits how you already operate.
             </motion.p>
           </div>
 
           <div className="mt-12 grid gap-6 md:grid-cols-3">
             {[
-              { icon: Shield, title: "Vetted people", copy: "Talent selected for reliability, communication, and property operations judgment." },
+              { icon: Shield, title: "Vetted people", copy: "Talent selected for reliability, communication, role fit, and judgment under real operating pressure." },
               { icon: Users, title: "Built into your workflow", copy: "We operate inside your tools, channels, templates, and approval rules." },
               { icon: CheckCircle, title: "Visible delivery", copy: "Weekly reporting and clean task ownership keep work from disappearing." },
-            ].map((item) => (
+            ].map((item, index) => (
               <motion.article
                 key={item.title}
                 className="premium-card p-7"
-                initial={{ opacity: 0, y: 18 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-80px" }}
-                transition={{ duration: 0.55 }}
+                initial={{ opacity: 0, y: 26, filter: "blur(7px)" }}
+                whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                viewport={smoothViewport}
+                transition={{ duration: 0.62, delay: index * 0.06, ease: [0.16, 1, 0.3, 1] }}
               >
                 <item.icon className="mb-6 h-7 w-7 text-[#C6A75E]" />
                 <h3 className="text-xl font-semibold">{item.title}</h3>
@@ -221,17 +282,17 @@ export default function Home() {
                 <motion.article
                   key={service.id}
                   className="premium-card p-7"
-                  initial={{ opacity: 0, y: 18 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-80px" }}
-                  transition={{ duration: 0.55, delay: index * 0.06 }}
+                  initial={{ opacity: 0, y: 28, scale: 0.98 }}
+                  whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                  viewport={smoothViewport}
+                  transition={{ duration: 0.62, delay: index * 0.06, ease: [0.16, 1, 0.3, 1] }}
                 >
                   <div className="mb-7 flex h-12 w-12 items-center justify-center rounded-lg bg-[#1F2A44] text-[#C6A75E]">
                     <FallbackIcon className="h-6 w-6" />
                   </div>
                   <h3 className="text-xl font-semibold">{service.title}</h3>
                   <p className="mt-3 leading-7 text-[#1B1F2A]/66">{service.description}</p>
-                  <Link href="/project-management">
+                  <Link href={service.title.toLowerCase().includes("property") ? "/project-management" : "/services"}>
                     <a className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-[#1F2A44] transition hover:gap-3">
                       Learn more <ArrowRight className="h-4 w-4" />
                     </a>
@@ -243,13 +304,47 @@ export default function Home() {
         </div>
       </section>
 
+      <section className="section-padding bg-white">
+        <div className="container">
+          <motion.div initial="hidden" whileInView="visible" viewport={smoothViewport} variants={stagger} className="mb-12 max-w-3xl">
+            <motion.p variants={fadeUp} className="eyebrow mb-4">Where we plug in</motion.p>
+            <motion.h2 variants={fadeUp} className="text-4xl font-semibold leading-tight md:text-5xl">
+              Support lanes with visuals that match the work.
+            </motion.h2>
+          </motion.div>
+          <div className="grid gap-6 lg:grid-cols-3">
+            {outsourcingLanes.map((lane, index) => (
+              <motion.article
+                key={lane.title}
+                className="group overflow-hidden rounded-lg border border-[#1F2A44]/12 bg-[#FAF7F1]"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={smoothViewport}
+                transition={{ duration: 0.66, delay: index * 0.08, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <div
+                  className="h-56 bg-cover bg-center transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.04]"
+                  style={{ backgroundImage: `url('${lane.image}')` }}
+                  aria-hidden="true"
+                />
+                <div className="p-7">
+                  <lane.icon className="mb-5 h-7 w-7 text-[#C6A75E]" />
+                  <h3 className="text-xl font-semibold text-[#1F2A44]">{lane.title}</h3>
+                  <p className="mt-3 leading-7 text-[#1B1F2A]/68">{lane.copy}</p>
+                </div>
+              </motion.article>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section className="section-padding section-deep">
         <div className="container grid gap-12 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
           <div>
             <p className="eyebrow mb-4">How it works</p>
-            <h2 className="text-4xl font-semibold leading-tight md:text-5xl">A simple handoff, then steady execution.</h2>
+            <h2 className="text-4xl font-semibold leading-tight text-white md:text-5xl">A simple handoff, then steady execution.</h2>
             <p className="mt-6 max-w-xl leading-8 text-white/70">
-              We keep motion subtle because the message needs to win: match, onboard, execute, report.
+              We define the role, match the right person, install the workflow, and keep performance visible.
             </p>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
@@ -257,10 +352,10 @@ export default function Home() {
               <motion.div
                 key={step}
                 className="rounded-lg border border-white/12 bg-white/6 p-6"
-                initial={{ opacity: 0, y: 18 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-80px" }}
-                transition={{ duration: 0.5, delay: index * 0.06 }}
+                initial={{ opacity: 0, y: 26, x: index % 2 === 0 ? -12 : 12 }}
+                whileInView={{ opacity: 1, y: 0, x: 0 }}
+                viewport={smoothViewport}
+                transition={{ duration: 0.6, delay: index * 0.06, ease: [0.16, 1, 0.3, 1] }}
               >
                 <p className="mb-4 text-sm font-bold text-[#C6A75E]">0{index + 1}</p>
                 <h3 className="text-xl font-semibold text-white">{step}</h3>
@@ -282,7 +377,7 @@ export default function Home() {
                       <Star key={index} className="h-4 w-4 fill-[#C6A75E] text-[#C6A75E]" />
                     ))}
                   </div>
-                  <p className="leading-7 text-[#1B1F2A]/70">"{testimonial.content}"</p>
+                <p className="leading-7 text-[#1B1F2A]/70">&quot;{testimonial.content}&quot;</p>
                   <div className="mt-6 border-t border-[#1F2A44]/10 pt-5">
                     <p className="font-bold text-[#1F2A44]">{testimonial.name}</p>
                     <p className="text-sm text-[#1B1F2A]/58">{testimonial.company}</p>
@@ -300,7 +395,7 @@ export default function Home() {
             <div className="grid gap-8 md:grid-cols-[1fr_auto] md:items-center">
               <div>
                 <p className="eyebrow mb-4">Next step</p>
-                <h2 className="text-3xl font-semibold text-white md:text-4xl">Get the right property support in place.</h2>
+                <h2 className="text-3xl font-semibold text-white md:text-4xl">Get the right outsourcing support in place.</h2>
                 <p className="mt-4 max-w-2xl leading-7 text-white/70">
                   Tell us what you need off your plate. We will map the role, tools, and first-week operating rhythm.
                 </p>

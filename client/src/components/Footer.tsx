@@ -16,7 +16,7 @@ export default function Footer() {
               <span className="font-['Poppins'] text-xl font-semibold">OutsourcEdge</span>
             </div>
             <p className="mb-6 max-w-sm text-sm leading-7 text-white/68">
-              Vetted offshore property talent for realtors, landlords, and STR hosts who want calm operations without added payroll.
+              Vetted offshore talent for growing teams that need reliable admin, operations, customer support, and property management execution.
             </p>
             <div className="flex gap-3">
               {[Linkedin, Twitter, Facebook].map((Icon, index) => (
@@ -53,10 +53,10 @@ export default function Footer() {
           <div>
             <h4 className="mb-5 text-sm font-bold uppercase tracking-[0.16em] text-[#C6A75E]">Services</h4>
             <ul className="space-y-3 text-sm text-white/68">
-              <li>Property management support</li>
               <li>Virtual assistant support</li>
-              <li>Tenant coordination</li>
-              <li>Maintenance operations</li>
+              <li>Customer support</li>
+              <li>Business operations</li>
+              <li>Property management support</li>
             </ul>
           </div>
 
@@ -77,7 +77,7 @@ export default function Footer() {
               </li>
               <li className="flex items-start gap-3">
                 <MapPin className="mt-0.5 h-4 w-4 flex-shrink-0 text-[#C6A75E]" />
-                <span className="text-white/68">Serving US property teams remotely</span>
+                <span className="text-white/68">Serving US teams remotely</span>
               </li>
             </ul>
           </div>
