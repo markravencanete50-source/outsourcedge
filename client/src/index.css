@@ -43,64 +43,199 @@
 }
 
 :root {
-  --primary: #0891B2;
+  /* ─── Core Brand Colors ─────────────────────────────────────────────
+     Deep Harbor Blue  #1B3A4B  — nav, buttons, primary actions, titles
+     Luxury Gold       #B8973E  — stats, dividers, hover accents (2% only)
+     White             #FFFFFF  — backgrounds, cards, whitespace
+     Charcoal Black    #1A1A1A  — body text, footer, dark sections
+  ──────────────────────────────────────────────────────────────────── */
+
+  --primary:            #1B3A4B;
   --primary-foreground: #FFFFFF;
-  --sidebar-primary: #0891B2;
-  --sidebar-primary-foreground: #FFFFFF;
-  --chart-1: #0891B2;
-  --chart-2: #0E7490;
-  --chart-3: #155E75;
-  --chart-4: #164E63;
-  --chart-5: #083344;
-  --radius: 0.75rem;
-  --background: #FFFFFF;
-  --foreground: #0F172A;
-  --card: #FFFFFF;
-  --card-foreground: #0F172A;
-  --popover: #FFFFFF;
-  --popover-foreground: #0F172A;
-  --secondary: #F8FAFC;
-  --secondary-foreground: #0F172A;
-  --muted: #64748B;
-  --muted-foreground: #94A3B8;
-  --accent: #0891B2;
-  --accent-foreground: #FFFFFF;
-  --destructive: #DC2626;
+
+  /* Gold — accent only, use sparingly */
+  --accent:             #B8973E;
+  --accent-foreground:  #FFFFFF;
+
+  /* Backgrounds & surfaces */
+  --background:         #FFFFFF;
+  --foreground:         #1A1A1A;
+  --card:               #FFFFFF;
+  --card-foreground:    #1A1A1A;
+  --popover:            #FFFFFF;
+  --popover-foreground: #1A1A1A;
+
+  /* Secondary surface — very light warm off-white */
+  --secondary:          #F5F6F7;
+  --secondary-foreground: #1A1A1A;
+
+  /* Muted text */
+  --muted:              #4A5568;
+  --muted-foreground:   #718096;
+
+  /* UI chrome */
+  --border:             #E2E6EA;
+  --input:              #F0F2F4;
+  --ring:               #B8973E;
+
+  /* Destructive */
+  --destructive:        #DC2626;
   --destructive-foreground: #FFFFFF;
-  --border: #E2E8F0;
-  --input: #F1F5F9;
-  --ring: #0891B2;
-  --sidebar: #0F172A;
-  --sidebar-foreground: #FFFFFF;
-  --sidebar-accent: #1E293B;
-  --sidebar-accent-foreground: #FFFFFF;
-  --sidebar-border: #1E293B;
-  --sidebar-ring: #0891B2;
+
+  /* Chart scale — Deep Harbor tints */
+  --chart-1: #1B3A4B;
+  --chart-2: #254F63;
+  --chart-3: #2F657C;
+  --chart-4: #3A7A95;
+  --chart-5: #B8973E;
+
+  /* Radius */
+  --radius: 0.75rem;
+
+  /* Sidebar — Deep Harbor dark */
+  --sidebar:                    #1B3A4B;
+  --sidebar-foreground:         #FFFFFF;
+  --sidebar-primary:            #B8973E;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent:             #254F63;
+  --sidebar-accent-foreground:  #FFFFFF;
+  --sidebar-border:             #254F63;
+  --sidebar-ring:               #B8973E;
 }
 
 @layer base {
   * { @apply border-border outline-ring/50; }
+
   body {
-    @apply bg-background text-foreground font-sans antialiased selection:bg-[#0891B2]/20 selection:text-[#0891B2];
+    @apply bg-background text-foreground font-sans antialiased;
+    /* Gold-tinted selection — premium feel */
+    selection-color: #1B3A4B;
+    -webkit-user-select: auto;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
   }
+
+  /* Selection highlight */
+  ::selection {
+    background-color: rgba(184, 151, 62, 0.18);
+    color: #1B3A4B;
+  }
+
+  /* All headings — Deep Harbor */
   h1, h2, h3, h4, h5, h6 {
-    @apply font-bold tracking-tight text-slate-900;
+    @apply font-bold tracking-tight;
+    color: #1B3A4B;
     font-family: 'Sora', sans-serif;
   }
 }
 
 @layer components {
   .container { @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8; }
+
+  /* Primary button — Deep Harbor with gold shadow on hover */
   .btn-primary {
-    @apply inline-flex items-center justify-center rounded-xl bg-[#0891B2] px-6 py-3.5 text-sm font-bold text-white shadow-lg shadow-cyan-500/25 transition-all hover:bg-[#0E7490] hover:shadow-cyan-500/40 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:pointer-events-none;
+    @apply inline-flex items-center justify-center rounded-xl px-6 py-3.5 text-sm font-bold text-white shadow-lg transition-all hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:pointer-events-none;
+    background-color: #1B3A4B;
+    box-shadow: 0 4px 16px rgba(27, 58, 75, 0.25);
   }
+  .btn-primary:hover {
+    background-color: #254F63;
+    box-shadow: 0 6px 20px rgba(184, 151, 62, 0.25);
+  }
+
+  /* Outline button — Deep Harbor border, gold hover */
   .btn-outline {
-    @apply inline-flex items-center justify-center rounded-xl border-2 border-slate-200 bg-white px-6 py-3.5 text-sm font-bold text-slate-900 transition-all hover:border-[#0891B2] hover:text-[#0891B2] hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:pointer-events-none;
+    @apply inline-flex items-center justify-center rounded-xl border-2 bg-white px-6 py-3.5 text-sm font-bold transition-all hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:pointer-events-none;
+    border-color: #1B3A4B;
+    color: #1B3A4B;
   }
-  .glass-card { @apply bg-white/80 backdrop-blur-md border border-white/20 shadow-xl shadow-slate-200/50; }
+  .btn-outline:hover {
+    border-color: #B8973E;
+    color: #B8973E;
+  }
+
+  /* Gold accent button — for premium CTAs only */
+  .btn-gold {
+    @apply inline-flex items-center justify-center rounded-xl px-6 py-3.5 text-sm font-bold text-white transition-all hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:pointer-events-none;
+    background-color: #B8973E;
+    box-shadow: 0 4px 16px rgba(184, 151, 62, 0.30);
+  }
+  .btn-gold:hover {
+    background-color: #A3832E;
+    box-shadow: 0 6px 20px rgba(184, 151, 62, 0.40);
+  }
+
+  /* Cards */
+  .glass-card {
+    @apply bg-white/80 backdrop-blur-md border border-white/20 shadow-xl;
+    box-shadow: 0 8px 32px rgba(27, 58, 75, 0.08);
+  }
+
   .section-padding { @apply py-20 md:py-32; }
-  .gradient-text { @apply bg-gradient-to-r from-[#0891B2] to-[#0E7490] bg-clip-text text-transparent; }
+
+  /* Gradient text — Deep Harbor range */
+  .gradient-text {
+    background: linear-gradient(135deg, #1B3A4B 0%, #2F657C 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Gold accent text — use sparingly on stats/metrics */
+  .gold-text {
+    color: #B8973E;
+  }
+
+  /* Section divider — hairline gold */
+  .gold-divider {
+    border: none;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #B8973E, transparent);
+    opacity: 0.5;
+  }
+
+  /* Stat/metric highlight */
+  .stat-value {
+    @apply font-bold;
+    color: #B8973E;
+    font-family: 'Sora', sans-serif;
+  }
+
+  /* Premium card hover — Deep Harbor lift */
+  .card-hover {
+    @apply transition-all duration-300;
+  }
+  .card-hover:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 40px rgba(27, 58, 75, 0.12);
+  }
+
+  /* Deep Harbor section background */
+  .section-deep {
+    background-color: #1B3A4B;
+    color: #FFFFFF;
+  }
+  .section-deep h1,
+  .section-deep h2,
+  .section-deep h3,
+  .section-deep h4,
+  .section-deep h5,
+  .section-deep h6 {
+    color: #FFFFFF;
+  }
+
+  /* Charcoal footer/dark sections */
+  .section-charcoal {
+    background-color: #1A1A1A;
+    color: #FFFFFF;
+  }
+  .section-charcoal h1,
+  .section-charcoal h2,
+  .section-charcoal h3,
+  .section-charcoal h4,
+  .section-charcoal h5,
+  .section-charcoal h6 {
+    color: #FFFFFF;
+  }
 }
 
 /* Accessibility: smooth scroll */
@@ -108,9 +243,9 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Accessibility: visible keyboard focus ring */
+/* Accessibility: visible keyboard focus ring — gold */
 :focus-visible {
-  outline: 2px solid #0891B2;
+  outline: 2px solid #B8973E;
   outline-offset: 2px;
 }
 
