@@ -256,13 +256,19 @@
     animation-name: oe-dialog-out;
   }
 
-  .hero-word-pop {
+  .hero-typewriter {
+    position: relative;
+  }
+
+  .hero-typewriter::after {
+    content: "";
     display: inline-block;
-    color: #F4D98B;
-    text-shadow: 0 10px 34px rgba(0, 0, 0, 0.32);
-    animation: oe-word-pop 3.2s cubic-bezier(0.16, 1, 0.3, 1) infinite;
-    transform-origin: center bottom;
-    will-change: transform, filter;
+    width: 0.08em;
+    height: 0.86em;
+    margin-left: 0.08em;
+    transform: translateY(0.08em);
+    background-color: currentColor;
+    animation: oe-type-caret 0.85s steps(1) infinite;
   }
 
   .hero-shine {
@@ -328,18 +334,9 @@
   }
 }
 
-@keyframes oe-word-pop {
-  0%, 72%, 100% {
-    transform: translateY(0) scale(1);
-    filter: brightness(1);
-  }
-  8% {
-    transform: translateY(-5px) scale(1.045);
-    filter: brightness(1.18);
-  }
-  14% {
-    transform: translateY(0) scale(0.995);
-  }
+@keyframes oe-type-caret {
+  0%, 48% { opacity: 1; }
+  49%, 100% { opacity: 0; }
 }
 
 @keyframes oe-shine {

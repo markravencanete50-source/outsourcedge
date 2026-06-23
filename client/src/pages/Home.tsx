@@ -149,6 +149,8 @@ export default function Home() {
     description: service.description,
     icon: "",
   }));
+  const heroWords = content.heroTitle.split(" ");
+  let heroLetterIndex = 0;
 
   return (
     <div className="min-h-screen bg-[#FAF7F1]">
@@ -202,14 +204,32 @@ export default function Home() {
             <motion.p variants={fadeUp} className="eyebrow mb-5">
               Offshore talent. Onshore standards.
             </motion.p>
-            <motion.p variants={fadeUp} className="mb-4 font-['Poppins'] text-2xl font-semibold leading-tight text-white md:text-4xl">
-              <span className="hero-word-pop">Your Growth Team, Ready Now</span>
-            </motion.p>
             <motion.h1
+              key={content.heroTitle}
               variants={fadeUp}
-              className="max-w-4xl text-5xl font-bold leading-[1.05] text-white drop-shadow-[0_16px_42px_rgba(0,0,0,0.40)] md:text-7xl"
+              className="hero-typewriter max-w-4xl text-5xl font-bold leading-[1.05] text-white drop-shadow-[0_16px_42px_rgba(0,0,0,0.40)] md:text-7xl"
+              aria-label={content.heroTitle}
             >
-              {content.heroTitle}
+              {heroWords.map((word, wordIndex) => (
+                <span key={`${word}-${wordIndex}`} className="inline-block whitespace-nowrap">
+                  {word.split("").map((letter, letterIndex) => {
+                    const delay = heroLetterIndex++ * 0.035;
+                    return (
+                      <motion.span
+                        key={`${word}-${letterIndex}`}
+                        aria-hidden="true"
+                        className="inline-block"
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.16, delay, ease: "easeOut" }}
+                      >
+                        {letter}
+                      </motion.span>
+                    );
+                  })}
+                  {wordIndex < heroWords.length - 1 && <span aria-hidden="true">&nbsp;</span>}
+                </span>
+              ))}
             </motion.h1>
             <motion.p variants={fadeUp} className="mt-7 max-w-2xl text-lg font-medium leading-8 text-white/86 md:text-xl">
               {content.heroSubtitle}
