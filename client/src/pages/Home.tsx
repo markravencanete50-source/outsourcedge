@@ -2,11 +2,11 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import AiAssistant from "@/components/AiAssistant";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, CheckCircle, Users, Zap, TrendingUp, Globe, Award, Star, Shield, Cpu, Target, Cog } from "lucide-react";
+import { ArrowRight, CheckCircle, ClipboardCheck, Home as HomeIcon, Shield, Star, Users, Wrench } from "lucide-react";
 import { Link } from "wouter";
-import { motion } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 import { useEffect, useState } from "react";
-import { doc, onSnapshot, collection, query, orderBy, limit } from "firebase/firestore";
+import { collection, doc, limit, onSnapshot, orderBy, query } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 
 interface PageContent {
@@ -31,37 +31,52 @@ interface Testimonial {
 }
 
 const DEFAULT_CONTENT: PageContent = {
-  heroTitle: "Scale Your Business with Dedicated Growth Partners",
-  heroSubtitle: "OutsourcEdge helps businesses streamline operations, improve customer experiences, and accelerate growth through world-class outsourcing solutions.",
-  servicesTitle: "Our Specialized Services",
+  heroTitle: "Your listings, expertly managed.",
+  heroSubtitle: "OutsourcEdge places vetted offshore property talent with US realtors, landlords, and STR hosts who want calm operations without in-house overhead.",
+  servicesTitle: "Property support built around the work owners actually need done",
 };
 
-const trustItems = [
-  { icon: Shield, title: "Secure Operations", description: "Enterprise-grade security and compliance standards" },
-  { icon: Users, title: "Dedicated Support", description: "Dedicated teams aligned with your business goals" },
-  { icon: Cpu, title: "Technology Enabled", description: "Powered by modern tools and platforms" },
-  { icon: Cog, title: "Process Driven", description: "Systematic, repeatable, and optimized workflows" },
-  { icon: TrendingUp, title: "Scalable Solutions", description: "Grow from 1 to 100+ team members seamlessly" },
-  { icon: Award, title: "Operational Excellence", description: "Continuous improvement and quality assurance" },
+const highlights = [
+  { value: "5-7", label: "days to onboard" },
+  { value: "24/7", label: "request intake" },
+  { value: "40-60%", label: "lower ops overhead" },
+  { value: "US", label: "property owner focus" },
 ];
 
-const differentiators = [
-  { icon: Target, title: "Operational Excellence", description: "We don't just provide staff—we deliver systematic processes, quality assurance, and continuous improvement frameworks." },
-  { icon: Users, title: "Dedicated Growth Partners", description: "Your team becomes an extension of your business, not just a vendor. We invest in understanding your goals." },
-  { icon: Cog, title: "Process-Driven Delivery", description: "Every engagement is built on documented processes, clear KPIs, and accountability measures." },
-  { icon: TrendingUp, title: "Cost Efficiency", description: "Reduce operational costs by 40-60% while maintaining or improving service quality." },
-  { icon: Globe, title: "Scalable Workforce Solutions", description: "Scale your team up or down without the overhead of hiring and managing full-time employees." },
-  { icon: Cpu, title: "Technology-Enabled Operations", description: "Leverage Microsoft 365, ClickUp, Firebase, and custom integrations for seamless collaboration." },
+const servicesFallback = [
+  {
+    icon: HomeIcon,
+    title: "Listing Operations",
+    description: "Calendar, listing, guest, and tenant coordination handled with clean daily communication.",
+  },
+  {
+    icon: Wrench,
+    title: "Maintenance Coordination",
+    description: "Request intake, vendor follow-up, status updates, and documentation before problems get expensive.",
+  },
+  {
+    icon: ClipboardCheck,
+    title: "Owner Reporting",
+    description: "Reliable summaries, task tracking, rent follow-up, and portfolio visibility without more admin work.",
+  },
 ];
 
 const processSteps = [
-  { step: 1, title: "Discovery", description: "We learn about your business, challenges, and goals." },
-  { step: 2, title: "Assessment", description: "We analyze processes and identify opportunities." },
-  { step: 3, title: "Talent Matching", description: "We match the right team members to your needs." },
-  { step: 4, title: "Onboarding", description: "Seamless integration with your team and systems." },
-  { step: 5, title: "Execution", description: "Dedicated team begins delivering results with transparency." },
-  { step: 6, title: "Improvement", description: "Regular review, optimization, and scaling." },
+  "Map the work",
+  "Match the right talent",
+  "Onboard into your tools",
+  "Report results weekly",
 ];
+
+const fadeUp: Variants = {
+  hidden: { opacity: 0, y: 24 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.65, ease: [0.16, 1, 0.3, 1] } },
+};
+
+const stagger: Variants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.1 } },
+};
 
 export default function Home() {
   const [content, setContent] = useState<PageContent>(DEFAULT_CONTENT);
@@ -71,23 +86,20 @@ export default function Home() {
   useEffect(() => {
     if (!db) return;
 
-    // Store unsubscribe functions and clean them up on unmount
-    const docRef = doc(db, "site_content", "main");
-    const unsubContent = onSnapshot(docRef, (docSnap) => {
-      if (docSnap.exists()) setContent({ ...DEFAULT_CONTENT, ...docSnap.data() as PageContent });
+    const unsubContent = onSnapshot(doc(db, "site_content", "main"), (docSnap) => {
+      if (docSnap.exists()) setContent({ ...DEFAULT_CONTENT, ...(docSnap.data() as PageContent) });
     });
 
-    const qServices = query(collection(db, "services"), orderBy("order", "asc"), limit(6));
-    const unsubServices = onSnapshot(qServices, (snapshot) =>
-      setServices(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Service)))
-    );
+    const servicesQuery = query(collection(db, "services"), orderBy("order", "asc"), limit(3));
+    const unsubServices = onSnapshot(servicesQuery, (snapshot) => {
+      setServices(snapshot.docs.map((serviceDoc) => ({ id: serviceDoc.id, ...serviceDoc.data() } as Service)));
+    });
 
-    const qTestimonials = query(collection(db, "testimonials"), limit(3));
-    const unsubTestimonials = onSnapshot(qTestimonials, (snapshot) =>
-      setTestimonials(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Testimonial)))
-    );
+    const testimonialsQuery = query(collection(db, "testimonials"), limit(3));
+    const unsubTestimonials = onSnapshot(testimonialsQuery, (snapshot) => {
+      setTestimonials(snapshot.docs.map((testimonialDoc) => ({ id: testimonialDoc.id, ...testimonialDoc.data() } as Testimonial)));
+    });
 
-    // Cleanup all listeners when the component unmounts
     return () => {
       unsubContent();
       unsubServices();
@@ -95,301 +107,46 @@ export default function Home() {
     };
   }, []);
 
-  // Animation Variants
-  const fadeUpVariant = {
-    hidden: { opacity: 0, y: 40 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } }
-  };
-
-  const scaleVariant = {
-    hidden: { opacity: 0, scale: 0.8 },
-    visible: { opacity: 1, scale: 1, transition: { duration: 0.6, ease: "easeOut" } }
-  };
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.12,
-        delayChildren: 0.2,
-      }
-    }
-  };
+  const visibleServices = services.length > 0 ? services : servicesFallback.map((service, index) => ({
+    id: String(index),
+    title: service.title,
+    description: service.description,
+    icon: "",
+  }));
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[#FAF7F1]">
       <Header />
-      
-      {/* HERO SECTION */}
-      <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-slate-50/30 to-white -z-10" />
-        {/* Replaced animate-pulse blobs with static blobs — no GPU drain */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-[#1B3A4B]/10 rounded-full blur-3xl -z-10" />
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-100/20 rounded-full blur-3xl -z-10" />
-        
-        <div className="container">
-          <motion.div 
-            className="max-w-4xl"
-            initial="hidden"
-            animate="visible"
-            variants={containerVariants}
-          >
-            <motion.div 
-              variants={fadeUpVariant}
-              className="inline-flex items-center gap-2 mb-6 px-4 py-2 bg-[#EEF2F5] rounded-full border border-[#1B3A4B]/20"
-            >
-              <Zap className="w-4 h-4 text-[#1B3A4B]" />
-              <span className="text-sm font-bold text-[#1B3A4B]">Trusted by leading businesses worldwide</span>
-            </motion.div>
 
-            <motion.h1 
-              variants={fadeUpVariant}
-              className="text-5xl md:text-7xl font-bold text-slate-900 mb-6 leading-tight"
-            >
+      <section className="relative min-h-[92vh] overflow-hidden bg-[#1F2A44] pt-32 text-white md:pt-40">
+        <div
+          className="absolute inset-0 bg-cover bg-center opacity-42"
+          style={{
+            backgroundImage:
+              "url('https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=2200&q=82')",
+          }}
+          aria-hidden="true"
+        />
+        <div className="absolute inset-0 bg-[#1F2A44]/72" aria-hidden="true" />
+        <div className="container relative z-10 flex min-h-[calc(92vh-8rem)] items-center pb-16">
+          <motion.div className="max-w-4xl" initial="hidden" animate="visible" variants={stagger}>
+            <motion.div variants={fadeUp} className="mb-6 h-px w-24 bg-[#C6A75E]" />
+            <motion.p variants={fadeUp} className="eyebrow mb-5">
+              Offshore property talent. On-shore standards.
+            </motion.p>
+            <motion.h1 variants={fadeUp} className="max-w-4xl text-5xl font-semibold leading-[1.05] text-white md:text-7xl">
               {content.heroTitle}
             </motion.h1>
-
-            <motion.p 
-              variants={fadeUpVariant}
-              className="text-xl md:text-2xl text-slate-600 mb-8 max-w-3xl leading-relaxed"
-            >
+            <motion.p variants={fadeUp} className="mt-7 max-w-2xl text-lg leading-8 text-white/78 md:text-xl">
               {content.heroSubtitle}
             </motion.p>
-
-            <motion.div 
-              variants={fadeUpVariant}
-              className="flex flex-col sm:flex-row gap-4"
-            >
+            <motion.div variants={fadeUp} className="mt-9 flex flex-col gap-4 sm:flex-row">
               <Link href="/contact">
-                <Button className="btn-primary text-lg">Book a Consultation</Button>
+                <Button className="btn-gold text-base">Book a Discovery Call</Button>
               </Link>
-              <Link href="/services">
-                <Button className="btn-outline text-lg">Explore Services</Button>
-              </Link>
-            </motion.div>
-
-            <motion.div 
-              variants={fadeUpVariant}
-              className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8"
-            >
-              {[
-                { label: "Years of Experience", value: "10+" },
-                { label: "Team Members", value: "500+" },
-                { label: "Clients Served", value: "200+" },
-                { label: "Success Rate", value: "98%" },
-              ].map((stat, i) => (
-                <motion.div 
-                  key={i}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.6 + i * 0.1, duration: 0.6 }}
-                  className="text-center"
-                >
-                  <div className="text-3xl md:text-4xl font-bold text-[#1B3A4B] mb-2">{stat.value}</div>
-                  <div className="text-sm text-slate-600">{stat.label}</div>
-                </motion.div>
-              ))}
-            </motion.div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* TRUST & CREDIBILITY */}
-      <section className="py-20 md:py-32 bg-slate-50">
-        <div className="container">
-          <motion.div 
-            className="text-center mb-16"
-            initial="hidden"
-            whileInView="visible"
-            variants={containerVariants}
-            viewport={{ once: true, margin: "-100px" }}
-          >
-            <motion.h2 
-              variants={fadeUpVariant}
-              className="text-4xl md:text-5xl font-bold text-slate-900 mb-4"
-            >
-              Why Businesses Trust OutsourcEdge
-            </motion.h2>
-            <motion.p 
-              variants={fadeUpVariant}
-              className="text-xl text-slate-600 max-w-2xl mx-auto"
-            >
-              We combine operational excellence with dedicated partnership to deliver measurable business outcomes.
-            </motion.p>
-          </motion.div>
-
-          <motion.div 
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-            initial="hidden"
-            whileInView="visible"
-            variants={containerVariants}
-            viewport={{ once: true, margin: "-100px" }}
-          >
-            {trustItems.map((item, i) => (
-              <motion.div 
-                key={i}
-                variants={scaleVariant}
-                className="group p-8 bg-white rounded-2xl border border-slate-200 hover:border-[#B8973E]/50 hover:shadow-xl transition-all duration-300 cursor-pointer"
-                whileHover={{ y: -5 }}
-              >
-                <motion.div 
-                  className="w-14 h-14 bg-[#D6E0E5] rounded-xl flex items-center justify-center mb-6 group-hover:bg-[#B8D0DA] transition-colors"
-                  whileHover={{ scale: 1.1, rotate: 5 }}
-                >
-                  <item.icon className="w-7 h-7 text-[#1B3A4B]" />
-                </motion.div>
-                <h3 className="text-xl font-bold text-slate-900 mb-3">{item.title}</h3>
-                <p className="text-slate-600 leading-relaxed">{item.description}</p>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
-
-      {/* WHY OUTSOURCEDGE */}
-      <section className="py-20 md:py-32 bg-white">
-        <div className="container">
-          <motion.div 
-            className="text-center mb-16"
-            initial="hidden"
-            whileInView="visible"
-            variants={containerVariants}
-            viewport={{ once: true, margin: "-100px" }}
-          >
-            <motion.h2 
-              variants={fadeUpVariant}
-              className="text-4xl md:text-5xl font-bold text-slate-900 mb-4"
-            >
-              What Sets Us Apart
-            </motion.h2>
-            <motion.p 
-              variants={fadeUpVariant}
-              className="text-xl text-slate-600 max-w-2xl mx-auto"
-            >
-              Six core differentiators that make OutsourcEdge your ideal growth partner.
-            </motion.p>
-          </motion.div>
-
-          <motion.div 
-            className="grid grid-cols-1 md:grid-cols-2 gap-8"
-            initial="hidden"
-            whileInView="visible"
-            variants={containerVariants}
-            viewport={{ once: true, margin: "-100px" }}
-          >
-            {differentiators.map((item, i) => (
-              <motion.div 
-                key={i}
-                variants={fadeUpVariant}
-                className="p-8 bg-slate-50 rounded-2xl border border-slate-200 hover:border-[#B8973E]/50 hover:shadow-lg transition-all flex gap-4"
-                whileHover={{ x: 5 }}
-              >
-                <motion.div 
-                  whileHover={{ scale: 1.15, rotate: -5 }}
-                  className="w-12 h-12 bg-[#1B3A4B] rounded-xl flex items-center justify-center flex-shrink-0"
-                >
-                  <item.icon className="w-6 h-6 text-white" />
-                </motion.div>
-                <div>
-                  <h3 className="text-lg font-bold text-slate-900 mb-2">{item.title}</h3>
-                  <p className="text-slate-600 leading-relaxed">{item.description}</p>
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
-
-      {/* HOW IT WORKS */}
-      <section className="py-20 md:py-32 bg-slate-50">
-        <div className="container">
-          <motion.div 
-            className="text-center mb-16"
-            initial="hidden"
-            whileInView="visible"
-            variants={containerVariants}
-            viewport={{ once: true, margin: "-100px" }}
-          >
-            <motion.h2 
-              variants={fadeUpVariant}
-              className="text-4xl md:text-5xl font-bold text-slate-900 mb-4"
-            >
-              Our Proven Process
-            </motion.h2>
-            <motion.p 
-              variants={fadeUpVariant}
-              className="text-xl text-slate-600 max-w-2xl mx-auto"
-            >
-              Six strategic steps to transform your operations and accelerate growth.
-            </motion.p>
-          </motion.div>
-
-          <motion.div 
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8"
-            initial="hidden"
-            whileInView="visible"
-            variants={containerVariants}
-            viewport={{ once: true, margin: "-100px" }}
-          >
-            {processSteps.map((item, i) => (
-              <motion.div 
-                key={i}
-                variants={fadeUpVariant}
-                className="text-center"
-              >
-                <motion.div 
-                  className="w-12 h-12 bg-[#1B3A4B] text-white rounded-full flex items-center justify-center font-bold mx-auto mb-4 shadow-lg"
-                  whileHover={{ scale: 1.2, rotate: 360 }}
-                  transition={{ duration: 0.6 }}
-                >
-                  {item.step}
-                </motion.div>
-                <h3 className="text-lg font-bold text-slate-900 mb-2">{item.title}</h3>
-                <p className="text-slate-600 text-sm leading-relaxed">{item.description}</p>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
-
-      {/* FINAL CTA */}
-      <section className="py-20 md:py-32 bg-gradient-to-br from-[#1B3A4B] to-[#254F63] text-white relative overflow-hidden">
-        {/* Replaced animate-pulse with static decorative blob */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl" />
-
-        <div className="container relative z-10">
-          <motion.div 
-            className="max-w-3xl mx-auto text-center"
-            initial="hidden"
-            whileInView="visible"
-            variants={containerVariants}
-            viewport={{ once: true }}
-          >
-            <motion.h2 
-              variants={fadeUpVariant}
-              className="text-4xl md:text-5xl font-bold mb-6"
-            >
-              Ready to Scale Your Business?
-            </motion.h2>
-            <motion.p 
-              variants={fadeUpVariant}
-              className="text-xl md:text-2xl mb-8 leading-relaxed opacity-90"
-            >
-              Partner with OutsourcEdge and gain access to dedicated growth partners and operational excellence.
-            </motion.p>
-            <motion.div 
-              variants={fadeUpVariant}
-              className="flex flex-col sm:flex-row gap-4 justify-center"
-            >
-              <Link href="/contact">
-                <Button className="bg-white text-[#1B3A4B] hover:bg-slate-100 text-lg px-8 py-6 font-bold">
-                  Book a Consultation
-                </Button>
-              </Link>
-              <Link href="/services">
-                <Button className="border-2 border-white text-white hover:bg-white/10 text-lg px-8 py-6 font-bold">
-                  Explore Services
+              <Link href="/project-management">
+                <Button className="border border-white/25 bg-white/8 px-6 py-3.5 text-base font-bold text-white hover:bg-white/14">
+                  View Property Services
                 </Button>
               </Link>
             </motion.div>
@@ -397,61 +154,164 @@ export default function Home() {
         </div>
       </section>
 
-      {/* TESTIMONIALS */}
-      {testimonials.length > 0 && (
-        <section className="py-20 md:py-32 bg-white">
-          <div className="container">
-            <motion.div 
-              className="text-center mb-16"
-              initial="hidden"
-              whileInView="visible"
-              variants={containerVariants}
-              viewport={{ once: true, margin: "-100px" }}
-            >
-              <motion.h2 
-                variants={fadeUpVariant}
-                className="text-4xl md:text-5xl font-bold text-slate-900 mb-4"
-              >
-                Trusted by Industry Leaders
+      <section className="border-b border-[#1F2A44]/10 bg-white">
+        <div className="container grid grid-cols-2 gap-px md:grid-cols-4">
+          {highlights.map((stat) => (
+            <div key={stat.label} className="py-8 text-center">
+              <p className="stat-value text-3xl md:text-4xl">{stat.value}</p>
+              <p className="mt-2 text-sm font-semibold text-[#1B1F2A]/62">{stat.label}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="section-padding bg-[#FAF7F1]">
+        <div className="container">
+          <div className="grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
+            <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-80px" }} variants={stagger}>
+              <motion.p variants={fadeUp} className="eyebrow mb-4">Why owners delegate to us</motion.p>
+              <motion.h2 variants={fadeUp} className="text-4xl font-semibold leading-tight md:text-5xl">
+                Calm support for the tasks that keep portfolios moving.
               </motion.h2>
             </motion.div>
-            <motion.div 
-              className="grid grid-cols-1 md:grid-cols-3 gap-8"
-              initial="hidden"
-              whileInView="visible"
-              variants={containerVariants}
-              viewport={{ once: true, margin: "-100px" }}
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 0.65 }}
+              className="text-lg leading-8 text-[#1B1F2A]/68"
             >
-              {testimonials.map((t) => (
-                <motion.div 
-                  key={t.id}
-                  variants={scaleVariant}
-                  className="p-8 bg-slate-50 rounded-2xl border border-slate-200 hover:shadow-lg transition-all"
-                  whileHover={{ y: -5 }}
+              The brand should feel trustworthy enough to hand the keys to. That means clear owners, documented work, responsive updates, and no noisy sales language.
+            </motion.p>
+          </div>
+
+          <div className="mt-12 grid gap-6 md:grid-cols-3">
+            {[
+              { icon: Shield, title: "Vetted people", copy: "Talent selected for reliability, communication, and property operations judgment." },
+              { icon: Users, title: "Built into your workflow", copy: "We operate inside your tools, channels, templates, and approval rules." },
+              { icon: CheckCircle, title: "Visible delivery", copy: "Weekly reporting and clean task ownership keep work from disappearing." },
+            ].map((item) => (
+              <motion.article
+                key={item.title}
+                className="premium-card p-7"
+                initial={{ opacity: 0, y: 18 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-80px" }}
+                transition={{ duration: 0.55 }}
+              >
+                <item.icon className="mb-6 h-7 w-7 text-[#C6A75E]" />
+                <h3 className="text-xl font-semibold">{item.title}</h3>
+                <p className="mt-3 leading-7 text-[#1B1F2A]/66">{item.copy}</p>
+              </motion.article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="section-padding bg-[#E8DCC8]/52">
+        <div className="container">
+          <div className="mb-12 max-w-3xl">
+            <p className="eyebrow mb-4">Services</p>
+            <h2 className="text-4xl font-semibold leading-tight md:text-5xl">{content.servicesTitle}</h2>
+          </div>
+          <div className="grid gap-6 md:grid-cols-3">
+            {visibleServices.map((service, index) => {
+              const FallbackIcon = servicesFallback[index]?.icon ?? HomeIcon;
+              return (
+                <motion.article
+                  key={service.id}
+                  className="premium-card p-7"
+                  initial={{ opacity: 0, y: 18 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-80px" }}
+                  transition={{ duration: 0.55, delay: index * 0.06 }}
                 >
-                  <div className="flex gap-1 mb-4">
-                    {[...Array(t.rating)].map((_, i) => (
-                      <motion.div
-                        key={i}
-                        initial={{ opacity: 0, scale: 0 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: i * 0.1 }}
-                      >
-                        <Star className="w-5 h-5 fill-amber-400 text-amber-400" />
-                      </motion.div>
+                  <div className="mb-7 flex h-12 w-12 items-center justify-center rounded-lg bg-[#1F2A44] text-[#C6A75E]">
+                    <FallbackIcon className="h-6 w-6" />
+                  </div>
+                  <h3 className="text-xl font-semibold">{service.title}</h3>
+                  <p className="mt-3 leading-7 text-[#1B1F2A]/66">{service.description}</p>
+                  <Link href="/project-management">
+                    <a className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-[#1F2A44] transition hover:gap-3">
+                      Learn more <ArrowRight className="h-4 w-4" />
+                    </a>
+                  </Link>
+                </motion.article>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      <section className="section-padding section-deep">
+        <div className="container grid gap-12 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
+          <div>
+            <p className="eyebrow mb-4">How it works</p>
+            <h2 className="text-4xl font-semibold leading-tight md:text-5xl">A simple handoff, then steady execution.</h2>
+            <p className="mt-6 max-w-xl leading-8 text-white/70">
+              We keep motion subtle because the message needs to win: match, onboard, execute, report.
+            </p>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            {processSteps.map((step, index) => (
+              <motion.div
+                key={step}
+                className="rounded-lg border border-white/12 bg-white/6 p-6"
+                initial={{ opacity: 0, y: 18 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-80px" }}
+                transition={{ duration: 0.5, delay: index * 0.06 }}
+              >
+                <p className="mb-4 text-sm font-bold text-[#C6A75E]">0{index + 1}</p>
+                <h3 className="text-xl font-semibold text-white">{step}</h3>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {testimonials.length > 0 && (
+        <section className="section-padding bg-white">
+          <div className="container">
+            <h2 className="mb-10 text-4xl font-semibold">Trusted by operators who need the work handled.</h2>
+            <div className="grid gap-6 md:grid-cols-3">
+              {testimonials.map((testimonial) => (
+                <article key={testimonial.id} className="premium-card p-7">
+                  <div className="mb-5 flex gap-1">
+                    {[...Array(testimonial.rating)].map((_, index) => (
+                      <Star key={index} className="h-4 w-4 fill-[#C6A75E] text-[#C6A75E]" />
                     ))}
                   </div>
-                  <p className="text-slate-700 mb-6 italic leading-relaxed">"{t.content}"</p>
-                  <div className="border-t border-slate-200 pt-4">
-                    <p className="font-bold text-slate-900">{t.name}</p>
-                    <p className="text-sm text-slate-600">{t.company}</p>
+                  <p className="leading-7 text-[#1B1F2A]/70">"{testimonial.content}"</p>
+                  <div className="mt-6 border-t border-[#1F2A44]/10 pt-5">
+                    <p className="font-bold text-[#1F2A44]">{testimonial.name}</p>
+                    <p className="text-sm text-[#1B1F2A]/58">{testimonial.company}</p>
                   </div>
-                </motion.div>
+                </article>
               ))}
-            </motion.div>
+            </div>
           </div>
         </section>
       )}
+
+      <section className="bg-[#FAF7F1] py-18 md:py-24">
+        <div className="container">
+          <div className="rounded-lg bg-[#1F2A44] p-8 text-white md:p-12">
+            <div className="grid gap-8 md:grid-cols-[1fr_auto] md:items-center">
+              <div>
+                <p className="eyebrow mb-4">Next step</p>
+                <h2 className="text-3xl font-semibold text-white md:text-4xl">Get the right property support in place.</h2>
+                <p className="mt-4 max-w-2xl leading-7 text-white/70">
+                  Tell us what you need off your plate. We will map the role, tools, and first-week operating rhythm.
+                </p>
+              </div>
+              <Link href="/contact">
+                <Button className="btn-gold">Book a Discovery Call</Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
 
       <Footer />
       <AiAssistant />

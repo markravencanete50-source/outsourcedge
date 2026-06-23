@@ -1,73 +1,67 @@
 import { Link } from "wouter";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
-import { Button } from "@/components/ui/button"; // Import Button component
+import { Button } from "@/components/ui/button";
+
+const navLinks = [
+  { href: "/", label: "Home" },
+  { href: "/about", label: "About" },
+  { href: "/services", label: "Services" },
+  { href: "/project-management", label: "Property Management" },
+  { href: "/careers", label: "Careers" },
+  { href: "/contact", label: "Contact" },
+];
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
 
-  const navLinks = [
-    { href: "/", label: "Home" },
-    { href: "/about", label: "About" },
-    { href: "/services", label: "Services" },
-    { href: "/project-management", label: "Project Management Services" },
-    { href: "/careers", label: "Careers" },
-    { href: "/contact", label: "Contact" },
-  ];
-
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200">
-      <div className="container flex items-center justify-between h-20">
-        {/* Logo */}
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-[#1F2A44]/10 bg-[#FAF7F1]/92 backdrop-blur-xl">
+      <div className="container flex h-20 items-center justify-between">
         <Link href="/">
-          <a className="flex items-center gap-3 font-bold text-2xl hover:opacity-80 transition">
-            <div className="w-10 h-10 bg-gradient-to-br from-[#1B3A4B] to-[#059669] rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold">OE</span>
+          <a className="flex items-center gap-3 transition hover:opacity-85" aria-label="OutsourcEdge home">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#1F2A44] text-sm font-bold text-[#C6A75E]">
+              OE
             </div>
-            <span className="text-[#0F172A]">OutsourcEdge</span>
+            <span className="font-['Poppins'] text-xl font-semibold text-[#1F2A44]">
+              OutsourcEdge
+            </span>
           </a>
         </Link>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-8">
+        <nav className="hidden items-center gap-7 md:flex">
           {navLinks.map((link) => (
             <Link key={link.href} href={link.href}>
-              <a className="text-[#0F172A] hover:text-[#1B3A4B] transition font-medium whitespace-nowrap">
+              <a className="text-sm font-semibold text-[#1B1F2A]/78 transition hover:text-[#1F2A44]">
                 {link.label}
               </a>
             </Link>
           ))}
         </nav>
 
-        {/* CTA Button */}
-        <div className="hidden md:flex items-center">
+        <div className="hidden md:flex">
           <Link href="/contact">
-            <Button className="btn-primary">Get Started</Button> {/* Using Button component */}
+            <Button className="btn-gold">Book a Discovery Call</Button>
           </Link>
         </div>
 
-        {/* Mobile Menu Button */}
         <button
-          className="md:hidden p-2"
-          onClick={() => setIsOpen(!isOpen)}
+          className="rounded-lg p-2 text-[#1F2A44] md:hidden"
+          onClick={() => setIsOpen((open) => !open)}
           aria-label="Toggle menu"
+          aria-expanded={isOpen}
         >
-          {isOpen ? (
-            <X className="w-6 h-6 text-[#0F172A]" />
-          ) : (
-            <Menu className="w-6 h-6 text-[#0F172A]" />
-          )}
+          {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
         </button>
       </div>
 
-      {/* Mobile Navigation */}
       {isOpen && (
-        <nav className="md:hidden bg-white border-t border-gray-200">
-          <div className="container py-4 flex flex-col gap-2">
+        <nav className="border-t border-[#1F2A44]/10 bg-[#FAF7F1] md:hidden">
+          <div className="container flex flex-col gap-1 py-4">
             {navLinks.map((link) => (
               <Link key={link.href} href={link.href}>
                 <a
-                  className="text-[#0F172A] hover:text-[#1B3A4B] transition font-medium py-2 px-2 rounded-lg hover:bg-gray-50 block"
+                  className="rounded-lg px-3 py-3 text-sm font-semibold text-[#1F2A44] transition hover:bg-white"
                   onClick={() => setIsOpen(false)}
                 >
                   {link.label}
@@ -75,11 +69,8 @@ export default function Header() {
               </Link>
             ))}
             <Link href="/contact">
-              <Button // Using Button component for mobile as well
-                className="btn-primary w-full mt-2"
-                onClick={() => setIsOpen(false)}
-              >
-                Get Started
+              <Button className="btn-gold mt-3 w-full" onClick={() => setIsOpen(false)}>
+                Book a Discovery Call
               </Button>
             </Link>
           </div>
