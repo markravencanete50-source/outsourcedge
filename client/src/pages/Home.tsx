@@ -88,11 +88,24 @@ const KEYFRAMES = `
   .oe-bounce-x, .oe-bob, .oe-float, .oe-cue { animation: none !important; }
 }`;
 
+function useIsDesktop(query = "(min-width: 1024px)") {
+  const [v, setV] = useState(false);
+  useEffect(() => {
+    const m = window.matchMedia(query);
+    const on = () => setV(m.matches);
+    on();
+    m.addEventListener("change", on);
+    return () => m.removeEventListener("change", on);
+  }, [query]);
+  return v;
+}
+
 export default function Home() {
   const [content, setContent] = useState<PageContent>(DEFAULT_CONTENT);
   const [services, setServices] = useState<Service[]>([]);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const reduce = useReducedMotion();
+  const isDesktop = useIsDesktop(); // pinned scrollytelling + horizontal lanes only on lg+
 
   // Hero parallax
   const heroRef = useRef<HTMLElement>(null);
@@ -223,27 +236,27 @@ export default function Home() {
         </section>
 
         {/* ── SCROLLYTELLING · WHY DELEGATE (pinned) ────────────────────────── */}
-        <section ref={whyRef} className="relative h-[340vh] bg-[#FAF7F1]">
-          <div className="sticky top-0 flex h-screen items-center overflow-hidden">
-            <div className="container grid items-center gap-8 md:grid-cols-2 md:gap-[clamp(28px,5vw,72px)]">
+        <section ref={whyRef} className={`relative bg-[#FAF7F1] ${isDesktop ? "h-[340vh]" : ""}`}>
+          <div className={`flex items-center ${isDesktop ? "sticky top-0 h-screen overflow-hidden" : ""}`}>
+            <div className="container grid items-center gap-8 py-16 lg:grid-cols-2 lg:gap-[clamp(28px,5vw,72px)] lg:py-0">
               <div>
                 <p className="eyebrow mb-[18px]">Why owners delegate to us</p>
                 <div className="relative">
                   {whyPanels.map((p, i) => (
-                    <motion.div key={i} className={i === 0 ? "" : "absolute inset-0"} animate={{ opacity: whyActive === i ? 1 : 0, y: whyActive === i ? 0 : 14 }} transition={{ duration: 0.5 }} style={{ pointerEvents: whyActive === i ? "auto" : "none" }}>
+                    <motion.div key={i} className={isDesktop ? (i === 0 ? "" : "absolute inset-0") : (i === 0 ? "" : "mt-10")} animate={isDesktop ? { opacity: whyActive === i ? 1 : 0, y: whyActive === i ? 0 : 14 } : { opacity: 1, y: 0 }} transition={{ duration: 0.5 }} style={{ pointerEvents: isDesktop && whyActive !== i ? "none" : "auto" }}>
                       <h2 className="font-['Poppins'] text-[clamp(28px,4.2vw,50px)] font-semibold leading-[1.08] tracking-[-0.015em] text-[#1F2A44]">{p.title}</h2>
                       <p className="mt-[18px] max-w-[480px] text-[clamp(15px,1.7vw,19px)] leading-[1.62] text-[#1B1F2A]/[0.66]">{p.copy}</p>
-                      <motion.span className="mt-6 block h-0.5 w-16 origin-left bg-[#C6A75E]" animate={{ scaleX: whyActive === i ? 1 : 0 }} transition={{ duration: 0.6, ease: SMOOTH_EASE }} />
+                      <motion.span className="mt-6 block h-0.5 w-16 origin-left bg-[#C6A75E]" animate={{ scaleX: isDesktop ? (whyActive === i ? 1 : 0) : 1 }} transition={{ duration: 0.6, ease: SMOOTH_EASE }} />
                     </motion.div>
                   ))}
                 </div>
-                <div className="mt-10 flex gap-2.5">
+                <div className={`mt-10 gap-2.5 ${isDesktop ? "flex" : "hidden"}`}>
                   {whyPanels.map((_, i) => (
                     <span key={i} className="h-[3px] w-[46px] rounded-full transition-colors duration-300" style={{ background: whyActive === i ? "#C6A75E" : "rgba(31,42,68,.16)" }} />
                   ))}
                 </div>
               </div>
-              <div className="relative hidden aspect-[4/5] overflow-hidden rounded-[18px] border border-[#1F2A44]/10 shadow-[0_40px_90px_rgba(31,42,68,0.22)] sm:block">
+              <div className="relative hidden aspect-[4/5] overflow-hidden rounded-[18px] border border-[#1F2A44]/10 shadow-[0_40px_90px_rgba(31,42,68,0.22)] lg:block">
                 {whyPanels.map((p, i) => (
                   <motion.div key={i} className="absolute inset-0" animate={{ opacity: whyActive === i ? 1 : 0, scale: whyActive === i ? 1 : 1.07 }} transition={{ duration: 0.6 }}>
                     <img src={p.img} alt="" className="h-full w-full object-cover" />
@@ -286,16 +299,16 @@ export default function Home() {
         </section>
 
         {/* ── HORIZONTAL · WHERE WE PLUG IN ─────────────────────────────────── */}
-        <section ref={lanesRef} className="relative h-auto bg-white md:h-[360vh]">
-          <div className="flex flex-col justify-center overflow-hidden py-20 md:sticky md:top-0 md:h-screen md:py-0">
-            <div className="container mb-6 flex flex-col items-start justify-between gap-5 md:mb-12 md:flex-row md:items-end">
+        <section ref={lanesRef} className="relative bg-white lg:h-[360vh]">
+          <div className="flex flex-col justify-center overflow-hidden py-20 lg:sticky lg:top-0 lg:h-screen lg:py-0">
+            <div className="container mb-6 flex flex-col items-start justify-between gap-5 lg:mb-12 lg:flex-row lg:items-end">
               <div>
                 <p className="eyebrow mb-3.5">Where we plug in</p>
                 <h2 className="max-w-[620px] font-['Poppins'] text-[clamp(28px,4vw,50px)] font-semibold leading-[1.06] tracking-[-0.015em] text-[#1F2A44]">Support lanes that match the work.</h2>
               </div>
-              <span className="hidden items-center gap-2 whitespace-nowrap text-[13px] font-semibold text-[#1B1F2A]/45 md:flex">Scroll <ArrowRight className="h-3.5 w-5" /></span>
+              <span className="hidden items-center gap-2 whitespace-nowrap text-[13px] font-semibold text-[#1B1F2A]/45 lg:flex">Scroll <ArrowRight className="h-3.5 w-5" /></span>
             </div>
-            <motion.div className="flex gap-[22px] overflow-x-auto px-4 [scrollbar-width:none] sm:px-6 md:overflow-visible md:px-[clamp(20px,5vw,40px)] [&::-webkit-scrollbar]:hidden" style={{ x: trackX, scrollSnapType: "x mandatory" }}>
+            <motion.div className="flex gap-[22px] overflow-x-auto px-4 [scrollbar-width:none] sm:px-6 lg:overflow-visible lg:px-[clamp(20px,5vw,40px)] [&::-webkit-scrollbar]:hidden" style={{ x: isDesktop ? trackX : 0, scrollSnapType: "x mandatory" }}>
               {lanes.map((l) => (
                 <article key={l.n} className="w-[clamp(280px,74vw,440px)] flex-[0_0_auto] snap-start overflow-hidden rounded-[18px] border border-[#1F2A44]/10 bg-[#FAF7F1]">
                   <div className="relative h-[230px]">
@@ -312,7 +325,7 @@ export default function Home() {
                 <Button asChild className="btn-gold mt-[26px] self-start"><Link href="/contact">Tell us what you need</Link></Button>
               </article>
             </motion.div>
-            <div className="container mt-9 hidden md:block">
+            <div className="container mt-9 hidden lg:block">
               <div className="h-[3px] overflow-hidden rounded-full bg-[#1F2A44]/10"><motion.span className="block h-full rounded-full bg-[#C6A75E]" style={{ width: lanesBar }} /></div>
             </div>
           </div>
