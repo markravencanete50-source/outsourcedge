@@ -55,9 +55,9 @@ const servicesFallback = [
 ];
 
 const whyPanels = [
-  { title: "Vetted people you can hand the keys to.", copy: "Talent selected for reliability, communication, role fit, and judgment under real operating pressure — not the cheapest seat we can fill.", img: "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=1200&q=80" },
-  { title: "Built into the way you already work.", copy: "We operate inside your tools, channels, templates, and approval rules — so it feels less like outsourcing and more like a teammate who simply gets it.", img: "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=1200&q=80" },
-  { title: "Delivery you can actually see.", copy: "Weekly reporting and clean task ownership keep work from disappearing. You always know what got done, what's next, and who owns it.", img: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80" },
+  { title: "Vetted people you can hand the keys to.", chip: "Vetted talent", copy: "Talent selected for reliability, communication, role fit, and judgment under real operating pressure — not the cheapest seat we can fill.", img: "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=1200&q=80" },
+  { title: "Built into the way you already work.", chip: "Inside your workflow", copy: "We operate inside your tools, channels, templates, and approval rules — so it feels less like outsourcing and more like a teammate who simply gets it.", img: "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=1200&q=80" },
+  { title: "Delivery you can actually see.", chip: "Visible delivery", copy: "Weekly reporting and clean task ownership keep work from disappearing. You always know what got done, what's next, and who owns it.", img: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80" },
 ];
 
 const lanes = [
@@ -84,6 +84,7 @@ const KEYFRAMES = `
 @keyframes oe-bob { 0% { transform: translateY(12vh); } 100% { transform: translateY(58vh); } }
 @keyframes oe-float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
 @keyframes oe-cue { 0% { transform: translateY(0); opacity: 0; } 40% { opacity: 1; } 80% { transform: translateY(11px); opacity: 0; } 100% { opacity: 0; } }
+@keyframes oe-kb { from { transform: scale(1.02) translate(0, 0); } to { transform: scale(1.14) translate(-2.5%, -2%); } }
 @media (prefers-reduced-motion: reduce) {
   .oe-bounce-x, .oe-bob, .oe-float, .oe-cue { animation: none !important; }
 }`;
@@ -98,6 +99,51 @@ function useIsDesktop(query = "(min-width: 1024px)") {
     return () => m.removeEventListener("change", on);
   }, [query]);
   return v;
+}
+
+/* Mobile-only card for the "why delegate" section — animated photo card with
+   scroll parallax + Ken Burns, replacing the flat stacked text below lg.
+   Desktop keeps the pinned scrollytelling untouched. */
+function WhyMobileCard({ panel, index }: { panel: (typeof whyPanels)[number]; index: number }) {
+  const reduce = useReducedMotion();
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
+  const imgY = useTransform(scrollYProgress, [0, 1], reduce ? ["0%", "0%"] : ["-8%", "8%"]);
+
+  return (
+    <Reveal>
+      <article className="overflow-hidden rounded-[22px] border border-[#1F2A44]/10 bg-white shadow-[0_22px_50px_rgba(31,42,68,0.12)]">
+        <div ref={ref} className="relative h-52 overflow-hidden">
+          <motion.div className="absolute inset-x-0 -top-[12%] h-[124%] will-change-transform" style={{ y: imgY }}>
+            <img
+              src={panel.img}
+              alt=""
+              className="h-full w-full object-cover"
+              style={{ animation: reduce ? undefined : "oe-kb 17s ease-in-out infinite alternate" }}
+            />
+          </motion.div>
+          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(20,25,41,0.05),rgba(20,25,41,0.12)_45%,rgba(20,25,41,0.74))]" aria-hidden="true" />
+          <span className="absolute left-4 top-4 flex h-[42px] w-[42px] items-center justify-center rounded-[12px] border border-white/20 bg-[rgba(15,19,33,0.55)] font-['Poppins'] text-base font-bold text-[#C6A75E] backdrop-blur-sm">
+            0{index + 1}
+          </span>
+          <span className="absolute bottom-[18px] left-4 rounded-full bg-[rgba(198,167,94,0.92)] px-[11px] py-1.5 text-[11px] font-bold uppercase tracking-[0.14em] text-white">
+            {panel.chip}
+          </span>
+        </div>
+        <div className="px-[22px] pb-7 pt-6">
+          <h3 className="font-['Poppins'] text-[clamp(22px,6.2vw,26px)] font-semibold leading-[1.12] tracking-[-0.01em] text-[#1F2A44]">{panel.title}</h3>
+          <p className="mt-[13px] text-base leading-[1.6] text-[#1B1F2A]/[0.66]">{panel.copy}</p>
+          <motion.span
+            className="mt-[22px] block h-0.5 w-16 origin-left bg-[#C6A75E]"
+            initial={{ scaleX: reduce ? 1 : 0 }}
+            whileInView={{ scaleX: 1 }}
+            viewport={{ once: true, amount: 0.6 }}
+            transition={{ duration: 0.7, delay: 0.18, ease: SMOOTH_EASE }}
+          />
+        </div>
+      </article>
+    </Reveal>
+  );
 }
 
 export default function Home() {
@@ -235,42 +281,60 @@ export default function Home() {
           </Stagger>
         </section>
 
-        {/* ── SCROLLYTELLING · WHY DELEGATE (pinned) ────────────────────────── */}
+        {/* ── WHY DELEGATE — pinned scrollytelling (lg+) / animated cards (mobile) ── */}
         <section ref={whyRef} className={`relative bg-[#FAF7F1] ${isDesktop ? "h-[340vh]" : ""}`}>
-          <div className={`flex items-center ${isDesktop ? "sticky top-0 h-screen overflow-hidden" : ""}`}>
-            <div className="container grid items-center gap-8 py-16 lg:grid-cols-2 lg:gap-[clamp(28px,5vw,72px)] lg:py-0">
-              <div>
-                <p className="eyebrow mb-[18px]">Why owners delegate to us</p>
-                <div className="relative">
+          {isDesktop ? (
+            <div className="sticky top-0 flex h-screen items-center overflow-hidden">
+              <div className="container grid items-center gap-[clamp(28px,5vw,72px)] lg:grid-cols-2">
+                <div>
+                  <p className="eyebrow mb-[18px]">Why owners delegate to us</p>
+                  <div className="relative">
+                    {whyPanels.map((p, i) => (
+                      <motion.div key={i} className={i === 0 ? "" : "absolute inset-0"} animate={{ opacity: whyActive === i ? 1 : 0, y: whyActive === i ? 0 : 14 }} transition={{ duration: 0.5 }} style={{ pointerEvents: whyActive === i ? "auto" : "none" }}>
+                        <h2 className="font-['Poppins'] text-[clamp(28px,4.2vw,50px)] font-semibold leading-[1.08] tracking-[-0.015em] text-[#1F2A44]">{p.title}</h2>
+                        <p className="mt-[18px] max-w-[480px] text-[clamp(15px,1.7vw,19px)] leading-[1.62] text-[#1B1F2A]/[0.66]">{p.copy}</p>
+                        <motion.span className="mt-6 block h-0.5 w-16 origin-left bg-[#C6A75E]" animate={{ scaleX: whyActive === i ? 1 : 0 }} transition={{ duration: 0.6, ease: SMOOTH_EASE }} />
+                      </motion.div>
+                    ))}
+                  </div>
+                  <div className="mt-10 flex gap-2.5">
+                    {whyPanels.map((_, i) => (
+                      <span key={i} className="h-[3px] w-[46px] rounded-full transition-colors duration-300" style={{ background: whyActive === i ? "#C6A75E" : "rgba(31,42,68,.16)" }} />
+                    ))}
+                  </div>
+                </div>
+                <div className="relative aspect-[4/5] overflow-hidden rounded-[18px] border border-[#1F2A44]/10 shadow-[0_40px_90px_rgba(31,42,68,0.22)]">
                   {whyPanels.map((p, i) => (
-                    <motion.div key={i} className={isDesktop ? (i === 0 ? "" : "absolute inset-0") : (i === 0 ? "" : "mt-10")} animate={isDesktop ? { opacity: whyActive === i ? 1 : 0, y: whyActive === i ? 0 : 14 } : { opacity: 1, y: 0 }} transition={{ duration: 0.5 }} style={{ pointerEvents: isDesktop && whyActive !== i ? "none" : "auto" }}>
-                      <h2 className="font-['Poppins'] text-[clamp(28px,4.2vw,50px)] font-semibold leading-[1.08] tracking-[-0.015em] text-[#1F2A44]">{p.title}</h2>
-                      <p className="mt-[18px] max-w-[480px] text-[clamp(15px,1.7vw,19px)] leading-[1.62] text-[#1B1F2A]/[0.66]">{p.copy}</p>
-                      <motion.span className="mt-6 block h-0.5 w-16 origin-left bg-[#C6A75E]" animate={{ scaleX: isDesktop ? (whyActive === i ? 1 : 0) : 1 }} transition={{ duration: 0.6, ease: SMOOTH_EASE }} />
+                    <motion.div key={i} className="absolute inset-0" animate={{ opacity: whyActive === i ? 1 : 0, scale: whyActive === i ? 1 : 1.07 }} transition={{ duration: 0.6 }}>
+                      <img src={p.img} alt="" className="h-full w-full object-cover" />
+                      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(20,25,41,0.12),rgba(20,25,41,0.55))]" />
                     </motion.div>
                   ))}
+                  <div className="absolute inset-x-[22px] bottom-[22px] flex items-center justify-between">
+                    <span className="text-xs font-bold uppercase tracking-[0.14em] text-white/85">The OutsourcEdge standard</span>
+                    <span className="font-['Poppins'] text-[15px] font-bold text-[#C6A75E]">0{whyActive + 1} / 0{whyPanels.length}</span>
+                  </div>
+                  <div className="absolute inset-x-0 bottom-0 h-[3px] bg-white/[0.18]"><motion.span className="block h-full bg-[#C6A75E]" style={{ width: whyBar }} /></div>
                 </div>
-                <div className={`mt-10 gap-2.5 ${isDesktop ? "flex" : "hidden"}`}>
-                  {whyPanels.map((_, i) => (
-                    <span key={i} className="h-[3px] w-[46px] rounded-full transition-colors duration-300" style={{ background: whyActive === i ? "#C6A75E" : "rgba(31,42,68,.16)" }} />
+              </div>
+            </div>
+          ) : (
+            <div className="px-[clamp(18px,5.5vw,26px)] pb-[60px] pt-16">
+              <div className="mx-auto max-w-[680px]">
+                <Reveal><p className="eyebrow mb-3.5">Why owners delegate to us</p></Reveal>
+                <Reveal delay={0.08}>
+                  <h2 className="max-w-[18ch] font-['Poppins'] text-[clamp(28px,8.4vw,38px)] font-semibold leading-[1.08] tracking-[-0.015em] text-[#1F2A44]">
+                    Built to be trusted with the work.
+                  </h2>
+                </Reveal>
+                <div className="mt-[30px] flex flex-col gap-5">
+                  {whyPanels.map((p, i) => (
+                    <WhyMobileCard key={i} panel={p} index={i} />
                   ))}
                 </div>
               </div>
-              <div className="relative hidden aspect-[4/5] overflow-hidden rounded-[18px] border border-[#1F2A44]/10 shadow-[0_40px_90px_rgba(31,42,68,0.22)] lg:block">
-                {whyPanels.map((p, i) => (
-                  <motion.div key={i} className="absolute inset-0" animate={{ opacity: whyActive === i ? 1 : 0, scale: whyActive === i ? 1 : 1.07 }} transition={{ duration: 0.6 }}>
-                    <img src={p.img} alt="" className="h-full w-full object-cover" />
-                    <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(20,25,41,0.12),rgba(20,25,41,0.55))]" />
-                  </motion.div>
-                ))}
-                <div className="absolute inset-x-[22px] bottom-[22px] flex items-center justify-between">
-                  <span className="text-xs font-bold uppercase tracking-[0.14em] text-white/85">The OutsourcEdge standard</span>
-                  <span className="font-['Poppins'] text-[15px] font-bold text-[#C6A75E]">0{whyActive + 1} / 0{whyPanels.length}</span>
-                </div>
-                <div className="absolute inset-x-0 bottom-0 h-[3px] bg-white/[0.18]"><motion.span className="block h-full bg-[#C6A75E]" style={{ width: whyBar }} /></div>
-              </div>
             </div>
-          </div>
+          )}
         </section>
 
         {/* ── SERVICES ─────────────────────────────────────────────────────── */}
