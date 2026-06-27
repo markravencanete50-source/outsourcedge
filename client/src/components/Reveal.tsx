@@ -40,7 +40,7 @@ interface RevealProps {
 }
 
 export const Reveal = forwardRef<HTMLDivElement, RevealProps>(function Reveal(
-  { children, className, direction = "up", delay = 0, distance = 28, duration = 0.7, amount },
+  { children, className, direction = "up", delay = 0, distance = 32, duration = 0.95, amount },
   ref,
 ) {
   const reduce = useReducedMotion();
@@ -73,7 +73,7 @@ interface StaggerProps {
 }
 
 export const Stagger = forwardRef<HTMLDivElement, StaggerProps>(function Stagger(
-  { children, className, gap = 0.09, amount },
+  { children, className, gap = 0.13, amount },
   ref,
 ) {
   return (
@@ -103,7 +103,7 @@ export const StaggerChild = forwardRef<HTMLDivElement, StaggerChildProps>(functi
   const reduce = useReducedMotion();
   const variants: Variants = {
     hidden: reduce ? { opacity: 0 } : { opacity: 0, y: distance },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.65, ease: SMOOTH_EASE } },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.9, ease: SMOOTH_EASE } },
   };
   return (
     <motion.div ref={ref} className={className} variants={variants}>
