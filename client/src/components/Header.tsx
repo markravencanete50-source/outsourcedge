@@ -18,30 +18,30 @@ export default function Header() {
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-[#1F2A44]/10 bg-[#FAF7F1]/92 backdrop-blur-xl">
       <div className="container flex h-20 items-center justify-between">
-        <Link href="/">
-          <a className="flex items-center transition hover:opacity-85" aria-label="OutsourcEdge home">
-            <img
-              src="/brand/outsourcedge-wordmark.png"
-              alt="OutsourcEdge"
-              className="h-9 w-auto object-contain md:h-10"
-            />
-          </a>
+        <Link href="/" className="flex items-center transition hover:opacity-85" aria-label="OutsourcEdge home">
+          <img
+            src="/brand/outsourcedge-wordmark.png"
+            alt="OutsourcEdge"
+            className="h-9 w-auto object-contain md:h-10"
+          />
         </Link>
 
         <nav className="hidden items-center gap-7 md:flex">
           {navLinks.map((link) => (
-            <Link key={link.href} href={link.href}>
-              <a className="text-sm font-semibold text-[#1B1F2A]/78 transition hover:text-[#1F2A44]">
-                {link.label}
-              </a>
+            <Link
+              key={link.href}
+              href={link.href}
+              className="text-sm font-semibold text-[#1B1F2A]/78 transition hover:text-[#1F2A44]"
+            >
+              {link.label}
             </Link>
           ))}
         </nav>
 
         <div className="hidden md:flex">
-          <Link href="/contact">
-            <Button className="btn-gold">Book a Discovery Call</Button>
-          </Link>
+          <Button asChild className="btn-gold">
+            <Link href="/contact">Book a Discovery Call</Link>
+          </Button>
         </div>
 
         <button
@@ -58,20 +58,20 @@ export default function Header() {
         <nav className="border-t border-[#1F2A44]/10 bg-[#FAF7F1] md:hidden">
           <div className="container flex flex-col gap-1 py-4">
             {navLinks.map((link) => (
-              <Link key={link.href} href={link.href}>
-                <a
-                  className="rounded-lg px-3 py-3 text-sm font-semibold text-[#1F2A44] transition hover:bg-white"
-                  onClick={() => setIsOpen(false)}
-                >
-                  {link.label}
-                </a>
+              <Link
+                key={link.href}
+                href={link.href}
+                className="rounded-lg px-3 py-3 text-sm font-semibold text-[#1F2A44] transition hover:bg-white"
+                onClick={() => setIsOpen(false)}
+              >
+                {link.label}
               </Link>
             ))}
-            <Link href="/contact">
-              <Button className="btn-gold mt-3 w-full" onClick={() => setIsOpen(false)}>
+            <Button asChild className="btn-gold mt-3 w-full">
+              <Link href="/contact" onClick={() => setIsOpen(false)}>
                 Book a Discovery Call
-              </Button>
-            </Link>
+              </Link>
+            </Button>
           </div>
         </nav>
       )}

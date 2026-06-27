@@ -1,95 +1,81 @@
 # OutsourcEdge Design Strategy
 
-## Design Philosophy: Modern Enterprise Minimalism
+> **Source of truth:** *OutsourcEdge — Visual Identity & Web Direction, Phase 1*
+> (J&Co. Growth Studio, June 2026). This file mirrors that brand direction for
+> developers. If the two ever disagree, the brand direction document wins.
 
-**Design Movement:** Contemporary corporate design with Swiss-inspired grid systems and modernist principles.
+## Positioning
 
-**Core Principles:**
-1. **Clarity Through Simplicity** - Clean lines, generous whitespace, and purposeful hierarchy make complex services immediately understandable
-2. **Premium Restraint** - Sophisticated use of negative space and selective color creates an elevated, trustworthy presence
-3. **Purposeful Motion** - Subtle animations that guide attention and reinforce brand confidence without distraction
-4. **Accessible Excellence** - Enterprise-grade accessibility ensures all stakeholders can engage seamlessly
+- **Audience:** US realtors, landlords, Airbnb / STR hosts, and small property
+  teams — busy owners who would rather delegate than hire in-house.
+- **Personality:** Polished, calm, quietly confident. Boutique firm, not
+  call-center. Never loud or discount-feeling.
+- **Voice:** Clear and reassuring. Short sentences, concrete outcomes, no jargon.
+  Speak to results — time saved, listings managed, money protected.
+- **Promise:** Vetted, dependable talent that gives owners their time back and
+  makes their operation run like a larger company's.
+- **Keywords:** Clean · Modern · Luxurious · Trustworthy · Effortless.
 
-## Color Philosophy
+## Color System — navy & gold, built for trust
 
-**Primary Palette:**
-- **Deep Navy** (`#0F172A`) - Trust, stability, corporate authority
-- **Vibrant Teal** (`#0891B2`) - Growth, innovation, forward momentum
-- **Warm Slate** (`#64748B`) - Professionalism, approachability
-- **Clean White** (`#FFFFFF`) - Clarity, premium space
+| Token | Hex | Role |
+|-------|-----|------|
+| Deep Harbor / Navy | `#1F2A44` | **Primary.** Headers, nav, dark sections, body text on light. |
+| Slate | `#38486E` | Support. Gradients, hovers, secondary buttons, depth. |
+| Champagne Gold | `#C6A75E` | **Accent only (~10%).** CTAs, thin rules, icons, highlights. |
+| Porcelain | `#FAF7F1` | Primary background. Soft off-white, warmer than pure white. |
+| Sand | `#E8DCC8` | Warm secondary blocks, cards, alternating sections. |
+| Ink | `#1B1F2A` | Long-form body text where navy feels too heavy. |
+| White | `#FFFFFF` | Cards, hairline-bordered surfaces. |
 
-**Accent Colors:**
-- **Emerald Green** (`#059669`) - Success, growth, reliability
-- **Soft Gray** (`#F1F5F9`) - Breathing room, hierarchy
+**The 60 / 30 / 10 rule:** 60% Porcelain/White · 30% Navy + Sand · 10% Gold.
 
-**Reasoning:** The navy-teal combination signals both established trust and forward-thinking innovation. This palette avoids the purple-gradient clichés of tech while maintaining premium positioning.
+**Accessibility:** Gold on white/porcelain is **low-contrast** — use it only for
+large text, icons, rules, and accents, **never small body copy**. Navy on
+Porcelain is the safe, high-contrast pairing for all reading text.
 
-## Layout Paradigm
+## Typography — Poppins × Inter
 
-**Asymmetric Grid System:**
-- Hero sections feature bold, off-center layouts with strategic whitespace
-- Content flows in varied column structures (not uniform grids)
-- Service cards use staggered arrangements to create visual rhythm
-- Testimonials and case studies employ asymmetric card placement
+Both are free Google Fonts. Poppins is drawn from the OutsourcEdge wordmark, so
+the logo and the site speak the same language.
 
-**Spacing System:**
-- Base unit: 8px
-- Key intervals: 8, 16, 24, 32, 48, 64, 96px
-- Generous margins between sections (80-120px)
+| Style | Font |
+|-------|------|
+| H1 | Poppins SemiBold (600) |
+| H2 | Poppins Medium (500) |
+| Eyebrow / kicker | Inter SemiBold, UPPERCASE, tracked, in gold |
+| Body | Inter (400) |
 
-## Signature Elements
+_Alternatives if ever needed: Montserrat (more architectural), Sora (more
+tech-forward)._
 
-1. **Geometric Accent Shapes** - Subtle diagonal lines and corner accents that frame key sections
-2. **Gradient Underlines** - Navy-to-teal gradients on CTAs and section headers
-3. **Micro-interactions** - Smooth hover states, scroll reveals, and button feedback
+## Web Art Direction — white canvas, navy structure, gold restraint
 
-## Typography System
+The site **breathes**: generous whitespace, navy for structure and dark moments,
+gold only where the eye should land.
 
-**Font Pairing:**
-- **Headlines:** "Sora" (Google Fonts) - Modern, geometric, premium
-- **Body:** "Inter" - Highly legible, professional, accessible
+- **Hero:** Full-width navy overlay (55–65%) over a muted, slowed loop of people
+  working on laptops. Left-aligned Poppins headline, a thin gold rule above it,
+  **one gold primary CTA + one ghost CTA**. No competing elements.
+- **Sections:** Alternate **Porcelain and Sand** backgrounds for rhythm — never
+  lean blue-heavy. Cards sit on white with hairline borders.
+- **Accents:** Gold appears as the primary button, thin rules, icons, and the
+  **one** stat you most want remembered — and nowhere else.
+- **Motion:** Subtle only — hero loop and gentle fade-ins on scroll. Nothing
+  that competes with the message. Honor `prefers-reduced-motion`.
 
-**Hierarchy:**
-- H1: 48px, 700 weight, line-height 1.2
-- H2: 36px, 600 weight, line-height 1.3
-- H3: 28px, 600 weight, line-height 1.4
-- Body: 16px, 400 weight, line-height 1.6
-- Small: 14px, 400 weight, line-height 1.5
+## Home page structure (Phase 1)
 
-## Brand Essence
+`NAV → HERO → TRUST BAR (logos/stats) → SERVICES (3 cards) → HOW IT WORKS
+(match → onboard → results) → SOCIAL PROOF (testimonial) → CTA BAND
+(Book a discovery call) → FOOTER (nav + contact)`
 
-**One-Line Positioning:** OutsourcEdge is the trusted partner that scales your business through dedicated growth teams and seamless operational support.
+## Approved headline directions
 
-**Personality Adjectives:** Reliable, Innovative, Scalable
+1. **Your listings, expertly managed. Your time, given back.** _(primary)_
+2. Offshore talent. On-shore standards.
+3. The team behind your properties — without the payroll.
 
-## Brand Voice
+## 5-page build
 
-**Tone:** Professional yet approachable, confident without arrogance, forward-thinking but grounded.
-
-**Example Headlines:**
-- "Scale Without the Complexity" (not "Welcome to our website")
-- "Your Growth Team, Ready Now" (not "Get started today")
-
-**Microcopy:** Direct, benefit-focused, action-oriented.
-
-## Logo & Wordmark
-
-**Concept:** A geometric symbol combining an upward arrow (growth) with a connected node (partnership). The mark is bold, minimal, and works at any scale.
-
-**Color:** Vibrant Teal on dark backgrounds, Deep Navy on light backgrounds.
-
-## Signature Brand Color
-
-**Vibrant Teal** (`#0891B2`) - Unmistakably OutsourcEdge. Used strategically on CTAs, accents, and key interactive elements to create instant brand recognition.
-
----
-
-## Implementation Guidelines
-
-- **Hero Sections:** Bold typography, asymmetric layout, strategic use of teal accents
-- **Service Cards:** Clean white backgrounds, subtle shadows, teal accent borders
-- **CTAs:** Teal background with white text, smooth hover scale effect
-- **Navigation:** Fixed header with navy background, white text, teal accent on active links
-- **Animations:** Fade-in on scroll, scale on hover, smooth transitions (200-300ms)
-- **Whitespace:** Minimum 40px padding on all sections, 80px+ between major sections
-
+Home · About · Services · Careers · Contact.

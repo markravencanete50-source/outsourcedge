@@ -12,6 +12,37 @@
 
 import type { Variants } from "framer-motion";
 
+// ── Shared easing ─────────────────────────────────────────────────────────────
+// easeOutExpo-style curve — long, smooth deceleration. The whole site uses this
+// so motion feels like one system, not a pile of one-off transitions.
+export const SMOOTH_EASE = [0.16, 1, 0.3, 1] as const;
+
+// Default viewport config for scroll reveals: fire once, a little before the
+// element is fully on screen, so content is already settling as it enters.
+export const REVEAL_VIEWPORT = { once: true, amount: 0.2, margin: "0px 0px -80px 0px" } as const;
+
+// ── Reveal variants (used by <Reveal> / <Stagger>) ────────────────────────────
+export const revealUp: Variants = {
+  hidden: { opacity: 0, y: 28 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: SMOOTH_EASE } },
+};
+
+export const staggerContainer: Variants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.09, delayChildren: 0.05 } },
+};
+
+export const staggerItem: Variants = {
+  hidden: { opacity: 0, y: 28 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.65, ease: SMOOTH_EASE } },
+};
+
+// Reduced-motion-safe fallback: fade only, no movement.
+export const revealUpReduced: Variants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { duration: 0.4 } },
+};
+
 // Matches the exact definition used across all your pages
 export const fadeUpVariant: Variants = {
   hidden:  { opacity: 0, y: 40 },

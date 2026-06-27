@@ -20,8 +20,8 @@ export default function Footer() {
               </div>
               <span className="font-['Poppins'] text-xl font-semibold">OutsourcEdge</span>
             </div>
-            <p className="mb-6 max-w-sm text-sm leading-7 text-white/68">
-              Vetted offshore talent for growing teams that need reliable admin, operations, customer support, and property management execution.
+            <p className="mb-6 max-w-sm text-sm leading-7 text-white/75">
+              Vetted offshore talent for US realtors, landlords, and short-term-rental hosts who need reliable admin, operations, support, and property management execution.
             </p>
             <div className="flex gap-3">
               {[Linkedin, Twitter, Facebook].map((Icon, index) => (
@@ -47,8 +47,8 @@ export default function Footer() {
                 { href: "/careers", label: "Careers" },
               ].map((item) => (
                 <li key={item.href}>
-                  <Link href={item.href}>
-                    <a className="text-white/68 transition hover:text-white">{item.label}</a>
+                  <Link href={item.href} className="text-white/75 transition hover:text-white">
+                    {item.label}
                   </Link>
                 </li>
               ))}
@@ -88,13 +88,13 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 flex flex-col gap-4 border-t border-white/10 pt-8 text-sm text-white/55 md:flex-row md:items-center md:justify-between">
+        <div className="mt-12 flex flex-col gap-4 border-t border-white/10 pt-8 text-sm text-white/65 md:flex-row md:items-center md:justify-between">
           <p>&copy; {currentYear} OutsourcEdge. All rights reserved.</p>
           <div className="flex flex-wrap gap-4">
             <a href="#" className="transition hover:text-white">Privacy Policy</a>
             <a href="#" className="transition hover:text-white">Terms</a>
-            <Link href="/admin/login">
-              <a className="text-[#C6A75E] transition hover:text-white">Admin</a>
+            <Link href="/admin/login" className="text-[#C6A75E] transition hover:text-white">
+              Admin
             </Link>
           </div>
         </div>

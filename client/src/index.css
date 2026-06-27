@@ -292,6 +292,22 @@
   }
 }
 
+/* The shadcn <Button> default variant adds the `bg-primary` utility, which lives
+   in Tailwind's `utilities` layer and therefore beats `.btn-*` rules defined in
+   the `components` layer above. These overrides re-assert the brand button colors
+   from within the utilities layer (same layer + higher specificity = they win),
+   so `<Button className="btn-gold">` actually renders gold. */
+@layer utilities {
+  [data-slot="button"].btn-primary { background-color: #1F2A44; color: #fff; }
+  [data-slot="button"].btn-primary:hover { background-color: #38486E; }
+
+  [data-slot="button"].btn-gold { background-color: #C6A75E; color: #1F2A44; }
+  [data-slot="button"].btn-gold:hover { background-color: #D5BB75; }
+
+  [data-slot="button"].btn-outline { background-color: #fff; color: #1F2A44; }
+  [data-slot="button"].btn-outline:hover { background-color: #FAF7F1; }
+}
+
 :focus-visible {
   outline: 2px solid #C6A75E;
   outline-offset: 2px;
