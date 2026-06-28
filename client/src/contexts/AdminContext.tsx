@@ -127,6 +127,14 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
       setAdminName(user.email ? user.email.split('@')[0] : 'Admin');
       setIsAuthenticated(true);
 
+      // Clear the previous user's role/record FIRST. Without this, switching
+      // accounts in the same browser (e.g. CEO → admin) lets the new user
+      // inherit the prior session's elevated role until their own doc loads —
+      // which is how an admin could briefly land in the CEO/Executive view.
+      setAdminRecord(null);
+      setRole(null);
+      setStatus(null);
+
       try {
         await provisionAdmin(user);
 
@@ -138,7 +146,15 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
               revokeAccess('Your admin access has been removed.');
               return;
             }
-            const record = { uid: user.uid, ...(snap.data() as object) } as AdminRecord;
+            // Tolerate legacy field names (`name`/`emailaddress`) so older docs
+            // resolve correctly instead of showing blanks.
+            const data = snap.data() as any;
+            const record = {
+              uid: user.uid,
+              ...data,
+              displayName: data.displayName || data.name || (user.email || '').split('@')[0],
+              email: data.email || data.emailaddress || user.email || '',
+            } as AdminRecord;
 
             if (record.status === 'suspended') {
               revokeAccess('Your access has been suspended by the CEO.');

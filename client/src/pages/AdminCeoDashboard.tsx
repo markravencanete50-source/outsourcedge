@@ -142,7 +142,18 @@ export default function AdminCeoDashboard() {
     const unsub = onSnapshot(
       q,
       (s) => {
-        setAdmins(s.docs.map((d) => ({ uid: d.id, ...(d.data() as object) }) as AdminRecord));
+        setAdmins(
+          s.docs.map((d) => {
+            // Normalize legacy field names so every row displays consistently.
+            const data = d.data() as any;
+            return {
+              uid: d.id,
+              ...data,
+              displayName: data.displayName || data.name || '',
+              email: data.email || data.emailaddress || '',
+            } as AdminRecord;
+          }),
+        );
         setAdminsLoading(false);
       },
       (err) => {

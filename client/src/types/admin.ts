@@ -10,6 +10,9 @@ export interface AdminRecord {
   displayName: string;
   role: AdminRole;
   status: AdminStatus;
+  // Legacy field aliases tolerated when reading older docs.
+  name?: string;
+  emailaddress?: string;
   createdAt?: any;
   updatedAt?: any;
   lastLoginAt?: any;
