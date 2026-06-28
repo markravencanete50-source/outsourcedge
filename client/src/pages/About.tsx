@@ -323,7 +323,7 @@ function CapabilityRing() {
           </p>
         </Reveal>
         <Reveal delay={0.1}>
-          <h2 className="mx-auto max-w-[16ch] text-balance font-[Poppins] text-[clamp(28px,4.2vw,50px)] font-semibold leading-[1.1] tracking-[-0.015em]">
+          <h2 className="mx-auto max-w-[16ch] text-balance font-[Poppins] text-[clamp(28px,4.2vw,50px)] font-semibold leading-[1.1] tracking-[-0.015em] text-[#BCC9E8]">
             One operation. Every moving part, covered.
           </h2>
         </Reveal>
@@ -533,7 +533,7 @@ export default function About() {
             </p>
           </Reveal>
           <Reveal delay={0.18}>
-            <h2 className="text-balance font-[Poppins] text-[clamp(26px,3.8vw,46px)] font-medium leading-[1.28] tracking-[-0.01em]">
+            <h2 className="text-balance font-[Poppins] text-[clamp(26px,3.8vw,46px)] font-medium leading-[1.28] tracking-[-0.01em] text-[#C6A75E]">
               We exist to give owners their time back — placing dependable talent
               that makes a one-person operation run like a{" "}
               <span className="text-[#C6A75E]">larger company's</span>, without the
@@ -675,7 +675,7 @@ export default function About() {
                   <p className="mb-4 text-[12px] font-bold uppercase tracking-[0.16em] text-[#C6A75E]">
                     Next step
                   </p>
-                  <h2 className="font-[Poppins] text-[clamp(28px,4vw,46px)] font-semibold leading-[1.08] tracking-[-0.015em]">
+                  <h2 className="font-[Poppins] text-[clamp(28px,4vw,46px)] font-semibold leading-[1.08] tracking-[-0.015em] text-[#C6A75E]">
                     Get the right support in place.
                   </h2>
                   <p className="mt-4 max-w-[560px] text-[17px] leading-[1.6] text-white/[0.74]">
