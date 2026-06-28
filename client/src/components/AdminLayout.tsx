@@ -2,9 +2,9 @@ import { ReactNode, useEffect, useState } from 'react';
 import { Link, useLocation } from 'wouter';
 import { useAdmin } from '@/contexts/AdminContext';
 import { useAdminActivityLogger } from '@/hooks/useAdminActivityLogger';
-import { 
-  BarChart3, Users, Mail, FileText, LogOut, Menu, X, Zap, 
-  Briefcase, Layout, Settings, Star, Clock 
+import {
+  BarChart3, Users, Mail, FileText, LogOut, Menu, X, Zap,
+  Briefcase, Layout, Settings, Star, Clock, Crown
 } from 'lucide-react';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
@@ -15,7 +15,7 @@ interface AdminLayoutProps {
 }
 
 export default function AdminLayout({ children }: AdminLayoutProps) {
-  const { logout, adminEmail } = useAdmin();
+  const { logout, adminEmail, isCeo } = useAdmin();
   const { trackPageView, logActivity, trackClick } = useAdminActivityLogger();
   const [location, setLocation] = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -98,6 +98,20 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
         <nav className="flex-1 py-6 overflow-y-auto">
           <ul className="space-y-2 px-3">
+            {isCeo && (
+              <li>
+                <Link href="/admin/ceo">
+                  <a className={`flex items-center gap-3 p-3 rounded-lg transition-colors mb-2 ${
+                    isActive('/admin/ceo')
+                      ? 'bg-amber-500 text-slate-900 font-semibold'
+                      : 'bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 border border-amber-500/30'
+                  }`}>
+                    <Crown className="w-5 h-5" />
+                    {sidebarOpen && <span>CEO Command Center</span>}
+                  </a>
+                </Link>
+              </li>
+            )}
             {menuItems.map((item) => (
               <li key={item.href}>
                 <Link href={item.href}>

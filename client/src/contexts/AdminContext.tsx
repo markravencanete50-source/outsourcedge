@@ -1,17 +1,33 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { 
-  signInWithEmailAndPassword, 
-  signOut, 
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
+import {
+  signInWithEmailAndPassword,
+  signOut,
   onAuthStateChanged,
-  User
+  User,
 } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+import {
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
+  onSnapshot,
+  serverTimestamp,
+} from 'firebase/firestore';
+import { auth, db } from '@/lib/firebase';
+import { isBootstrapCeo } from '@/lib/roles';
+import type { AdminRecord, AdminRole, AdminStatus } from '@/types/admin';
 
 interface AdminContextType {
   isAuthenticated: boolean;
   adminEmail: string | null;
-  adminName: string | null; // Added this
+  adminName: string | null;
   adminUser: User | null;
+  // RBAC
+  adminRecord: AdminRecord | null;
+  role: AdminRole | null;
+  status: AdminStatus | null;
+  isCeo: boolean;
+  // actions
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   isLoading: boolean;
@@ -23,10 +39,69 @@ const AdminContext = createContext<AdminContextType | undefined>(undefined);
 export function AdminProvider({ children }: { children: React.ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [adminEmail, setAdminEmail] = useState<string | null>(null);
-  const [adminName, setAdminName] = useState<string | null>(null); // Added this
+  const [adminName, setAdminName] = useState<string | null>(null);
   const [adminUser, setAdminUser] = useState<User | null>(null);
+  const [adminRecord, setAdminRecord] = useState<AdminRecord | null>(null);
+  const [role, setRole] = useState<AdminRole | null>(null);
+  const [status, setStatus] = useState<AdminStatus | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Holds the unsubscribe fn for the per-user admins/{uid} live listener.
+  const adminDocUnsub = useRef<null | (() => void)>(null);
+
+  const resetIdentity = () => {
+    setAdminEmail(null);
+    setAdminName(null);
+    setAdminUser(null);
+    setAdminRecord(null);
+    setRole(null);
+    setStatus(null);
+    setIsAuthenticated(false);
+  };
+
+  // Force a sign-out triggered by suspension / removal, keeping the reason so the
+  // login screen can explain why the user was kicked out.
+  const revokeAccess = async (reason: string) => {
+    setError(reason);
+    try {
+      if (auth) await signOut(auth);
+    } catch (e) {
+      console.error('Forced sign-out failed:', e);
+    }
+  };
+
+  // Make sure every authenticated user has an admins/{uid} record. The bootstrap
+  // CEO is (re)granted the CEO role here; everyone else defaults to a regular,
+  // active admin. Role/status changes are otherwise controlled only by the CEO.
+  const provisionAdmin = async (user: User) => {
+    if (!db) return;
+    const ref = doc(db, 'admins', user.uid);
+    const email = (user.email || '').toLowerCase();
+    const bootstrap = isBootstrapCeo(email);
+    const snap = await getDoc(ref);
+
+    if (!snap.exists()) {
+      await setDoc(ref, {
+        uid: user.uid,
+        email,
+        displayName: user.displayName || email.split('@')[0] || 'Admin',
+        role: bootstrap ? 'ceo' : 'admin',
+        status: 'active',
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+        lastLoginAt: serverTimestamp(),
+      });
+      return;
+    }
+
+    const data = snap.data() as AdminRecord;
+    const patch: Record<string, any> = { lastLoginAt: serverTimestamp() };
+    // Self-heal the founder account so it can never be locked out.
+    if (bootstrap && data.role !== 'ceo') patch.role = 'ceo';
+    if (bootstrap && data.status !== 'active') patch.status = 'active';
+    await updateDoc(ref, patch);
+  };
 
   useEffect(() => {
     if (!auth) {
@@ -34,23 +109,60 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setAdminEmail(user.email);
-        setAdminName(user.email ? user.email.split('@')[0] : 'Admin'); // Set name from email
-        setAdminUser(user);
-        setIsAuthenticated(true);
-        setError(null);
-      } else {
-        setAdminEmail(null);
-        setAdminName(null);
-        setAdminUser(null);
-        setIsAuthenticated(false);
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      // Tear down any previous user's admin-doc listener.
+      if (adminDocUnsub.current) {
+        adminDocUnsub.current();
+        adminDocUnsub.current = null;
       }
-      setIsLoading(false);
+
+      if (!user) {
+        resetIdentity();
+        setIsLoading(false);
+        return;
+      }
+
+      setAdminUser(user);
+      setAdminEmail(user.email);
+      setAdminName(user.email ? user.email.split('@')[0] : 'Admin');
+      setIsAuthenticated(true);
+
+      try {
+        await provisionAdmin(user);
+
+        // Live access control: react instantly if the CEO suspends/removes us.
+        adminDocUnsub.current = onSnapshot(
+          doc(db, 'admins', user.uid),
+          (snap) => {
+            if (!snap.exists()) {
+              revokeAccess('Your admin access has been removed.');
+              return;
+            }
+            const record = { uid: user.uid, ...(snap.data() as object) } as AdminRecord;
+
+            if (record.status === 'suspended') {
+              revokeAccess('Your access has been suspended by the CEO.');
+              return;
+            }
+
+            setAdminRecord(record);
+            setRole(record.role);
+            setStatus(record.status);
+            if (record.displayName) setAdminName(record.displayName);
+          },
+          (err) => console.error('Admin record listener error:', err),
+        );
+      } catch (e) {
+        console.error('Admin provisioning error:', e);
+      } finally {
+        setIsLoading(false);
+      }
     });
 
-    return () => unsubscribe();
+    return () => {
+      unsubscribe();
+      if (adminDocUnsub.current) adminDocUnsub.current();
+    };
   }, []);
 
   const login = async (email: string, password: string) => {
@@ -58,29 +170,23 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
     setError(null);
     try {
       if (!auth) throw new Error('Firebase is not initialized');
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      setAdminEmail(userCredential.user.email);
-      setAdminName(userCredential.user.email ? userCredential.user.email.split('@')[0] : 'Admin');
-      setAdminUser(userCredential.user);
-      setIsAuthenticated(true);
+      await signInWithEmailAndPassword(auth, email, password);
+      // Identity, provisioning and role loading are handled by onAuthStateChanged.
     } catch (err: any) {
       const errorMessage = err.message || 'Login failed';
       setError(errorMessage);
-      throw new Error(errorMessage);
-    } finally {
       setIsLoading(false);
+      throw new Error(errorMessage);
     }
   };
 
   const logout = async () => {
     setIsLoading(true);
+    setError(null);
     try {
       if (!auth) throw new Error('Firebase is not initialized');
       await signOut(auth);
-      setAdminEmail(null);
-      setAdminName(null);
-      setAdminUser(null);
-      setIsAuthenticated(false);
+      resetIdentity();
     } catch (err: any) {
       setError(err.message || 'Logout failed');
     } finally {
@@ -88,8 +194,25 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const isCeo = role === 'ceo' || isBootstrapCeo(adminEmail);
+
   return (
-    <AdminContext.Provider value={{ isAuthenticated, adminEmail, adminName, adminUser, login, logout, isLoading, error }}>
+    <AdminContext.Provider
+      value={{
+        isAuthenticated,
+        adminEmail,
+        adminName,
+        adminUser,
+        adminRecord,
+        role,
+        status,
+        isCeo,
+        login,
+        logout,
+        isLoading,
+        error,
+      }}
+    >
       {children}
     </AdminContext.Provider>
   );

@@ -2,14 +2,14 @@ import { useState } from 'react';
 import { useLocation } from 'wouter';
 import { useAdmin } from '@/contexts/AdminContext';
 import { Button } from '@/components/ui/button';
-import { Lock, Mail } from 'lucide-react';
+import { Lock, Mail, AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function AdminLogin() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { login } = useAdmin();
+  const { login, error } = useAdmin();
   const [, setLocation] = useLocation();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -43,6 +43,14 @@ export default function AdminLogin() {
 
         {/* Login Form */}
         <div className="bg-white rounded-xl shadow-2xl p-8">
+          {/* Suspension / removal notice */}
+          {error && (
+            <div className="mb-6 flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+              <AlertTriangle className="w-5 h-5 flex-shrink-0 mt-0.5" />
+              <span>{error}</span>
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Email */}
             <div>

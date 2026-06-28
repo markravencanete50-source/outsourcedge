@@ -1,0 +1,105 @@
+rules_version = '2';
+
+// OutsourcEdge — Firestore security rules
+//
+// Access model:
+//   • Public website: read jobs/services/testimonials/site_content; submit
+//     contacts/applications/service_questionnaires (create only).
+//   • Active admins: full read/write on operational collections.
+//   • Suspended admins: blocked from everything (mirrors the in-app suspension).
+//   • CEO: the only role that can manage the `admins` collection.
+//
+// The bootstrap CEO email below is always treated as CEO and can never be
+// suspended or removed — keep it in sync with VITE_CEO_BOOTSTRAP_EMAIL.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function bootstrapCeoEmail() {
+      return 'markravencanete50@gmail.com';
+    }
+
+    function myAdmin() {
+      return get(/databases/$(database)/documents/admins/$(request.auth.uid)).data;
+    }
+
+    function adminExists() {
+      return isSignedIn()
+        && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    function isActiveAdmin() {
+      return adminExists() && myAdmin().status == 'active';
+    }
+
+    function isCeo() {
+      return isSignedIn() && (
+        request.auth.token.email == bootstrapCeoEmail()
+        || (adminExists() && myAdmin().role == 'ceo' && myAdmin().status == 'active')
+      );
+    }
+
+    // ── Admin accounts (CEO-managed) ────────────────────────────────────────
+    match /admins/{uid} {
+      allow read: if isCeo() || (isSignedIn() && request.auth.uid == uid);
+
+      // Self-provision on first login: only as an active 'admin', unless the
+      // signed-in user is the bootstrap CEO (who may seed their own 'ceo' doc).
+      allow create: if isSignedIn() && request.auth.uid == uid
+        && request.resource.data.status == 'active'
+        && (
+          request.resource.data.role == 'admin'
+          || (request.resource.data.role == 'ceo'
+              && request.auth.token.email == bootstrapCeoEmail())
+        );
+
+      // CEO manages other accounts (never the founder). A user may also touch
+      // their own doc (e.g. lastLoginAt) as long as role and status are unchanged.
+      allow update: if isSignedIn() && (
+        (isCeo() && resource.data.email != bootstrapCeoEmail())
+        || (
+          request.auth.uid == uid
+          && request.resource.data.role == resource.data.role
+          && request.resource.data.status == resource.data.status
+        )
+      );
+
+      allow delete: if isCeo()
+        && request.auth.uid != uid
+        && resource.data.email != bootstrapCeoEmail();
+    }
+
+    // ── Public website content (world-readable, admin-writable) ──────────────
+    match /jobs/{id}         { allow read: if true; allow write: if isActiveAdmin(); }
+    match /services/{id}     { allow read: if true; allow write: if isActiveAdmin(); }
+    match /testimonials/{id} { allow read: if true; allow write: if isActiveAdmin(); }
+    match /site_content/{id} { allow read: if true; allow write: if isActiveAdmin(); }
+
+    // ── Public submissions (anyone may create; admins manage) ────────────────
+    match /contacts/{id} {
+      allow create: if true;
+      allow read, update, delete: if isActiveAdmin();
+    }
+    match /applications/{id} {
+      allow create: if true;
+      allow read, update, delete: if isActiveAdmin();
+    }
+    match /service_questionnaires/{id} {
+      allow create: if true;
+      allow read, update, delete: if isActiveAdmin();
+    }
+
+    // ── Internal, admin-only collections ─────────────────────────────────────
+    match /clients/{id}         { allow read, write: if isActiveAdmin(); }
+    match /adminActivities/{id} { allow read, write: if isActiveAdmin(); }
+
+    // Deny everything else by default.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

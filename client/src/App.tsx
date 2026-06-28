@@ -16,6 +16,7 @@ const ProjectManagement          = lazy(() => import("@/pages/ProjectManagement"
 const JobDetail                  = lazy(() => import("@/pages/JobDetail"));
 const AdminLogin                 = lazy(() => import("@/pages/AdminLogin"));
 const AdminDashboard             = lazy(() => import("@/pages/AdminDashboard"));
+const AdminCeoDashboard          = lazy(() => import("@/pages/AdminCeoDashboard"));
 const AdminContacts              = lazy(() => import("@/pages/AdminContacts"));
 const AdminApplications          = lazy(() => import("@/pages/AdminApplications"));
 const AdminAnalytics             = lazy(() => import("@/pages/AdminAnalytics"));
@@ -45,6 +46,17 @@ function ProtectedRoute({ component: Component }: { component: React.ComponentTy
   return <Component />;
 }
 
+// ── CEO-only route — authenticated AND holds the CEO role ──────────────────────
+function CeoRoute({ component: Component }: { component: React.ComponentType }) {
+  const { isAuthenticated, isCeo, isLoading } = useAdmin();
+
+  if (isLoading) return <PageLoader />;
+  if (!isAuthenticated) return <Redirect to="/admin/login" />;
+  // Authenticated but not a CEO → bounce to the standard admin dashboard.
+  if (!isCeo) return <Redirect to="/admin/dashboard" />;
+  return <Component />;
+}
+
 // ── Router ────────────────────────────────────────────────────────────────────
 function Router() {
   return (
@@ -63,6 +75,11 @@ function Router() {
 
           {/* Auth */}
           <Route path="/admin/login" component={AdminLogin} />
+
+          {/* CEO-exclusive command center */}
+          <Route path="/admin/ceo">
+            {() => <CeoRoute component={AdminCeoDashboard} />}
+          </Route>
 
           {/* Protected admin routes */}
           <Route path="/admin/dashboard">
