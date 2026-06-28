@@ -3,6 +3,7 @@ import { useLocation } from 'wouter';
 import { useAdmin } from '@/contexts/AdminContext';
 import { Button } from '@/components/ui/button';
 import { Lock, Mail, AlertTriangle } from 'lucide-react';
+import { isBootstrapCeo } from '@/lib/roles';
 import { toast } from 'sonner';
 
 export default function AdminLogin() {
@@ -19,7 +20,10 @@ export default function AdminLogin() {
     try {
       await login(email, password);
       toast.success('Login successful!');
-      setLocation('/admin/dashboard');
+      // CEOs land in the executive portal; everyone else in the admin dashboard.
+      // (Promoted, non-bootstrap CEOs are also redirected by the dashboard guard
+      // once their role finishes loading.)
+      setLocation(isBootstrapCeo(email) ? '/admin/ceo' : '/admin/dashboard');
     } catch (error: any) {
       toast.error(error.message || 'Invalid email or password');
       setEmail('');

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Redirect } from 'wouter';
 import AdminLayout from '@/components/AdminLayout';
 import { useAdmin } from '@/contexts/AdminContext';
 import { useAdminActivityLogger } from '@/hooks/useAdminActivityLogger';
@@ -15,7 +16,7 @@ import {
 import { Badge } from "@/components/ui/badge"; // Fixed import
 
 export default function AdminDashboard() {
-  const { isAuthenticated } = useAdmin();
+  const { isAuthenticated, isCeo } = useAdmin();
   const { trackPageView } = useAdminActivityLogger();
   
   const [totalInquiries, setTotalInquiries] = useState(0);
@@ -81,6 +82,8 @@ export default function AdminDashboard() {
   }, []);
 
   if (!isAuthenticated) return <AdminLayout><div className="p-8 text-center">Please login.</div></AdminLayout>;
+  // CEOs never see the operational admin dashboard — send them to their portal.
+  if (isCeo) return <Redirect to="/admin/ceo" />;
 
   return (
     <AdminLayout>

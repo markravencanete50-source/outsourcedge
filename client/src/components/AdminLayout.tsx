@@ -21,7 +21,17 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [firebaseConnected, setFirebaseConnected] = useState(false);
 
-  const menuItems = [
+  // The CEO sees a dedicated executive portal: business overview + the focused
+  // set of insight views. Admins see the full operational menu (and never the
+  // CEO views). The active menu is driven entirely by role.
+  const ceoMenu = [
+    { href: '/admin/ceo', label: 'Overview', icon: Crown },
+    { href: '/admin/analytics', label: 'Analytics', icon: BarChart3 },
+    { href: '/admin/clients', label: 'Partnership Pipeline', icon: Zap },
+    { href: '/admin/activity-logs', label: 'Activity Logs', icon: Clock },
+  ];
+
+  const adminMenu = [
     { href: '/admin/dashboard', label: 'Dashboard', icon: BarChart3 },
     { href: '/admin/contacts', label: 'Contact Submissions', icon: Mail },
     { href: '/admin/applications', label: 'Job Applications', icon: Users },
@@ -34,6 +44,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     { href: '/admin/testimonials', label: 'Testimonial Manager', icon: Star },
     { href: '/admin/service-questionnaires', label: 'Service Inquiries', icon: FileText },
   ];
+
+  const menuItems = isCeo ? ceoMenu : adminMenu;
 
   // 1. GLOBAL PAGE TRACKING
   useEffect(() => {
@@ -87,8 +99,13 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         <div className="p-6 border-b border-gray-700 flex items-center justify-between">
           {sidebarOpen && (
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-[#1B3A4B] rounded-lg flex items-center justify-center font-bold">OE</div>
-              <span className="font-bold">OutsourceEdge</span>
+              <div className={`w-10 h-10 rounded-lg flex items-center justify-center font-bold ${isCeo ? 'bg-amber-500 text-slate-900' : 'bg-[#1B3A4B]'}`}>
+                {isCeo ? <Crown className="w-5 h-5" /> : 'OE'}
+              </div>
+              <div className="flex flex-col leading-tight">
+                <span className="font-bold">OutsourceEdge</span>
+                {isCeo && <span className="text-[10px] uppercase tracking-wider text-amber-400">Executive Portal</span>}
+              </div>
             </div>
           )}
           <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-1 hover:bg-gray-700 rounded">
@@ -98,30 +115,21 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
         <nav className="flex-1 py-6 overflow-y-auto">
           <ul className="space-y-2 px-3">
-            {isCeo && (
-              <li>
-                <Link href="/admin/ceo">
-                  <a className={`flex items-center gap-3 p-3 rounded-lg transition-colors mb-2 ${
-                    isActive('/admin/ceo')
-                      ? 'bg-amber-500 text-slate-900 font-semibold'
-                      : 'bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 border border-amber-500/30'
-                  }`}>
-                    <Crown className="w-5 h-5" />
-                    {sidebarOpen && <span>CEO Command Center</span>}
-                  </a>
-                </Link>
-              </li>
-            )}
-            {menuItems.map((item) => (
-              <li key={item.href}>
-                <Link href={item.href}>
-                  <a className={`flex items-center gap-3 p-3 rounded-lg transition-colors ${isActive(item.href) ? 'bg-[#1B3A4B] text-white' : 'text-gray-400 hover:bg-gray-800 hover:text-white'}`}>
-                    <item.icon className="w-5 h-5" />
-                    {sidebarOpen && <span>{item.label}</span>}
-                  </a>
-                </Link>
-              </li>
-            ))}
+            {menuItems.map((item) => {
+              const activeCls = isCeo
+                ? 'bg-amber-500 text-slate-900 font-semibold'
+                : 'bg-[#1B3A4B] text-white';
+              return (
+                <li key={item.href}>
+                  <Link href={item.href}>
+                    <a className={`flex items-center gap-3 p-3 rounded-lg transition-colors ${isActive(item.href) ? activeCls : 'text-gray-400 hover:bg-gray-800 hover:text-white'}`}>
+                      <item.icon className="w-5 h-5" />
+                      {sidebarOpen && <span>{item.label}</span>}
+                    </a>
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
         </nav>
 
