@@ -21,16 +21,9 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [firebaseConnected, setFirebaseConnected] = useState(false);
 
-  // The CEO sees a dedicated executive portal: business overview + the focused
-  // set of insight views. Admins see the full operational menu (and never the
-  // CEO views). The active menu is driven entirely by role.
-  const ceoMenu = [
-    { href: '/admin/ceo', label: 'Overview', icon: Crown },
-    { href: '/admin/analytics', label: 'Analytics', icon: BarChart3 },
-    { href: '/admin/clients', label: 'Partnership Pipeline', icon: Zap },
-    { href: '/admin/activity-logs', label: 'Activity Logs', icon: Clock },
-  ];
-
+  // The CEO is a superset of an admin: they get the FULL operational menu plus an
+  // exclusive Command Center at the top. Regular admins see the operational menu
+  // only. (The CEO must never have *less* access than an admin.)
   const adminMenu = [
     { href: '/admin/dashboard', label: 'Dashboard', icon: BarChart3 },
     { href: '/admin/contacts', label: 'Contact Submissions', icon: Mail },
@@ -45,7 +38,12 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     { href: '/admin/service-questionnaires', label: 'Service Inquiries', icon: FileText },
   ];
 
-  const menuItems = isCeo ? ceoMenu : adminMenu;
+  // CEO-only entries, surfaced above the shared admin menu.
+  const ceoMenu = [
+    { href: '/admin/ceo', label: 'Command Center', icon: Crown },
+  ];
+
+  const menuItems = isCeo ? [...ceoMenu, ...adminMenu] : adminMenu;
 
   // 1. GLOBAL PAGE TRACKING
   useEffect(() => {

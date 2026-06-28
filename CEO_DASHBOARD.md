@@ -61,6 +61,26 @@ admins/{uid} = {
    firebase deploy --only firestore:rules,firestore:indexes
    ```
 
+## Troubleshooting — "Suspend does nothing"
+
+99% of the time this is **un-deployed security rules**. The CEO Command Center
+writes `status: 'suspended'` to `admins/{uid}`; if your Firestore project is still
+running default or older rules, that write is rejected with `permission-denied`
+and the UI now shows:
+
+> Permission denied. Deploy the security rules: `firebase deploy --only firestore:rules`
+
+Fix it:
+
+```
+firebase deploy --only firestore:rules,firestore:indexes
+```
+
+Then confirm in the Firebase Console → Firestore → Rules that `bootstrapCeoEmail()`
+matches `VITE_CEO_BOOTSTRAP_EMAIL`. The CEO is also a **superset of an admin** —
+the sidebar shows the full operational menu *plus* the Command Center, so the CEO
+never has less access than a regular admin.
+
 ## Notes / limitations
 
 - "Suspend" is an **application-level** revocation: it blocks all admin access via

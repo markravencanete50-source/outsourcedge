@@ -23,6 +23,13 @@ service cloud.firestore {
       return 'markravencanete50@gmail.com';
     }
 
+    // Case-insensitive comparison of the signed-in user's email to the founder's.
+    function isBootstrapCeoUser() {
+      return isSignedIn()
+        && request.auth.token.email != null
+        && request.auth.token.email.lower() == bootstrapCeoEmail();
+    }
+
     function myAdmin() {
       return get(/databases/$(database)/documents/admins/$(request.auth.uid)).data;
     }
@@ -38,9 +45,14 @@ service cloud.firestore {
 
     function isCeo() {
       return isSignedIn() && (
-        request.auth.token.email == bootstrapCeoEmail()
+        isBootstrapCeoUser()
         || (adminExists() && myAdmin().role == 'ceo' && myAdmin().status == 'active')
       );
+    }
+
+    // A target admin doc belongs to the protected founder account.
+    function isFounderDoc() {
+      return resource.data.email.lower() == bootstrapCeoEmail();
     }
 
     // ── Admin accounts (CEO-managed) ────────────────────────────────────────
@@ -53,14 +65,15 @@ service cloud.firestore {
         && request.resource.data.status == 'active'
         && (
           request.resource.data.role == 'admin'
-          || (request.resource.data.role == 'ceo'
-              && request.auth.token.email == bootstrapCeoEmail())
+          || (request.resource.data.role == 'ceo' && isBootstrapCeoUser())
         );
 
-      // CEO manages other accounts (never the founder). A user may also touch
-      // their own doc (e.g. lastLoginAt) as long as role and status are unchanged.
+      // CEO manages other accounts (never the founder). The founder may always
+      // update their own doc (self-heal role/status). Any user may touch their
+      // own doc (e.g. lastLoginAt) as long as role and status are unchanged.
       allow update: if isSignedIn() && (
-        (isCeo() && resource.data.email != bootstrapCeoEmail())
+        (isCeo() && !isFounderDoc())
+        || (request.auth.uid == uid && isBootstrapCeoUser())
         || (
           request.auth.uid == uid
           && request.resource.data.role == resource.data.role
@@ -70,7 +83,7 @@ service cloud.firestore {
 
       allow delete: if isCeo()
         && request.auth.uid != uid
-        && resource.data.email != bootstrapCeoEmail();
+        && !isFounderDoc();
     }
 
     // ── Public website content (world-readable, admin-writable) ──────────────
