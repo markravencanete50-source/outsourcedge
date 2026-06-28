@@ -70,8 +70,8 @@ export default function Footer() {
             <ul className="space-y-4 text-sm">
               <li className="flex items-start gap-3">
                 <Mail className="mt-0.5 h-4 w-4 flex-shrink-0 text-[#C6A75E]" />
-                <a href="mailto:sales@outsourcedge.com" className="text-white/68 transition hover:text-white">
-                  sales@outsourcedge.com
+                <a href="mailto:contact@outsourcedge.com" className="text-white/75 transition hover:text-white">
+                  contact@outsourcedge.com
                 </a>
               </li>
               <li className="flex items-start gap-3">
