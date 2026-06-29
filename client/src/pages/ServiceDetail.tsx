@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useRoute, Link } from 'wouter';
 import { doc, getDoc, addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
+import { notifySubmission } from '@/lib/notify';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { motion } from 'framer-motion';
@@ -64,6 +65,7 @@ export default function ServiceDetail() {
         status: 'new',
         createdAt: serverTimestamp()
       });
+      notifySubmission('service', { serviceTitle: service.title, ...formData });
       toast.success('Your inquiry has been submitted successfully!');
       setFormData({
         name: '',

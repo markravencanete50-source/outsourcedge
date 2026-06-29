@@ -7,6 +7,7 @@ import { ArrowRight, Mail, MapPin, Phone } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { addDoc, collection, doc, onSnapshot } from "firebase/firestore";
 import { db } from "@/lib/firebase";
+import { notifySubmission } from "@/lib/notify";
 import { SMOOTH_EASE } from "@/lib/animations";
 
 interface PageContent {
@@ -188,6 +189,7 @@ export default function Contact() {
       if (db) {
         await addDoc(collection(db, "contacts"), { ...form, timestamp: new Date() });
       }
+      notifySubmission("contact", { ...form });
       setSubmitted(true);
     } catch (err) {
       console.error("Error sending message:", err);

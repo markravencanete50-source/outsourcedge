@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useRoute, Link } from 'wouter';
 import { doc, getDoc, addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
+import { notifySubmission } from '@/lib/notify';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { motion } from 'framer-motion';
@@ -70,6 +71,7 @@ export default function JobDetail() {
         status: 'new',
         date: serverTimestamp()
       });
+      notifySubmission('application', { jobTitle: job.title, ...formData });
       toast.success('Application submitted successfully!');
       setFormData({
         fullName: '',
