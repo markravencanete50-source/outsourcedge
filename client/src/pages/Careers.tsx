@@ -10,6 +10,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { SMOOTH_EASE } from "@/lib/animations";
+import { useMagnetic } from "@/lib/motion3d";
+import Seo from "@/components/Seo";
 
 interface Job {
   id: string;
@@ -140,8 +142,16 @@ export default function Careers() {
   const visibleJobs = filter === "All" ? jobs : jobs.filter((j) => j.category === filter);
   const rolesOpen = jobs.length;
 
+  const ctaRef = useRef<HTMLAnchorElement>(null);
+  useMagnetic(ctaRef);
+
   return (
     <div className="bg-[#FAF7F1] text-[#1B1F2A]">
+      <Seo
+        title="Careers"
+        description="Join OutsourcEdge — remote roles supporting US realtors, landlords and short-term-rental hosts."
+        path="/careers"
+      />
       <Header />
 
       <a href="#openings" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[80] focus:rounded-lg focus:bg-[#1F2A44] focus:px-4 focus:py-2 focus:font-semibold focus:text-white">
@@ -377,7 +387,7 @@ export default function Careers() {
                     <h2 className="font-['Poppins'] text-[clamp(28px,4vw,46px)] font-semibold leading-[1.08] tracking-[-0.015em] text-white">Your next chapter starts with one form.</h2>
                     <p className="mt-4 max-w-[560px] text-[17px] leading-[1.6] text-white/[0.74]">Browse the open roles, or tell us about yourself for the talent network — we'd love to meet you.</p>
                   </div>
-                  <Button asChild className="btn-gold whitespace-nowrap px-[30px] py-[18px] text-[16px]"><a href="#openings">Start your application <ArrowRight className="h-[17px] w-[17px]" /></a></Button>
+                  <Button asChild className="btn-gold whitespace-nowrap px-[30px] py-[18px] text-[16px]"><a ref={ctaRef} href="#openings">Start your application <ArrowRight className="h-[17px] w-[17px]" /></a></Button>
                 </div>
               </div>
             </Reveal>

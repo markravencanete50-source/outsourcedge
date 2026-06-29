@@ -14,6 +14,8 @@ import {
 } from "framer-motion";
 import { useRef } from "react";
 import { SMOOTH_EASE } from "@/lib/animations";
+import { useMagnetic } from "@/lib/motion3d";
+import Seo from "@/components/Seo";
 
 /* ────────────────────────────────────────────────────────────────────────────
    OutsourcEdge — Property Management (Phase-1 redesign)
@@ -91,10 +93,16 @@ export default function ProjectManagement() {
   const { scrollYProgress: ownerP } = useScroll({ target: ownerImgRef, offset: ["start end", "end start"] });
   const ownerImgY = useTransform(ownerP, [0, 1], reduce ? ["0%", "0%"] : ["-7%", "7%"]);
 
+  const ctaRef = useRef<HTMLAnchorElement>(null);
+  useMagnetic(ctaRef);
+
   return (
     <>
-      <title>Property Management Services | OutsourcEdge</title>
-      <meta name="description" content="OutsourcEdge provides offshore property management support for landlords, realtors, and short-term-rental hosts." />
+      <Seo
+        title="Property Management"
+        description="Tenant coordination, maintenance follow-up, listing support & owner reporting from vetted offshore property teams."
+        path="/project-management"
+      />
 
       <div className="min-h-screen bg-[#FAF7F1]">
         <style dangerouslySetInnerHTML={{ __html: HUD_KEYFRAMES }} />
@@ -275,7 +283,7 @@ export default function ProjectManagement() {
                     <h2 className="font-['Poppins'] text-[clamp(28px,4vw,46px)] font-semibold leading-[1.08] tracking-[-0.015em] text-white">Hand off the work that keeps interrupting your day.</h2>
                     <p className="mt-4 max-w-[560px] leading-[1.6] text-white/74">We will help define the role, workflows, and first 30 days of property operations support.</p>
                   </div>
-                  <Button asChild className="btn-gold text-base"><Link href="/contact">Book a Discovery Call</Link></Button>
+                  <Button asChild className="btn-gold text-base"><Link ref={ctaRef as any} href="/contact">Book a Discovery Call</Link></Button>
                 </div>
               </div>
             </Reveal>

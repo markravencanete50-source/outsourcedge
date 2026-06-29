@@ -9,6 +9,8 @@ import { addDoc, collection, doc, onSnapshot } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { notifySubmission } from "@/lib/notify";
 import { SMOOTH_EASE } from "@/lib/animations";
+import { useMagnetic } from "@/lib/motion3d";
+import Seo from "@/components/Seo";
 
 interface PageContent {
   contactEmail: string;
@@ -134,6 +136,8 @@ export default function Contact() {
 
   const reduce = useReducedMotion();
   const heroRef = useRef<HTMLElement>(null);
+  const submitRef = useRef<HTMLButtonElement>(null);
+  useMagnetic(submitRef);
   const nameRef = useRef<HTMLInputElement & HTMLTextAreaElement>(null);
   const emailRef = useRef<HTMLInputElement & HTMLTextAreaElement>(null);
   const messageRef = useRef<HTMLInputElement & HTMLTextAreaElement>(null);
@@ -209,6 +213,11 @@ export default function Contact() {
 
   return (
     <div className="min-h-screen bg-[#FAF7F1]">
+      <Seo
+        title="Contact"
+        description="Book a discovery call. Tell us what to take off your plate and we'll map the role, tools, and first-week rhythm."
+        path="/contact"
+      />
       <style dangerouslySetInnerHTML={{ __html: KEYFRAMES }} />
       <Header />
 
@@ -310,6 +319,7 @@ export default function Contact() {
                     </div>
 
                     <button
+                      ref={submitRef}
                       type="submit"
                       disabled={submitting}
                       className="btn-gold mt-7 inline-flex w-full items-center justify-center gap-2.5 disabled:cursor-not-allowed disabled:opacity-70 sm:w-auto"

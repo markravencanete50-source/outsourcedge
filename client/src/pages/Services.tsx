@@ -13,6 +13,8 @@ import {
 } from "framer-motion";
 import { useRef } from "react";
 import { SMOOTH_EASE } from "@/lib/animations";
+import { useMagnetic } from "@/lib/motion3d";
+import Seo from "@/components/Seo";
 
 /* ────────────────────────────────────────────────────────────────────────────
    OutsourcEdge — Services (Phase-1 redesign)
@@ -277,8 +279,16 @@ export default function Services() {
   });
   const progressWidth = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
 
+  const ctaRef = useRef<HTMLAnchorElement>(null);
+  useMagnetic(ctaRef);
+
   return (
     <div className="relative bg-[#FAF7F1] text-[#1B1F2A]">
+      <Seo
+        title="Services"
+        description="Virtual assistant teams, property-management support, and customer/client support — built around the work you'd rather hand off."
+        path="/services"
+      />
       <Header />
 
       {/* ── HERO ── */}
@@ -408,7 +418,7 @@ export default function Services() {
                   </p>
                 </div>
                 <Button asChild className="btn-gold">
-                  <Link href="/contact" className="inline-flex items-center gap-[9px]">
+                  <Link ref={ctaRef as any} href="/contact" className="inline-flex items-center gap-[9px]">
                     Book a Discovery Call <ArrowRight size={17} strokeWidth={2.4} />
                   </Link>
                 </Button>

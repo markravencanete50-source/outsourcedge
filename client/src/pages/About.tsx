@@ -13,6 +13,8 @@ import {
 } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { SMOOTH_EASE } from "@/lib/animations";
+import { useMagnetic } from "@/lib/motion3d";
+import Seo from "@/components/Seo";
 
 /* ────────────────────────────────────────────────────────────────────────────
    OutsourcEdge — About (Phase-1 redesign)
@@ -511,8 +513,16 @@ function Hero() {
 }
 
 export default function About() {
+  const ctaRef = useRef<HTMLAnchorElement>(null);
+  useMagnetic(ctaRef);
+
   return (
     <div className="bg-[#FAF7F1] text-[#1B1F2A]">
+      <Seo
+        title="About"
+        description="Offshore talent, on-shore standards. How OutsourcEdge vets and embeds reliable teams for US real estate operators."
+        path="/about"
+      />
       <Header />
 
       <Hero />
@@ -685,7 +695,7 @@ export default function About() {
                   </p>
                 </div>
                 <Button asChild className="btn-gold whitespace-nowrap px-[30px] py-[18px] text-[16px]">
-                  <Link href="/contact">
+                  <Link ref={ctaRef as any} href="/contact">
                     Book a Discovery Call <ArrowRight className="h-[17px] w-[17px]" />
                   </Link>
                 </Button>
