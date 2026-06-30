@@ -81,7 +81,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   const sections = Array.from(new Set(menu.map((m) => m.section)));
 
   return (
-    <div className="flex h-screen bg-[#EEF1F6] dark:bg-[#070B14] text-slate-900 dark:text-slate-100 transition-colors">
+    <div className="admin-shell flex h-screen bg-[#EEF1F6] dark:bg-[#070B14] text-slate-900 dark:text-slate-100 transition-colors">
       {/* SIDEBAR */}
       <aside
         className={`${sidebarCollapsed ? 'w-[76px]' : 'w-64'} flex flex-col bg-[#0C1426] dark:bg-[#0A1020] border-r border-white/[.07] overflow-hidden transition-[width] duration-300 ease-[cubic-bezier(.4,0,.2,1)]`}

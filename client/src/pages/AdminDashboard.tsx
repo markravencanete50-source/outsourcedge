@@ -229,7 +229,7 @@ export default function AdminDashboard() {
                       </linearGradient>
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} className="stroke-slate-100 dark:stroke-white/[.06]" />
-                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 9.5, fill: '#5A6B83' }} interval={0} />
+                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 9.5, fill: '#94A3B8' }} interval={0} />
                     <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#9AA8BC' }} allowDecimals={false} />
                     <Tooltip cursor={{ fill: 'rgba(27,58,75,.06)' }} contentStyle={tooltipStyle} />
                     <Bar dataKey="value" fill="url(#gBar)" radius={[7, 7, 0, 0]} maxBarSize={48} />

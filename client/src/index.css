@@ -44,6 +44,7 @@
 }
 
 :root {
+  color-scheme: light;
   --deep-harbor: #1F2A44;
   --navy-slate: #38486E;
   --champagne-gold: #C6A75E;
@@ -94,6 +95,7 @@
    Mirrors the admin dashboard palette so shadcn/ui components (which render
    in body-level portals and read these CSS variables) theme correctly. */
 .dark {
+  color-scheme: dark;
   --primary: #1B3A4B;
   --primary-foreground: #FFFFFF;
   --accent: #C6A75E;
@@ -116,6 +118,22 @@
   --sidebar: #0A1020;
   --sidebar-foreground: #E6ECF5;
   --sidebar-border: rgba(255, 255, 255, 0.07);
+}
+
+/* In dark mode, give raw admin form controls a visibly filled surface with
+   light text so typed values, options and placeholders never disappear.
+   Scoped to `.admin-shell` so the public site is unaffected; shadcn <Input>
+   controls (rendered in body-level portals) already theme via the vars above. */
+.dark .admin-shell :is(input, select, textarea) {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: var(--foreground);
+}
+.dark .admin-shell :is(input, textarea)::placeholder {
+  color: rgba(230, 236, 245, 0.45);
+}
+.dark .admin-shell option {
+  background-color: #0F1A2E;
+  color: var(--foreground);
 }
 
 @layer base {

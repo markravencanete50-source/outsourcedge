@@ -328,13 +328,13 @@ export default function AdminCeoDashboard() {
                 <BarChart data={stageChartData} margin={{ top: 8, right: 8, left: -16, bottom: 8 }}>
                   <XAxis
                     dataKey="label"
-                    tick={{ fontSize: 11, fill: '#64748b' }}
+                    tick={{ fontSize: 11, fill: '#94A3B8' }}
                     interval={0}
                     angle={-25}
                     textAnchor="end"
                     height={60}
                   />
-                  <YAxis allowDecimals={false} tick={{ fontSize: 12, fill: '#64748b' }} />
+                  <YAxis allowDecimals={false} tick={{ fontSize: 12, fill: '#94A3B8' }} />
                   <Tooltip cursor={{ fill: '#f1f5f9' }} />
                   <Bar dataKey="value" radius={[4, 4, 0, 0]}>
                     {stageChartData.map((entry, i) => (
