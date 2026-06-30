@@ -1,81 +1,66 @@
 import { ReactNode, useEffect, useState } from 'react';
 import { Link, useLocation } from 'wouter';
 import { useAdmin } from '@/contexts/AdminContext';
+import { useTheme } from '@/contexts/ThemeProvider';
 import { useAdminActivityLogger } from '@/hooks/useAdminActivityLogger';
 import {
-  BarChart3, Users, Mail, FileText, LogOut, Menu, X, Zap,
-  Briefcase, Layout, Settings, Star, Clock, Crown
+  LayoutDashboard, Mail, Users, Briefcase, BarChart3, Zap, Clock,
+  Layout, Settings, Star, FileText, LogOut, Menu, Sun, Moon, Crown,
 } from 'lucide-react';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { toast } from 'sonner';
 
-interface AdminLayoutProps {
-  children: ReactNode;
-}
-
-export default function AdminLayout({ children }: AdminLayoutProps) {
-  const { logout, adminEmail, isCeo } = useAdmin();
+/**
+ * Redesigned admin shell.
+ *  - Collapsible sidebar (76px icon rail) — state lives in ThemeProvider, persisted.
+ *  - Top bar with hamburger + Light/Dark quick toggle.
+ *  - Full dark-mode support via Tailwind `dark:` classes (class-based variant
+ *    is wired in index.css: `@custom-variant dark`).
+ */
+export default function AdminLayout({ children }: { children: ReactNode }) {
+  const { logout, isCeo } = useAdmin();
   const { trackPageView, logActivity, trackClick } = useAdminActivityLogger();
+  const { theme, setTheme, sidebarCollapsed, toggleSidebar } = useTheme();
   const [location, setLocation] = useLocation();
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [firebaseConnected, setFirebaseConnected] = useState(false);
+  const [dbConnected, setDbConnected] = useState(false);
 
-  // The CEO is a superset of an admin: they get the FULL operational menu plus an
-  // exclusive Command Center at the top. Regular admins see the operational menu
-  // only. (The CEO must never have *less* access than an admin.)
   const adminMenu = [
-    { href: '/admin/dashboard', label: 'Dashboard', icon: BarChart3 },
-    { href: '/admin/contacts', label: 'Contact Submissions', icon: Mail },
-    { href: '/admin/applications', label: 'Job Applications', icon: Users },
-    { href: '/admin/jobs', label: 'Manage Jobs', icon: Briefcase },
-    { href: '/admin/analytics', label: 'Analytics', icon: FileText },
-    { href: '/admin/clients', label: 'Partnership Pipeline', icon: Zap },
-    { href: '/admin/activity-logs', label: 'Activity Logs', icon: Clock },
-    { href: '/admin/editor', label: 'Website Editor', icon: Layout },
-    { href: '/admin/services', label: 'Service Manager', icon: Settings },
-    { href: '/admin/testimonials', label: 'Testimonial Manager', icon: Star },
-    { href: '/admin/service-questionnaires', label: 'Service Inquiries', icon: FileText },
+    { href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard, section: 'Overview' },
+    { href: '/admin/contacts', label: 'Contact Submissions', icon: Mail, section: 'Overview' },
+    { href: '/admin/applications', label: 'Job Applications', icon: Users, section: 'Overview' },
+    { href: '/admin/jobs', label: 'Manage Jobs', icon: Briefcase, section: 'Overview' },
+    { href: '/admin/analytics', label: 'Analytics', icon: BarChart3, section: 'Intelligence' },
+    { href: '/admin/clients', label: 'Partnership Pipeline', icon: Zap, section: 'Intelligence' },
+    { href: '/admin/activity-logs', label: 'Activity Logs', icon: Clock, section: 'Intelligence' },
+    { href: '/admin/editor', label: 'Website Editor', icon: Layout, section: 'Content' },
+    { href: '/admin/services', label: 'Service Manager', icon: Settings, section: 'Content' },
+    { href: '/admin/testimonials', label: 'Testimonial Manager', icon: Star, section: 'Content' },
+    { href: '/admin/service-questionnaires', label: 'Service Inquiries', icon: FileText, section: 'Content' },
   ];
+  const ceoMenu = [{ href: '/admin/ceo', label: 'Command Center', icon: Crown, section: 'Executive' }];
+  const menu = isCeo ? [...ceoMenu, ...adminMenu] : adminMenu;
 
-  // CEO-only entries, surfaced above the shared admin menu.
-  const ceoMenu = [
-    { href: '/admin/ceo', label: 'Command Center', icon: Crown },
-  ];
-
-  const menuItems = isCeo ? [...ceoMenu, ...adminMenu] : adminMenu;
-
-  // 1. GLOBAL PAGE TRACKING
   useEffect(() => {
-    const pageName = menuItems.find(item => item.href === location)?.label || 'Admin Page';
-    trackPageView(pageName);
+    const name = menu.find((m) => m.href === location)?.label || 'Admin Page';
+    trackPageView(name);
   }, [location]);
 
-  // 2. GLOBAL CLICK LISTENER (Captures all button/link clicks)
   useEffect(() => {
-    const handleGlobalClick = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      const clickable = target.closest('button, a, [role="button"]');
-      
-      if (clickable) {
-        const name = clickable.textContent?.trim() || clickable.getAttribute('aria-label') || 'Unknown Element';
-        // Don't log heartbeat or system internal clicks
-        if (name && !['Logout', 'OE', 'OutsourceEdge'].includes(name)) {
-          trackClick(name);
-        }
+    const onClick = (e: MouseEvent) => {
+      const el = (e.target as HTMLElement).closest('button, a, [role="button"]');
+      if (el) {
+        const name = el.textContent?.trim() || el.getAttribute('aria-label') || 'Unknown';
+        if (name && !['Logout', 'OE', 'OutsourcEdge'].includes(name)) trackClick(name);
       }
     };
-
-    window.addEventListener('click', handleGlobalClick);
-    return () => window.removeEventListener('click', handleGlobalClick);
+    window.addEventListener('click', onClick);
+    return () => window.removeEventListener('click', onClick);
   }, []);
 
   useEffect(() => {
     if (!auth) return;
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setFirebaseConnected(!!user);
-    });
-    return () => unsubscribe();
+    return onAuthStateChanged(auth, (u) => setDbConnected(!!u));
   }, []);
 
   const handleLogout = async () => {
@@ -83,70 +68,119 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       await logActivity('logout', 'System', 'Admin initiated logout');
       await logout();
       setLocation('/admin/login');
-      toast.success("Logged out successfully");
-    } catch (error) {
-      toast.error("Error during logout");
+      toast.success('Logged out successfully');
+    } catch {
+      toast.error('Error during logout');
     }
   };
 
-  const isActive = (href: string) => location === href;
+  const active = (href: string) => location === href;
+  const sections = Array.from(new Set(menu.map((m) => m.section)));
 
   return (
-    <div className="flex h-screen bg-gray-100">
-      <aside className={`${sidebarOpen ? 'w-64' : 'w-20'} bg-[#0F172A] text-white transition-all duration-300 flex flex-col`}>
-        <div className="p-6 border-b border-gray-700 flex items-center justify-between">
-          {sidebarOpen && (
-            <div className="flex items-center gap-3">
-              <div className={`w-10 h-10 rounded-lg flex items-center justify-center font-bold ${isCeo ? 'bg-amber-500 text-slate-900' : 'bg-[#1B3A4B]'}`}>
-                {isCeo ? <Crown className="w-5 h-5" /> : 'OE'}
-              </div>
-              <div className="flex flex-col leading-tight">
-                <span className="font-bold">OutsourceEdge</span>
-                {isCeo && <span className="text-[10px] uppercase tracking-wider text-amber-400">Executive Portal</span>}
+    <div className="flex h-screen bg-[#EEF1F6] dark:bg-[#070B14] text-slate-900 dark:text-slate-100 transition-colors">
+      {/* SIDEBAR */}
+      <aside
+        className={`${sidebarCollapsed ? 'w-[76px]' : 'w-64'} flex flex-col bg-[#0C1426] dark:bg-[#0A1020] border-r border-white/[.07] overflow-hidden transition-[width] duration-300 ease-[cubic-bezier(.4,0,.2,1)]`}
+      >
+        <div className="flex items-center gap-3 px-4 h-[74px] border-b border-white/[.07]">
+          <div className="w-10 h-10 shrink-0 rounded-xl flex items-center justify-center bg-gradient-to-br from-[#1B3A4B] to-[#0B2230] shadow-lg">
+            <span className="font-[Poppins] font-bold text-[15px] text-[#C6A75E]">OE</span>
+          </div>
+          {!sidebarCollapsed && (
+            <div className="leading-tight whitespace-nowrap">
+              <div className="font-[Poppins] font-semibold text-[15px] text-slate-50">OutsourcEdge</div>
+              <div className="text-[10px] tracking-[.14em] uppercase text-[#C6A75E] font-semibold">
+                {isCeo ? 'Executive Portal' : 'Admin Portal'}
               </div>
             </div>
           )}
-          <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-1 hover:bg-gray-700 rounded">
-            {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
         </div>
 
-        <nav className="flex-1 py-6 overflow-y-auto">
-          <ul className="space-y-2 px-3">
-            {menuItems.map((item) => {
-              const activeCls = isCeo
-                ? 'bg-amber-500 text-slate-900 font-semibold'
-                : 'bg-[#1B3A4B] text-white';
-              return (
-                <li key={item.href}>
-                  <Link href={item.href}>
-                    <a className={`flex items-center gap-3 p-3 rounded-lg transition-colors ${isActive(item.href) ? activeCls : 'text-gray-400 hover:bg-gray-800 hover:text-white'}`}>
-                      <item.icon className="w-5 h-5" />
-                      {sidebarOpen && <span>{item.label}</span>}
+        <nav className="flex-1 overflow-y-auto px-3 py-3">
+          {sections.map((sec) => (
+            <div key={sec}>
+              {!sidebarCollapsed && (
+                <div className="px-3 pt-4 pb-2 text-[10px] tracking-[.13em] uppercase font-bold text-slate-500 whitespace-nowrap">
+                  {sec}
+                </div>
+              )}
+              {menu.filter((m) => m.section === sec).map((m) => {
+                const isOn = active(m.href);
+                return (
+                  <Link key={m.href} href={m.href}>
+                    <a
+                      title={m.label}
+                      className={`flex items-center gap-3 ${sidebarCollapsed ? 'justify-center' : ''} px-3 py-[11px] rounded-[10px] mb-[3px] text-[13.5px] whitespace-nowrap transition-colors ${
+                        isOn
+                          ? 'font-semibold text-white bg-gradient-to-r from-[#1B3A4B] to-[#143040] shadow-[0_8px_20px_rgba(27,58,75,.4)]'
+                          : 'font-medium text-slate-400 hover:bg-white/[.06] hover:text-slate-100'
+                      }`}
+                    >
+                      <m.icon className="w-[17px] h-[17px] shrink-0" />
+                      {!sidebarCollapsed && <span>{m.label}</span>}
                     </a>
                   </Link>
-                </li>
-              );
-            })}
-          </ul>
+                );
+              })}
+            </div>
+          ))}
         </nav>
 
-        <div className="p-4 border-t border-gray-700 space-y-3">
-          {sidebarOpen && (
-            <div className="space-y-2 mb-4">
-              <div className="flex items-center justify-between text-xs text-gray-400">
-                <span>Database</span>
-                <span className={firebaseConnected ? 'text-green-500' : 'text-yellow-500'}>{firebaseConnected ? 'Connected' : 'Syncing...'}</span>
-              </div>
+        <div className="p-3 border-t border-white/[.07]">
+          {!sidebarCollapsed && (
+            <div className="flex items-center justify-between text-[11px] text-slate-500 mb-[10px] px-1">
+              <span className="flex items-center gap-2">
+                <span className={`w-2 h-2 rounded-full ${dbConnected ? 'bg-emerald-500' : 'bg-amber-500'} animate-pulse`} />
+                Database
+              </span>
+              <span className={dbConnected ? 'text-emerald-500 font-semibold' : 'text-amber-500 font-semibold'}>
+                {dbConnected ? 'Connected' : 'Syncing…'}
+              </span>
             </div>
           )}
-          <button onClick={handleLogout} className="flex items-center gap-3 w-full p-3 text-gray-400 hover:bg-red-900/20 hover:text-red-500 rounded-lg transition-colors">
-            <LogOut className="w-5 h-5" />
-            {sidebarOpen && <span>Logout</span>}
+          <button
+            onClick={handleLogout}
+            className={`flex items-center gap-3 ${sidebarCollapsed ? 'justify-center' : ''} w-full px-3 py-[11px] rounded-[10px] text-slate-400 hover:bg-red-900/20 hover:text-red-400 transition-colors`}
+          >
+            <LogOut className="w-[17px] h-[17px] shrink-0" />
+            {!sidebarCollapsed && <span className="text-[13.5px]">Logout</span>}
           </button>
         </div>
       </aside>
-      <main className="flex-1 overflow-auto p-8">{children}</main>
+
+      {/* MAIN */}
+      <div className="flex-1 min-w-0 flex flex-col">
+        <header className="sticky top-0 z-20 flex items-center gap-4 px-[clamp(18px,3vw,30px)] py-[14px] bg-white/80 dark:bg-[#080C16]/80 backdrop-blur-md border-b border-slate-200 dark:border-white/[.08]">
+          <button
+            onClick={toggleSidebar}
+            title={sidebarCollapsed ? 'Expand sidebar' : 'Hide sidebar'}
+            className="w-10 h-10 shrink-0 rounded-xl bg-slate-100 dark:bg-white/[.04] border border-slate-200 dark:border-white/[.08] text-slate-600 dark:text-slate-300 hover:bg-[#1B3A4B] hover:text-white hover:border-transparent transition flex items-center justify-center"
+          >
+            <Menu className="w-[18px] h-[18px]" />
+          </button>
+          <div className="mr-auto" />
+          {/* quick Light/Dark toggle */}
+          <div className="flex items-center gap-[3px] h-10 p-1 rounded-xl bg-slate-100 dark:bg-white/[.04] border border-slate-200 dark:border-white/[.08]">
+            <button
+              onClick={() => setTheme('light')}
+              title="Light"
+              className={`w-[34px] h-8 rounded-lg flex items-center justify-center transition ${theme === 'light' ? 'bg-[#1B3A4B] text-white' : 'text-slate-500 dark:text-slate-400'}`}
+            >
+              <Sun className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => setTheme('dark')}
+              title="Dark"
+              className={`w-[34px] h-8 rounded-lg flex items-center justify-center transition ${theme === 'dark' ? 'bg-[#1B3A4B] text-white' : 'text-slate-500 dark:text-slate-400'}`}
+            >
+              <Moon className="w-[15px] h-[15px]" />
+            </button>
+          </div>
+        </header>
+
+        <main className="flex-1 overflow-auto p-[clamp(18px,3vw,28px)]">{children}</main>
+      </div>
     </div>
   );
 }

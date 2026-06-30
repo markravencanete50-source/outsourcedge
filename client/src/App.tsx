@@ -3,6 +3,7 @@ import { Switch, Route, Redirect } from "wouter";
 import { Toaster } from "@/components/ui/sonner";
 import { AdminProvider } from "./contexts/AdminContext";
 import { useAdmin } from "./contexts/AdminContext";
+import { ThemeProvider } from "./contexts/ThemeProvider";
 import ScrollToTop from "@/components/ScrollToTop";
 
 // ── Code splitting — each page loads only when visited ────────────────────────
@@ -126,10 +127,12 @@ function Router() {
 // ── App ───────────────────────────────────────────────────────────────────────
 function App() {
   return (
-    <AdminProvider>
-      <Router />
-      <Toaster />
-    </AdminProvider>
+    <ThemeProvider>
+      <AdminProvider>
+        <Router />
+        <Toaster />
+      </AdminProvider>
+    </ThemeProvider>
   );
 }
 
