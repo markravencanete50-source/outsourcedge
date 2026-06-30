@@ -85,10 +85,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader("Access-Control-Allow-Origin", "*");
 
   const apiKey = process.env.RESEND_API_KEY;
-  const projectId = process.env.FIREBASE_PROJECT_ID;
+  // Accept either the server-style name or the VITE_-prefixed one (serverless
+  // functions can read both — the VITE_ prefix only matters for the browser build).
+  const projectId = process.env.FIREBASE_PROJECT_ID || process.env.VITE_FIREBASE_PROJECT_ID;
   if (!apiKey || !projectId) {
     return res.status(500).json({
-      error: "Email sending is not configured. Set RESEND_API_KEY and FIREBASE_PROJECT_ID in Vercel.",
+      error: "Email sending is not configured. Set RESEND_API_KEY and FIREBASE_PROJECT_ID (or VITE_FIREBASE_PROJECT_ID) in Vercel.",
     });
   }
 
