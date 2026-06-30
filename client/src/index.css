@@ -95,7 +95,6 @@
    Mirrors the admin dashboard palette so shadcn/ui components (which render
    in body-level portals and read these CSS variables) theme correctly. */
 .dark {
-  color-scheme: dark;
   --primary: #1B3A4B;
   --primary-foreground: #FFFFFF;
   --accent: #C6A75E;
@@ -118,6 +117,14 @@
   --sidebar: #0A1020;
   --sidebar-foreground: #E6ECF5;
   --sidebar-border: rgba(255, 255, 255, 0.07);
+}
+
+/* Native control scheme (select dropdowns, scrollbars, autofill) is forced to
+   dark ONLY inside the admin shell. Keeping it off the global `.dark` means the
+   login screen and public pages keep light-scheme inputs even while an admin's
+   saved dark preference sits on <html>. */
+.dark .admin-shell {
+  color-scheme: dark;
 }
 
 /* In dark mode, give raw admin form controls a visibly filled surface with

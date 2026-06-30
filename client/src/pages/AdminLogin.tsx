@@ -68,7 +68,7 @@ export default function AdminLogin() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="admin@outsourcedge.com"
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-[#1B3A4B] transition"
+                  className="w-full pl-10 pr-4 py-3 bg-white text-slate-900 placeholder-gray-400 border border-gray-300 rounded-lg focus:outline-none focus:border-[#1B3A4B] transition"
                   required
                 />
               </div>
@@ -86,7 +86,7 @@ export default function AdminLogin() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-[#1B3A4B] transition"
+                  className="w-full pl-10 pr-4 py-3 bg-white text-slate-900 placeholder-gray-400 border border-gray-300 rounded-lg focus:outline-none focus:border-[#1B3A4B] transition"
                   required
                 />
               </div>
@@ -101,13 +101,6 @@ export default function AdminLogin() {
               {isLoading ? 'Logging in...' : 'Login to Dashboard'}
             </Button>
           </form>
-        </div>
-
-        {/* Footer */}
-        <div className="text-center mt-6">
-          <p className="text-white/80 text-sm">
-            © 2024 OutsourcEdge. All rights reserved.
-          </p>
         </div>
       </div>
     </div>
