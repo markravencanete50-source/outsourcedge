@@ -10,6 +10,7 @@ import {
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { toast } from 'sonner';
+import AdminAiAssistant from '@/components/AdminAiAssistant';
 
 /**
  * Redesigned admin shell.
@@ -194,6 +195,9 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
 
         <main className="flex-1 overflow-auto p-[clamp(18px,3vw,28px)]">{children}</main>
       </div>
+
+      {/* Built-in, API-free dashboard assistant — reads live data, all admins + CEO */}
+      <AdminAiAssistant />
     </div>
   );
 }
