@@ -8,7 +8,7 @@ import { uploadToCloudinary, cloudinaryConfigured } from '@/lib/cloudinary';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { motion } from 'framer-motion';
-import { Briefcase, MapPin, Clock, Calendar, ArrowLeft, Send, Upload, Video } from 'lucide-react';
+import { Briefcase, MapPin, Clock, Calendar, ArrowLeft, Send, Upload, Video, CheckCircle } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface Job {
@@ -27,6 +27,8 @@ export default function JobDetail() {
   const [job, setJob] = useState<Job | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [submittedName, setSubmittedName] = useState('');
 
   const [formData, setFormData] = useState({
     fullName: '',
@@ -100,6 +102,8 @@ export default function JobDetail() {
         pdfBase64 || undefined,
       );
       toast.success('Application submitted successfully!');
+      setSubmittedName((formData.fullName || '').trim().split(/\s+/)[0] || '');
+      setSubmitted(true);
       setFormData({
         fullName: '',
         email: '',
@@ -187,6 +191,44 @@ export default function JobDetail() {
             <hr className="border-slate-100 mb-12" />
 
             <section id="apply">
+              {submitted ? (
+                <motion.div
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="text-center bg-gradient-to-b from-[#1B3A4B]/[0.04] to-transparent border border-[#1B3A4B]/10 rounded-2xl px-6 py-14"
+                >
+                  <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-[#1B3A4B]">
+                    <CheckCircle className="h-9 w-9 text-[#C6A75E]" />
+                  </div>
+                  <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-3">
+                    Thank you{submittedName ? `, ${submittedName}` : ''} for applying!
+                  </h2>
+                  <p className="max-w-md mx-auto text-slate-600 leading-relaxed">
+                    Your application for{' '}
+                    <span className="font-semibold text-slate-900">{job.title}</span> has been received.
+                    Our team at OutsourcEdge will review it and get in touch with you shortly — please keep your lines open.
+                  </p>
+                  <p className="mt-3 text-sm text-slate-500">
+                    A confirmation email is on its way to your inbox.
+                  </p>
+                  <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
+                    <Link
+                      href="/careers"
+                      className="inline-flex items-center justify-center px-6 py-3 rounded-xl bg-[#1B3A4B] text-white font-semibold hover:bg-[#1B3A4B]/90 transition-all"
+                    >
+                      Browse more roles
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => { setSubmitted(false); setSubmittedName(''); }}
+                      className="inline-flex items-center justify-center px-6 py-3 rounded-xl border border-slate-200 text-slate-700 font-semibold hover:bg-slate-50 transition-all"
+                    >
+                      Submit another application
+                    </button>
+                  </div>
+                </motion.div>
+              ) : (
+              <>
               <h2 className="text-2xl font-bold text-slate-900 mb-8">Apply for this position</h2>
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -302,6 +344,8 @@ export default function JobDetail() {
                   Submit Application
                 </button>
               </form>
+              </>
+              )}
             </section>
           </div>
         </div>
