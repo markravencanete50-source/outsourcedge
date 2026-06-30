@@ -24,11 +24,13 @@ interface PageContent {
 }
 
 const DEFAULT_CONTENT: PageContent = {
-  heroTitle: "Your Growth Team, Ready Now",
-  heroSubtitle: "Scale your operations with dedicated global talent. We provide the expertise you need to grow without the complexity.",
-  aboutTitle: "Global Outsourcing Solutions",
-  aboutContent: "OutsourcEdge helps businesses scale by providing high-quality, dedicated remote teams. Our mission is to bridge the gap between global talent and growing enterprises.",
-  servicesTitle: "Our Specialized Services",
+  heroTitle: "Your listings, expertly managed. Your time, given back.",
+  heroSubtitle:
+    "OutsourcEdge places vetted offshore talent with US realtors, landlords, and short-term-rental hosts — so your listings, tenants, and back office run like a larger company's, without the payroll.",
+  aboutTitle: "The team behind your properties — without the payroll.",
+  aboutContent:
+    "OutsourcEdge is an offshore talent partner built for US realtors, landlords, and short-term-rental hosts. We place vetted people who run your listings, tenants, and back office — quietly, reliably, and to on-shore standards.",
+  servicesTitle: "Support built around the work you'd rather hand off.",
   contactEmail: "info@outsourcedge.com",
   contactPhone: "+1 (555) 000-0000",
   address: "Global Operations"

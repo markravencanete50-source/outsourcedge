@@ -12,6 +12,8 @@ import {
   useTransform,
 } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
+import { doc, onSnapshot } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 import { SMOOTH_EASE } from "@/lib/animations";
 import { useMagnetic } from "@/lib/motion3d";
 import Seo from "@/components/Seo";
@@ -35,8 +37,36 @@ import Seo from "@/components/Seo";
 const NAVY = "#1F2A44";
 const GOLD = "#C6A75E";
 
-const HERO_WORDS_A = ["The", "team", "behind", "your", "properties"];
-const HERO_WORDS_B = ["—", "without", "the", "payroll."];
+const DEFAULT_ABOUT = {
+  aboutTitle: "The team behind your properties — without the payroll.",
+  aboutContent:
+    "OutsourcEdge is an offshore talent partner built for US realtors, landlords, and short-term-rental hosts. We place vetted people who run your listings, tenants, and back office — quietly, reliably, and to on-shore standards.",
+};
+
+/* Split the editable About title into two animated lines (line B in gold).
+   Prefers an em/en/hyphen-dash boundary, then a sentence boundary, else the
+   word midpoint — so editing "About Title" in the admin editor drives the hero. */
+function splitHeadline(title: string): [string[], string[]] {
+  const t = (title || "").trim();
+  if (!t) return [[], []];
+  let a = t;
+  let b = "";
+  const dash = t.search(/\s[—–-]\s/);
+  const sentence = t.search(/[.!?]\s+/);
+  if (dash !== -1) {
+    a = t.slice(0, dash).trim();
+    b = t.slice(dash).trim();
+  } else if (sentence !== -1) {
+    a = t.slice(0, sentence + 1).trim();
+    b = t.slice(sentence + 1).trim();
+  } else {
+    const words = t.split(/\s+/);
+    const mid = Math.ceil(words.length / 2);
+    a = words.slice(0, mid).join(" ");
+    b = words.slice(mid).join(" ");
+  }
+  return [a ? a.split(/\s+/) : [], b ? b.split(/\s+/) : []];
+}
 
 const story = [
   {
@@ -402,6 +432,22 @@ function CapabilityRing() {
 function Hero() {
   const reduce = useReducedMotion();
   const ref = useRef<HTMLDivElement>(null);
+  const [about, setAbout] = useState(DEFAULT_ABOUT);
+
+  useEffect(() => {
+    if (!db) return;
+    return onSnapshot(doc(db, "site_content", "main"), (s) => {
+      if (!s.exists()) return;
+      const d = s.data() as Partial<typeof DEFAULT_ABOUT>;
+      setAbout({
+        aboutTitle: d.aboutTitle || DEFAULT_ABOUT.aboutTitle,
+        aboutContent: d.aboutContent || DEFAULT_ABOUT.aboutContent,
+      });
+    });
+  }, []);
+
+  const [titleA, titleB] = splitHeadline(about.aboutTitle);
+
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start start", "end start"],
@@ -443,16 +489,13 @@ function Hero() {
             </div>
           </Reveal>
           <h1 className="text-balance font-[Poppins] text-[clamp(34px,5.4vw,66px)] font-semibold leading-[1.05] tracking-[-0.02em] text-[#1F2A44]">
-            {HERO_WORDS_A.map((w, i) => word(w, i))}
-            <br />
-            {HERO_WORDS_B.map((w, i) => word(w, HERO_WORDS_A.length + i, true))}
+            {titleA.map((w, i) => word(w, i))}
+            {titleB.length > 0 && <br />}
+            {titleB.map((w, i) => word(w, titleA.length + i, true))}
           </h1>
           <Reveal delay={0.14}>
             <p className="mt-[26px] max-w-[500px] text-[clamp(16px,1.9vw,19px)] leading-[1.66] text-[#1B1F2A]/[0.7]">
-              OutsourcEdge is an offshore talent partner built for US realtors,
-              landlords, and short-term-rental hosts. We place vetted people who run
-              your listings, tenants, and back office — quietly, reliably, and to
-              on-shore standards.
+              {about.aboutContent}
             </p>
           </Reveal>
           <Reveal delay={0.26}>

@@ -50,8 +50,30 @@ const DEFAULT_CONTENT: PageContent = {
   servicesTitle: "Support built around the work you'd rather hand off.",
 };
 
-const HERO_WORDS_A = ["Your", "listings,", "expertly", "managed."];
-const HERO_WORDS_B = ["Your", "time,", "given", "back."];
+/* Split an editable headline into two animated lines (line B renders in gold).
+   Prefers an em/en/hyphen-dash boundary, then a sentence boundary, else the
+   word midpoint — so editing "Hero Title" in the admin editor drives the hero. */
+function splitHeadline(title: string): [string[], string[]] {
+  const t = (title || "").trim();
+  if (!t) return [[], []];
+  let a = t;
+  let b = "";
+  const dash = t.search(/\s[—–-]\s/);
+  const sentence = t.search(/[.!?]\s+/);
+  if (dash !== -1) {
+    a = t.slice(0, dash).trim();
+    b = t.slice(dash).trim(); // keep the dash on the gold line
+  } else if (sentence !== -1) {
+    a = t.slice(0, sentence + 1).trim();
+    b = t.slice(sentence + 1).trim();
+  } else {
+    const words = t.split(/\s+/);
+    const mid = Math.ceil(words.length / 2);
+    a = words.slice(0, mid).join(" ");
+    b = words.slice(mid).join(" ");
+  }
+  return [a ? a.split(/\s+/) : [], b ? b.split(/\s+/) : []];
+}
 
 const highlights = [
   { value: "5–7", label: "days to launch", emphasis: false },
@@ -163,6 +185,8 @@ export default function Home() {
     ? services
     : servicesFallback.map((s, i) => ({ id: String(i), title: s.title, description: s.description, icon: "" }));
 
+  const [heroLineA, heroLineB] = splitHeadline(content.heroTitle);
+
   return (
     <div className="min-h-screen bg-[#FAF7F1]">
       <Seo
@@ -239,11 +263,11 @@ export default function Home() {
                 <span className="eyebrow">Offshore talent · On-shore standards</span>
               </motion.div>
               <h1 className="font-['Poppins'] text-[clamp(38px,6.4vw,76px)] font-semibold leading-[1.04] tracking-[-0.02em] text-white [text-wrap:balance]">
-                {HERO_WORDS_A.map((w, i) => (
+                {heroLineA.map((w, i) => (
                   <motion.span key={"a" + i} variants={wordItem} className="inline-block">{w}&nbsp;</motion.span>
                 ))}
-                <br />
-                {HERO_WORDS_B.map((w, i) => (
+                {heroLineB.length > 0 && <br />}
+                {heroLineB.map((w, i) => (
                   <motion.span key={"b" + i} variants={wordItem} className="inline-block text-[#C6A75E]">{w}&nbsp;</motion.span>
                 ))}
               </h1>
