@@ -3,6 +3,8 @@ import { useRoute, Link } from 'wouter';
 import { doc, getDoc, addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { notifySubmission } from '@/lib/notify';
+import { buildApplicationPdf, blobToBase64 } from '@/lib/applicationPdf';
+import { uploadToCloudinary, cloudinaryConfigured } from '@/lib/cloudinary';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { motion } from 'framer-motion';
@@ -64,14 +66,39 @@ export default function JobDetail() {
 
     setIsSubmitting(true);
     try {
+      // Generate a branded PDF of the application and host it on Cloudinary so it
+      // can be attached to the admin notification email and downloaded later.
+      // Never let a PDF/upload hiccup block the actual submission.
+      let pdfUrl = '';
+      let pdfBase64 = '';
+      try {
+        const { blob, filename } = buildApplicationPdf({
+          jobTitle: job.title,
+          ...formData,
+          date: new Date(),
+        });
+        // Inline bytes so the team email can attach the PDF even without Cloudinary.
+        pdfBase64 = await blobToBase64(blob);
+        if (cloudinaryConfigured()) {
+          pdfUrl = await uploadToCloudinary(blob, filename);
+        }
+      } catch (pdfErr) {
+        console.error('Application PDF generation/upload failed:', pdfErr);
+      }
+
       await addDoc(collection(db, 'applications'), {
         jobId: job.id,
         jobTitle: job.title,
         ...formData,
+        ...(pdfUrl ? { pdfUrl } : {}),
         status: 'new',
         date: serverTimestamp()
       });
-      notifySubmission('application', { jobTitle: job.title, ...formData });
+      notifySubmission(
+        'application',
+        { jobTitle: job.title, ...formData, ...(pdfUrl ? { pdfUrl } : {}) },
+        pdfBase64 || undefined,
+      );
       toast.success('Application submitted successfully!');
       setFormData({
         fullName: '',

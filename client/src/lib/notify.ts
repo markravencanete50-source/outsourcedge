@@ -8,13 +8,20 @@
  */
 export type NotifyType = "application" | "contact" | "service";
 
-export function notifySubmission(type: NotifyType, record: Record<string, unknown>): void {
+export function notifySubmission(
+  type: NotifyType,
+  record: Record<string, unknown>,
+  pdfBase64?: string,
+): void {
   try {
     void fetch("/api/notify", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ type, record }),
-      keepalive: true,
+      body: JSON.stringify({ type, record, ...(pdfBase64 ? { pdfBase64 } : {}) }),
+      // `keepalive` caps the request body at 64KB; an inline PDF can exceed that,
+      // so only use it for the small (PDF-less) payloads where it helps the
+      // request survive a page unload.
+      keepalive: !pdfBase64,
     }).catch((err) => {
       console.error("notifySubmission failed:", err);
     });

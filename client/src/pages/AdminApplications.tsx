@@ -12,7 +12,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { ExternalLink, Video, FileText, User, Mail, Briefcase, Phone, Globe } from 'lucide-react';
+import { ExternalLink, Video, FileText, User, Mail, Briefcase, Phone, Globe, Download } from 'lucide-react';
+import { buildApplicationPdf } from '@/lib/applicationPdf';
 
 interface Application {
   id: string;
@@ -25,6 +26,7 @@ interface Application {
   coverLetter: string;
   resumeUrl: string;
   videoIntroUrl?: string;
+  pdfUrl?: string;
   status: 'new' | 'reviewed' | 'accepted' | 'rejected' | 'hired';
   date: any;
   notes?: string;
@@ -61,6 +63,7 @@ export default function AdminApplications() {
             coverLetter: data.coverLetter || data.message || 'N/A',
             resumeUrl: data.resumeUrl,
             videoIntroUrl: data.videoIntroUrl,
+            pdfUrl: data.pdfUrl,
             status: data.status || 'new',
             date: data.date,
             notes: data.notes || '',
@@ -81,6 +84,31 @@ export default function AdminApplications() {
       setIsLoading(false);
     }
   }, [isAuthenticated]);
+
+  // Open the hosted PDF if we stored one at submission time; otherwise generate
+  // it on the fly from the application data (covers older records, too).
+  const downloadApplicationPdf = (app: Application) => {
+    if (app.pdfUrl) {
+      window.open(app.pdfUrl, '_blank', 'noopener');
+      logActivity('view', 'Job Applications', `Downloaded application PDF for ${app.fullName}`, { id: app.id });
+      return;
+    }
+    try {
+      const { blob, filename } = buildApplicationPdf(app as any);
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      logActivity('view', 'Job Applications', `Generated application PDF for ${app.fullName}`, { id: app.id });
+    } catch (err) {
+      console.error('PDF generation failed:', err);
+      toast.error('Could not generate the PDF');
+    }
+  };
 
   const filteredApplications = applications.filter(app => {
     const matchesSearch = 
@@ -202,6 +230,13 @@ export default function AdminApplications() {
                   </TableCell>
                   <TableCell>
                     <div className="flex gap-2">
+                      <button
+                        onClick={() => downloadApplicationPdf(app)}
+                        title="Download application PDF"
+                        className="p-1 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 rounded"
+                      >
+                        <Download size={18} />
+                      </button>
                       {app.resumeUrl && (
                         <a href={app.resumeUrl} target="_blank" rel="noreferrer" title="Resume" className="p-1 text-[#1B3A4B] dark:text-[#7FB6CC] hover:bg-[#1B3A4B]/10 rounded">
                           <FileText size={18} />
@@ -317,6 +352,11 @@ export default function AdminApplications() {
           )}
 
           <DialogFooter>
+            {currentApplication && (
+              <Button variant="outline" className="mr-auto" onClick={() => downloadApplicationPdf(currentApplication)}>
+                <Download className="w-4 h-4 mr-2" /> Download PDF
+              </Button>
+            )}
             <Button variant="outline" onClick={() => setIsDialogOpen(false)}>Close</Button>
             <Button className="bg-[#1B3A4B] hover:bg-[#1B3A4B]/90" onClick={handleSaveApplication}>Save Changes</Button>
           </DialogFooter>
