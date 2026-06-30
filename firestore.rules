@@ -131,6 +131,7 @@ service cloud.firestore {
     // ── Internal, admin-only collections ─────────────────────────────────────
     match /clients/{id}         { allow read, write: if isActiveAdmin(); }
     match /adminActivities/{id} { allow read, write: if isActiveAdmin(); }
+    match /sentEmails/{id}      { allow read, write: if isActiveAdmin(); }
 
     // Deny everything else by default.
     match /{document=**} {

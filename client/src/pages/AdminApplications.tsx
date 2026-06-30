@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import AdminLayout from '@/components/AdminLayout';
 import { useAdmin } from '@/contexts/AdminContext';
 import { useAdminActivityLogger } from '@/hooks/useAdminActivityLogger'; // INJECTED
-import { collection, onSnapshot, query, orderBy, doc, updateDoc, deleteDoc, where } from 'firebase/firestore';
+import { collection, onSnapshot, query, orderBy, doc, updateDoc, deleteDoc, where, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -12,8 +12,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { ExternalLink, Video, FileText, User, Mail, Briefcase, Phone, Globe, Download } from 'lucide-react';
+import { ExternalLink, Video, FileText, User, Mail, Briefcase, Phone, Globe, Download, Send } from 'lucide-react';
 import { buildApplicationPdf } from '@/lib/applicationPdf';
+import { sendApplicantEmail } from '@/lib/sendApplicantEmail';
 
 interface Application {
   id: string;
@@ -33,14 +34,21 @@ interface Application {
 }
 
 export default function AdminApplications() {
-  const { isAuthenticated } = useAdmin();
+  const { isAuthenticated, adminEmail } = useAdmin();
   const { logActivity } = useAdminActivityLogger(); // INJECTED
   const [applications, setApplications] = useState<Application[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [currentApplication, setCurrentApplication] = useState<Application | null>(null);
   const [filterStatus, setFilterStatus] = useState<'all' | 'new' | 'reviewed' | 'accepted' | 'rejected' | 'hired'>('all');
+  const [filterJob, setFilterJob] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');
+
+  // Compose-email state
+  const [composeApp, setComposeApp] = useState<Application | null>(null);
+  const [emailSubject, setEmailSubject] = useState('');
+  const [emailBody, setEmailBody] = useState('');
+  const [isSending, setIsSending] = useState(false);
 
   useEffect(() => {
     if (!db || !isAuthenticated) return;
@@ -110,16 +118,116 @@ export default function AdminApplications() {
     }
   };
 
+  // Distinct positions applicants have applied for — powers the job filter.
+  const jobTitles = Array.from(
+    new Set(applications.map(a => a.jobTitle).filter(t => t && t !== 'Not specified')),
+  ).sort();
+
   const filteredApplications = applications.filter(app => {
-    const matchesSearch = 
+    const matchesSearch =
       (app.fullName?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
       (app.email?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
       (app.jobTitle?.toLowerCase() || '').includes(searchTerm.toLowerCase());
-    
+
     const matchesStatus = filterStatus === 'all' || app.status === filterStatus;
-    
-    return matchesSearch && matchesStatus;
+    const matchesJob = filterJob === 'all' || app.jobTitle === filterJob;
+
+    return matchesSearch && matchesStatus && matchesJob;
   });
+
+  const firstName = (name?: string) => (name || '').trim().split(/\s+/)[0] || 'there';
+
+  // Editable starting points for the compose box. The admin can tweak before sending.
+  const emailTemplates = (app: Application): Record<string, { subject: string; body: string }> => ({
+    interview: {
+      subject: `Interview invitation — ${app.jobTitle} at OutsourcEdge`,
+      body:
+        `Hi ${firstName(app.fullName)},\n\n` +
+        `Thank you for applying for the ${app.jobTitle} role at OutsourcEdge. We were impressed with your application and would love to invite you to an interview.\n\n` +
+        `Please reply with your availability over the coming days and we'll arrange a time that works for you.\n\n` +
+        `Warm regards,\nThe OutsourcEdge Team`,
+    },
+    info: {
+      subject: `A few more details about your application — OutsourcEdge`,
+      body:
+        `Hi ${firstName(app.fullName)},\n\n` +
+        `Thank you for applying for the ${app.jobTitle} role at OutsourcEdge. To move your application forward, could you please share a little more detail on the following:\n\n` +
+        `- \n- \n\n` +
+        `Looking forward to hearing from you.\n\n` +
+        `Warm regards,\nThe OutsourcEdge Team`,
+    },
+    reject: {
+      subject: `Update on your application — OutsourcEdge`,
+      body:
+        `Hi ${firstName(app.fullName)},\n\n` +
+        `Thank you for your interest in the ${app.jobTitle} role at OutsourcEdge and for the time you invested in your application.\n\n` +
+        `After careful consideration, we won't be moving forward at this time. We genuinely appreciate your interest and encourage you to apply for future roles that match your skills.\n\n` +
+        `Wishing you all the best,\nThe OutsourcEdge Team`,
+    },
+  });
+
+  const openCompose = (app: Application) => {
+    if (!app.email || app.email === 'No email') {
+      toast.error('This applicant has no email address on file.');
+      return;
+    }
+    // Pre-fill with a friendly default; templates can overwrite it.
+    setComposeApp(app);
+    setEmailSubject(`Your application for ${app.jobTitle} — OutsourcEdge`);
+    setEmailBody(
+      `Hi ${firstName(app.fullName)},\n\n` +
+        `Thank you for applying for the ${app.jobTitle} role at OutsourcEdge.\n\n` +
+        `\n\nWarm regards,\nThe OutsourcEdge Team`,
+    );
+  };
+
+  const applyTemplate = (key: 'interview' | 'info' | 'reject') => {
+    if (!composeApp) return;
+    const t = emailTemplates(composeApp)[key];
+    setEmailSubject(t.subject);
+    setEmailBody(t.body);
+  };
+
+  const handleSendEmail = async () => {
+    if (!composeApp) return;
+    if (!emailSubject.trim() || !emailBody.trim()) {
+      toast.error('Please add a subject and a message.');
+      return;
+    }
+    setIsSending(true);
+    try {
+      await sendApplicantEmail({
+        to: composeApp.email,
+        subject: emailSubject.trim(),
+        message: emailBody.trim(),
+      });
+
+      // Keep a record of what was sent to whom.
+      try {
+        await addDoc(collection(db, 'sentEmails'), {
+          applicationId: composeApp.id,
+          to: composeApp.email,
+          applicantName: composeApp.fullName,
+          jobTitle: composeApp.jobTitle,
+          subject: emailSubject.trim(),
+          message: emailBody.trim(),
+          sentBy: adminEmail || 'admin',
+          sentAt: serverTimestamp(),
+        });
+      } catch (logErr) {
+        console.error('Could not record sent email:', logErr);
+      }
+
+      await logActivity('update', 'Job Applications', `Emailed ${composeApp.fullName} (${composeApp.email})`, { id: composeApp.id });
+      toast.success(`Email sent to ${composeApp.fullName}`);
+      setComposeApp(null);
+    } catch (err: any) {
+      console.error('Send email failed:', err);
+      toast.error(err?.message || 'Failed to send the email.');
+    } finally {
+      setIsSending(false);
+    }
+  };
 
   const handleEditApplication = (application: Application) => {
     setCurrentApplication(application);
@@ -173,6 +281,17 @@ export default function AdminApplications() {
           onChange={(e) => setSearchTerm(e.target.value)}
           className="max-w-md bg-white dark:bg-[#0F1A2E]"
         />
+        <Select value={filterJob} onValueChange={(v: any) => setFilterJob(v)}>
+          <SelectTrigger className="w-[220px] bg-white dark:bg-[#0F1A2E]">
+            <SelectValue placeholder="Filter by position" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Positions</SelectItem>
+            {jobTitles.map((title) => (
+              <SelectItem key={title} value={title}>{title}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
         <Select value={filterStatus} onValueChange={(v: any) => setFilterStatus(v)}>
           <SelectTrigger className="w-[180px] bg-white dark:bg-[#0F1A2E]">
             <SelectValue placeholder="Filter by status" />
@@ -256,6 +375,9 @@ export default function AdminApplications() {
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
+                      <Button variant="outline" size="sm" className="text-[#1B3A4B] dark:text-[#7FB6CC]" onClick={() => openCompose(app)}>
+                        <Send className="w-3.5 h-3.5 mr-1.5" /> Email
+                      </Button>
                       <Button variant="outline" size="sm" onClick={() => handleEditApplication(app)}>View/Edit</Button>
                       <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-500/10" onClick={() => handleDeleteApplication(app.id, app.fullName)}>Delete</Button>
                     </div>
@@ -357,8 +479,77 @@ export default function AdminApplications() {
                 <Download className="w-4 h-4 mr-2" /> Download PDF
               </Button>
             )}
+            {currentApplication && (
+              <Button
+                variant="outline"
+                className="text-[#1B3A4B] dark:text-[#7FB6CC]"
+                onClick={() => { setIsDialogOpen(false); openCompose(currentApplication); }}
+              >
+                <Send className="w-4 h-4 mr-2" /> Email Applicant
+              </Button>
+            )}
             <Button variant="outline" onClick={() => setIsDialogOpen(false)}>Close</Button>
             <Button className="bg-[#1B3A4B] hover:bg-[#1B3A4B]/90" onClick={handleSaveApplication}>Save Changes</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Compose email to applicant */}
+      <Dialog open={!!composeApp} onOpenChange={(open) => { if (!open) setComposeApp(null); }}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-2xl flex items-center gap-2">
+              <Mail className="w-5 h-5 text-[#1B3A4B] dark:text-[#7FB6CC]" /> Compose Email
+            </DialogTitle>
+          </DialogHeader>
+
+          {composeApp && (
+            <div className="space-y-4 py-2">
+              <div className="flex flex-wrap items-center gap-2 text-sm">
+                <span className="text-slate-500 dark:text-slate-400">To:</span>
+                <span className="font-medium text-slate-900 dark:text-slate-100">{composeApp.fullName}</span>
+                <span className="px-2 py-0.5 rounded-full bg-slate-100 dark:bg-white/[.06] text-slate-600 dark:text-slate-300 text-xs">{composeApp.email}</span>
+                <span className="text-slate-400">·</span>
+                <span className="text-slate-500 dark:text-slate-400">{composeApp.jobTitle}</span>
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-slate-500 dark:text-slate-400">Quick templates</Label>
+                <div className="flex flex-wrap gap-2">
+                  <Button type="button" variant="outline" size="sm" onClick={() => applyTemplate('interview')}>Invite to interview</Button>
+                  <Button type="button" variant="outline" size="sm" onClick={() => applyTemplate('info')}>Request more info</Button>
+                  <Button type="button" variant="outline" size="sm" onClick={() => applyTemplate('reject')}>Not moving forward</Button>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Subject</Label>
+                <Input value={emailSubject} onChange={(e) => setEmailSubject(e.target.value)} placeholder="Subject line" />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Message</Label>
+                <Textarea
+                  rows={12}
+                  value={emailBody}
+                  onChange={(e) => setEmailBody(e.target.value)}
+                  placeholder="Write your message..."
+                  className="font-mono text-sm"
+                />
+                <p className="text-xs text-slate-400">Sent from your verified OutsourcEdge address. Replies come back to your team inbox.</p>
+              </div>
+            </div>
+          )}
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setComposeApp(null)} disabled={isSending}>Cancel</Button>
+            <Button className="bg-[#1B3A4B] hover:bg-[#1B3A4B]/90" onClick={handleSendEmail} disabled={isSending}>
+              {isSending ? (
+                <><div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" /> Sending…</>
+              ) : (
+                <><Send className="w-4 h-4 mr-2" /> Send Email</>
+              )}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
