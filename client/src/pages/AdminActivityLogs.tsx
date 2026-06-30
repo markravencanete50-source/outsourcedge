@@ -95,8 +95,8 @@ export default function AdminActivityLogs() {
       <div className="space-y-6">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-slate-900">Activity Logs</h1>
-            <p className="text-slate-500 mt-1">Full audit trail of all administrative actions and system heartbeats.</p>
+            <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100">Activity Logs</h1>
+            <p className="text-slate-500 dark:text-slate-400 mt-1">Full audit trail of all administrative actions and system heartbeats.</p>
           </div>
           <Button onClick={exportToCSV} className="bg-[#1B3A4B] hover:bg-[#06748F]">
             <Download className="w-4 h-4 mr-2" /> Export to CSV
@@ -104,9 +104,9 @@ export default function AdminActivityLogs() {
         </div>
 
         {/* Filters */}
-        <div className="flex flex-col md:flex-row gap-4 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+        <div className="flex flex-col md:flex-row gap-4 bg-white dark:bg-[#0F1A2E] p-4 rounded-xl border border-slate-200 dark:border-white/[.08] shadow-sm">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" />
             <Input 
               placeholder="Search by admin, action, or page..." 
               className="pl-10"
@@ -120,9 +120,9 @@ export default function AdminActivityLogs() {
         </div>
 
         {/* Logs Table */}
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+        <div className="bg-white dark:bg-[#0F1A2E] rounded-xl border border-slate-200 dark:border-white/[.08] shadow-sm overflow-hidden">
           <Table>
-            <TableHeader className="bg-slate-50">
+            <TableHeader className="bg-slate-50 dark:bg-white/[.04]">
               <TableRow>
                 <TableHead className="w-[200px]">Timestamp</TableHead>
                 <TableHead>Admin</TableHead>
@@ -133,13 +133,13 @@ export default function AdminActivityLogs() {
             </TableHeader>
             <TableBody>
               {isLoading ? (
-                <TableRow><TableCell colSpan={5} className="text-center py-10 text-slate-400 italic">Loading logs...</TableCell></TableRow>
+                <TableRow><TableCell colSpan={5} className="text-center py-10 text-slate-400 dark:text-slate-500 italic">Loading logs...</TableCell></TableRow>
               ) : filteredActivities.length === 0 ? (
-                <TableRow><TableCell colSpan={5} className="text-center py-10 text-slate-400 italic">No activity logs found.</TableCell></TableRow>
+                <TableRow><TableCell colSpan={5} className="text-center py-10 text-slate-400 dark:text-slate-500 italic">No activity logs found.</TableCell></TableRow>
               ) : (
                 filteredActivities.map((log) => (
                   <TableRow key={log.id} className="hover:bg-slate-50/50 transition-colors">
-                    <TableCell className="text-xs font-medium text-slate-500">
+                    <TableCell className="text-xs font-medium text-slate-500 dark:text-slate-400">
                       <div className="flex items-center gap-2">
                         <Clock className="w-3 h-3" />
                         {log.timestamp?.toDate().toLocaleString()}
@@ -147,10 +147,10 @@ export default function AdminActivityLogs() {
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
-                        <div className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[10px] font-bold text-slate-600">
+                        <div className="w-6 h-6 rounded-full bg-slate-100 dark:bg-white/[.06] flex items-center justify-center text-[10px] font-bold text-slate-600 dark:text-slate-400">
                           {log.adminName?.charAt(0).toUpperCase()}
                         </div>
-                        <span className="text-sm font-semibold text-slate-900">{log.adminName}</span>
+                        <span className="text-sm font-semibold text-slate-900 dark:text-slate-100">{log.adminName}</span>
                       </div>
                     </TableCell>
                     <TableCell>
@@ -162,13 +162,13 @@ export default function AdminActivityLogs() {
                         {log.activityType}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-sm text-slate-600">
+                    <TableCell className="text-sm text-slate-600 dark:text-slate-400">
                       <div className="flex items-center gap-1.5">
-                        <Globe className="w-3 h-3 text-slate-400" />
+                        <Globe className="w-3 h-3 text-slate-400 dark:text-slate-500" />
                         {log.page || 'System'}
                       </div>
                     </TableCell>
-                    <TableCell className="text-sm text-slate-500 italic">
+                    <TableCell className="text-sm text-slate-500 dark:text-slate-400 italic">
                       {log.details || '-'}
                     </TableCell>
                   </TableRow>

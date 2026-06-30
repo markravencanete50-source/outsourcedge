@@ -133,8 +133,8 @@ export default function AdminApplications() {
     <AdminLayout>
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">Job Applications</h1>
-          <p className="text-slate-500">Review and manage incoming job applications</p>
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100">Job Applications</h1>
+          <p className="text-slate-500 dark:text-slate-400">Review and manage incoming job applications</p>
         </div>
       </div>
 
@@ -143,10 +143,10 @@ export default function AdminApplications() {
           placeholder="Search name, email, or position..." 
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="max-w-md bg-white"
+          className="max-w-md bg-white dark:bg-[#0F1A2E]"
         />
         <Select value={filterStatus} onValueChange={(v: any) => setFilterStatus(v)}>
-          <SelectTrigger className="w-[180px] bg-white">
+          <SelectTrigger className="w-[180px] bg-white dark:bg-[#0F1A2E]">
             <SelectValue placeholder="Filter by status" />
           </SelectTrigger>
           <SelectContent>
@@ -160,9 +160,9 @@ export default function AdminApplications() {
         </Select>
       </div>
 
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+      <div className="bg-white dark:bg-[#0F1A2E] rounded-xl border border-slate-200 dark:border-white/[.08] shadow-sm overflow-hidden">
         <Table>
-          <TableHeader className="bg-slate-50">
+          <TableHeader className="bg-slate-50 dark:bg-white/[.04]">
             <TableRow>
               <TableHead className="font-semibold">Applicant</TableHead>
               <TableHead className="font-semibold">Position</TableHead>
@@ -176,44 +176,44 @@ export default function AdminApplications() {
             {isLoading ? (
               <TableRow><TableCell colSpan={6} className="text-center py-10">Loading...</TableCell></TableRow>
             ) : filteredApplications.length === 0 ? (
-              <TableRow><TableCell colSpan={6} className="text-center py-10 text-slate-500">No applications found.</TableCell></TableRow>
+              <TableRow><TableCell colSpan={6} className="text-center py-10 text-slate-500 dark:text-slate-400">No applications found.</TableCell></TableRow>
             ) : (
               filteredApplications.map((app) => (
-                <TableRow key={app.id} className="hover:bg-slate-50 transition-colors">
+                <TableRow key={app.id} className="hover:bg-slate-50 dark:hover:bg-white/[.04] transition-colors">
                   <TableCell>
-                    <div className="font-medium text-slate-900">{app.fullName}</div>
-                    <div className="text-xs text-slate-500">{app.email}</div>
+                    <div className="font-medium text-slate-900 dark:text-slate-100">{app.fullName}</div>
+                    <div className="text-xs text-slate-500 dark:text-slate-400">{app.email}</div>
                   </TableCell>
                   <td className="px-4 py-4">
-                    <div className="text-sm font-medium text-slate-900">{app.jobTitle}</div>
+                    <div className="text-sm font-medium text-slate-900 dark:text-slate-100">{app.jobTitle}</div>
                   </td>
                   <TableCell>
                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      app.status === 'new' ? 'bg-blue-100 text-blue-700' :
-                      app.status === 'accepted' ? 'bg-green-100 text-green-700' :
-                      app.status === 'rejected' ? 'bg-red-100 text-red-700' :
-                      'bg-slate-100 text-slate-700'
+                      app.status === 'new' ? 'bg-blue-100 dark:bg-blue-500/15 text-blue-700 dark:text-blue-300' :
+                      app.status === 'accepted' ? 'bg-green-100 dark:bg-green-500/15 text-green-700 dark:text-green-300' :
+                      app.status === 'rejected' ? 'bg-red-100 dark:bg-red-500/15 text-red-700 dark:text-red-300' :
+                      'bg-slate-100 dark:bg-white/[.06] text-slate-700 dark:text-slate-300'
                     }`}>
                       {app.status.toUpperCase()}
                     </span>
                   </TableCell>
-                  <TableCell className="text-sm text-slate-600">
+                  <TableCell className="text-sm text-slate-600 dark:text-slate-400">
                     {app.date?.toDate().toLocaleDateString() || 'N/A'}
                   </TableCell>
                   <TableCell>
                     <div className="flex gap-2">
                       {app.resumeUrl && (
-                        <a href={app.resumeUrl} target="_blank" rel="noreferrer" title="Resume" className="p-1 text-[#1B3A4B] hover:bg-[#1B3A4B]/10 rounded">
+                        <a href={app.resumeUrl} target="_blank" rel="noreferrer" title="Resume" className="p-1 text-[#1B3A4B] dark:text-[#7FB6CC] hover:bg-[#1B3A4B]/10 rounded">
                           <FileText size={18} />
                         </a>
                       )}
                       {app.videoIntroUrl && (
-                        <a href={app.videoIntroUrl} target="_blank" rel="noreferrer" title="Video Intro" className="p-1 text-purple-600 hover:bg-purple-50 rounded">
+                        <a href={app.videoIntroUrl} target="_blank" rel="noreferrer" title="Video Intro" className="p-1 text-purple-600 hover:bg-purple-50 dark:hover:bg-purple-500/10 rounded">
                           <Video size={18} />
                         </a>
                       )}
                       {app.portfolioUrl && (
-                        <a href={app.portfolioUrl} target="_blank" rel="noreferrer" title="Portfolio" className="p-1 text-orange-600 hover:bg-orange-50 rounded">
+                        <a href={app.portfolioUrl} target="_blank" rel="noreferrer" title="Portfolio" className="p-1 text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-500/10 rounded">
                           <Globe size={18} />
                         </a>
                       )}
@@ -222,7 +222,7 @@ export default function AdminApplications() {
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
                       <Button variant="outline" size="sm" onClick={() => handleEditApplication(app)}>View/Edit</Button>
-                      <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700 hover:bg-red-50" onClick={() => handleDeleteApplication(app.id, app.fullName)}>Delete</Button>
+                      <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-500/10" onClick={() => handleDeleteApplication(app.id, app.fullName)}>Delete</Button>
                     </div>
                   </TableCell>
                 </TableRow>
@@ -242,45 +242,45 @@ export default function AdminApplications() {
             <div className="space-y-6 py-4">
               <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-1">
-                  <Label className="text-slate-500">Full Name</Label>
+                  <Label className="text-slate-500 dark:text-slate-400">Full Name</Label>
                   <div className="flex items-center gap-2 font-medium">
-                    <User size={16} className="text-[#1B3A4B]" />
+                    <User size={16} className="text-[#1B3A4B] dark:text-[#7FB6CC]" />
                     {currentApplication.fullName}
                   </div>
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-slate-500">Email Address</Label>
+                  <Label className="text-slate-500 dark:text-slate-400">Email Address</Label>
                   <div className="flex items-center gap-2 font-medium">
-                    <Mail size={16} className="text-[#1B3A4B]" />
+                    <Mail size={16} className="text-[#1B3A4B] dark:text-[#7FB6CC]" />
                     {currentApplication.email}
                   </div>
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-slate-500">Phone Number</Label>
+                  <Label className="text-slate-500 dark:text-slate-400">Phone Number</Label>
                   <div className="flex items-center gap-2 font-medium">
-                    <Phone size={16} className="text-[#1B3A4B]" />
+                    <Phone size={16} className="text-[#1B3A4B] dark:text-[#7FB6CC]" />
                     {currentApplication.phone}
                   </div>
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-slate-500">Applied Position</Label>
+                  <Label className="text-slate-500 dark:text-slate-400">Applied Position</Label>
                   <div className="flex items-center gap-2 font-medium">
-                    <Briefcase size={16} className="text-[#1B3A4B]" />
+                    <Briefcase size={16} className="text-[#1B3A4B] dark:text-[#7FB6CC]" />
                     {currentApplication.jobTitle}
                   </div>
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label className="text-slate-500">Relevant Experience</Label>
-                <div className="p-3 bg-slate-50 rounded-lg text-sm text-slate-700 whitespace-pre-wrap">
+                <Label className="text-slate-500 dark:text-slate-400">Relevant Experience</Label>
+                <div className="p-3 bg-slate-50 dark:bg-white/[.04] rounded-lg text-sm text-slate-700 dark:text-slate-300 whitespace-pre-wrap">
                   {currentApplication.experience}
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label className="text-slate-500">Cover Letter</Label>
-                <div className="p-3 bg-slate-50 rounded-lg text-sm text-slate-700 whitespace-pre-wrap">
+                <Label className="text-slate-500 dark:text-slate-400">Cover Letter</Label>
+                <div className="p-3 bg-slate-50 dark:bg-white/[.04] rounded-lg text-sm text-slate-700 dark:text-slate-300 whitespace-pre-wrap">
                   {currentApplication.coverLetter}
                 </div>
               </div>

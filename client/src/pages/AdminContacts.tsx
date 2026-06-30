@@ -173,13 +173,13 @@ export default function AdminContacts() {
   const getStatusColor = (status: Contact['status']) => {
     switch (status) {
       case 'new':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-blue-100 dark:bg-blue-500/15 text-blue-800 dark:text-blue-300';
       case 'contacted':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-yellow-100 dark:bg-yellow-500/15 text-yellow-800 dark:text-yellow-300';
       case 'qualified':
-        return 'bg-green-100 text-green-800';
+        return 'bg-green-100 dark:bg-green-500/15 text-green-800 dark:text-green-300';
       case 'closed':
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-100 dark:bg-white/[.06] text-gray-800 dark:text-slate-200';
     }
   };
 
@@ -207,43 +207,43 @@ export default function AdminContacts() {
     <AdminLayout>
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-          <p className="text-gray-600 text-sm mb-1">Total Contacts</p>
-          <p className="text-3xl font-bold text-[#0F172A]">{stats.total}</p>
+        <div className="bg-white dark:bg-[#0F1A2E] rounded-lg shadow-sm border border-gray-200 dark:border-white/[.08] p-4">
+          <p className="text-gray-600 dark:text-slate-400 text-sm mb-1">Total Contacts</p>
+          <p className="text-3xl font-bold text-[#0F172A] dark:text-slate-100">{stats.total}</p>
         </div>
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-          <p className="text-gray-600 text-sm mb-1">New</p>
+        <div className="bg-white dark:bg-[#0F1A2E] rounded-lg shadow-sm border border-gray-200 dark:border-white/[.08] p-4">
+          <p className="text-gray-600 dark:text-slate-400 text-sm mb-1">New</p>
           <p className="text-3xl font-bold text-blue-600">{stats.new}</p>
         </div>
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-          <p className="text-gray-600 text-sm mb-1">Contacted</p>
+        <div className="bg-white dark:bg-[#0F1A2E] rounded-lg shadow-sm border border-gray-200 dark:border-white/[.08] p-4">
+          <p className="text-gray-600 dark:text-slate-400 text-sm mb-1">Contacted</p>
           <p className="text-3xl font-bold text-yellow-600">{stats.contacted}</p>
         </div>
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-          <p className="text-gray-600 text-sm mb-1">Qualified</p>
+        <div className="bg-white dark:bg-[#0F1A2E] rounded-lg shadow-sm border border-gray-200 dark:border-white/[.08] p-4">
+          <p className="text-gray-600 dark:text-slate-400 text-sm mb-1">Qualified</p>
           <p className="text-3xl font-bold text-green-600">{stats.qualified}</p>
         </div>
       </div>
 
       {/* Filters and Search */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
+      <div className="bg-white dark:bg-[#0F1A2E] rounded-lg shadow-sm border border-gray-200 dark:border-white/[.08] p-4 mb-6">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+            <Search className="absolute left-3 top-3 w-5 h-5 text-gray-400 dark:text-slate-500" />
             <input
               type="text"
               placeholder="Search by name, email, or company..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#1B3A4B]"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-white/[.08] rounded-lg focus:outline-none focus:border-[#1B3A4B]"
             />
           </div>
           <div className="flex gap-2">
-            <Filter className="w-5 h-5 text-gray-400 mt-2" />
+            <Filter className="w-5 h-5 text-gray-400 dark:text-slate-500 mt-2" />
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value as any)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#1B3A4B]"
+              className="px-4 py-2 border border-gray-300 dark:border-white/[.08] rounded-lg focus:outline-none focus:border-[#1B3A4B]"
             >
               <option value="all">All Status</option>
               <option value="new">New</option>
@@ -258,7 +258,7 @@ export default function AdminContacts() {
       {/* Loading State */}
       {isLoading && (
         <div className="text-center py-12">
-          <p className="text-gray-600">Loading contacts...</p>
+          <p className="text-gray-600 dark:text-slate-400">Loading contacts...</p>
         </div>
       )}
 
@@ -266,41 +266,41 @@ export default function AdminContacts() {
       {!isLoading && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Table */}
-          <div className="lg:col-span-2 bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+          <div className="lg:col-span-2 bg-white dark:bg-[#0F1A2E] rounded-lg shadow-sm border border-gray-200 dark:border-white/[.08] overflow-hidden">
             {filteredContacts.length === 0 ? (
               <div className="p-8 text-center">
-                <p className="text-gray-600">No contacts found</p>
+                <p className="text-gray-600 dark:text-slate-400">No contacts found</p>
               </div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-gray-50 border-b border-gray-200">
+                  <thead className="bg-gray-50 dark:bg-white/[.04] border-b border-gray-200 dark:border-white/[.08]">
                     <tr>
-                      <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Name</th>
-                      <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Email</th>
-                      <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Service</th>
-                      <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Status</th>
-                      <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Date</th>
-                      <th className="px-6 py-3 text-center text-sm font-semibold text-gray-700">Action</th>
+                      <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-slate-300">Name</th>
+                      <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-slate-300">Email</th>
+                      <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-slate-300">Service</th>
+                      <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-slate-300">Status</th>
+                      <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-slate-300">Date</th>
+                      <th className="px-6 py-3 text-center text-sm font-semibold text-gray-700 dark:text-slate-300">Action</th>
                     </tr>
                   </thead>
                   <tbody>
                     {filteredContacts.map((contact) => (
                       <tr
                         key={contact.id}
-                        className="border-b border-gray-200 hover:bg-gray-50 cursor-pointer transition"
+                        className="border-b border-gray-200 dark:border-white/[.08] hover:bg-gray-50 dark:hover:bg-white/[.04] cursor-pointer transition"
                         onClick={() => setSelectedContact(contact)}
                       >
-                        <td className="px-6 py-4 text-sm text-gray-900 font-medium">{contact.name}</td>
-                        <td className="px-6 py-4 text-sm text-gray-600">{contact.email}</td>
-                        <td className="px-6 py-4 text-sm text-gray-600">{contact.service || 'General'}</td>
+                        <td className="px-6 py-4 text-sm text-gray-900 dark:text-slate-100 font-medium">{contact.name}</td>
+                        <td className="px-6 py-4 text-sm text-gray-600 dark:text-slate-400">{contact.email}</td>
+                        <td className="px-6 py-4 text-sm text-gray-600 dark:text-slate-400">{contact.service || 'General'}</td>
                         <td className="px-6 py-4">
                           <div className={`px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1 w-fit ${getStatusColor(contact.status)}`}>
                             {getStatusIcon(contact.status)}
                             {contact.status}
                           </div>
                         </td>
-                        <td className="px-6 py-4 text-sm text-gray-600">
+                        <td className="px-6 py-4 text-sm text-gray-600 dark:text-slate-400">
                           {contact.createdAt?.toDate?.().toLocaleDateString() || 'N/A'}
                         </td>
                         <td className="px-6 py-4 text-center">
@@ -309,7 +309,7 @@ export default function AdminContacts() {
                               e.stopPropagation();
                               setSelectedContact(contact);
                             }}
-                            className="text-[#1B3A4B] hover:text-[#1B3A4B]/80 transition"
+                            className="text-[#1B3A4B] dark:text-[#7FB6CC] hover:text-[#1B3A4B]/80 transition"
                           >
                             <Eye className="w-5 h-5" />
                           </button>
@@ -324,12 +324,12 @@ export default function AdminContacts() {
 
           {/* Details Panel */}
           {selectedContact && (
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 h-fit">
+            <div className="bg-white dark:bg-[#0F1A2E] rounded-lg shadow-sm border border-gray-200 dark:border-white/[.08] p-6 h-fit">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-bold text-[#0F172A]">Contact Details</h3>
+                <h3 className="text-lg font-bold text-[#0F172A] dark:text-slate-100">Contact Details</h3>
                 <button
                   onClick={() => setSelectedContact(null)}
-                  className="text-gray-400 hover:text-gray-600"
+                  className="text-gray-400 dark:text-slate-500 hover:text-gray-600"
                 >
                   ✕
                 </button>
@@ -337,67 +337,67 @@ export default function AdminContacts() {
 
               <div className="space-y-4">
                 <div>
-                  <p className="text-xs text-gray-500 uppercase font-semibold mb-1">Name</p>
-                  <p className="text-gray-900 font-medium">{selectedContact.name}</p>
+                  <p className="text-xs text-gray-500 dark:text-slate-400 uppercase font-semibold mb-1">Name</p>
+                  <p className="text-gray-900 dark:text-slate-100 font-medium">{selectedContact.name}</p>
                 </div>
 
                 <div>
-                  <p className="text-xs text-gray-500 uppercase font-semibold mb-1">Email</p>
-                  <a href={`mailto:${selectedContact.email}`} className="text-[#1B3A4B] hover:underline">
+                  <p className="text-xs text-gray-500 dark:text-slate-400 uppercase font-semibold mb-1">Email</p>
+                  <a href={`mailto:${selectedContact.email}`} className="text-[#1B3A4B] dark:text-[#7FB6CC] hover:underline">
                     {selectedContact.email}
                   </a>
                 </div>
 
                 <div>
-                  <p className="text-xs text-gray-500 uppercase font-semibold mb-1">Phone</p>
-                  <a href={`tel:${selectedContact.phone}`} className="text-[#1B3A4B] hover:underline">
+                  <p className="text-xs text-gray-500 dark:text-slate-400 uppercase font-semibold mb-1">Phone</p>
+                  <a href={`tel:${selectedContact.phone}`} className="text-[#1B3A4B] dark:text-[#7FB6CC] hover:underline">
                     {selectedContact.phone || 'N/A'}
                   </a>
                 </div>
 
                 <div>
-                  <p className="text-xs text-gray-500 uppercase font-semibold mb-1">Company</p>
-                  <p className="text-gray-900">{selectedContact.company || 'N/A'}</p>
+                  <p className="text-xs text-gray-500 dark:text-slate-400 uppercase font-semibold mb-1">Company</p>
+                  <p className="text-gray-900 dark:text-slate-100">{selectedContact.company || 'N/A'}</p>
                 </div>
 
                 <div>
-                  <p className="text-xs text-gray-500 uppercase font-semibold mb-1">Service</p>
-                  <p className="text-gray-900">{selectedContact.service || 'General Inquiry'}</p>
+                  <p className="text-xs text-gray-500 dark:text-slate-400 uppercase font-semibold mb-1">Service</p>
+                  <p className="text-gray-900 dark:text-slate-100">{selectedContact.service || 'General Inquiry'}</p>
                 </div>
 
                 <div>
-                  <p className="text-xs text-gray-500 uppercase font-semibold mb-1">Message</p>
-                  <p className="text-gray-900 text-sm bg-gray-50 p-3 rounded">{selectedContact.message}</p>
+                  <p className="text-xs text-gray-500 dark:text-slate-400 uppercase font-semibold mb-1">Message</p>
+                  <p className="text-gray-900 dark:text-slate-100 text-sm bg-gray-50 dark:bg-white/[.04] p-3 rounded">{selectedContact.message}</p>
                 </div>
 
                 {/* AI Summary */}
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <p className="text-xs text-gray-500 uppercase font-semibold">AI Summary</p>
+                    <p className="text-xs text-gray-500 dark:text-slate-400 uppercase font-semibold">AI Summary</p>
                     <button
                       onClick={() => handleAISummarize(selectedContact)}
                       disabled={selectedContact.isLoadingSummary || !!selectedContact.summary}
-                      className="text-xs flex items-center gap-1 text-[#1B3A4B] hover:text-[#1B3A4B]/80 disabled:opacity-50"
+                      className="text-xs flex items-center gap-1 text-[#1B3A4B] dark:text-[#7FB6CC] hover:text-[#1B3A4B]/80 disabled:opacity-50"
                     >
                       <Sparkles className="w-3 h-3" />
                       {selectedContact.isLoadingSummary ? 'Summarizing...' : selectedContact.summary ? 'Summarized' : 'Summarize with AI'}
                     </button>
                   </div>
                   {selectedContact.summary && (
-                    <p className="text-sm text-gray-700 bg-blue-50 p-3 rounded border border-blue-200">
+                    <p className="text-sm text-gray-700 dark:text-slate-300 bg-blue-50 dark:bg-blue-500/10 p-3 rounded border border-blue-200 dark:border-blue-500/25">
                       {selectedContact.summary}
                     </p>
                   )}
                 </div>
 
                 <div>
-                  <p className="text-xs text-gray-500 uppercase font-semibold mb-2">Status</p>
+                  <p className="text-xs text-gray-500 dark:text-slate-400 uppercase font-semibold mb-2">Status</p>
                   <select
                     value={selectedContact.status}
                     onChange={(e) =>
                       handleStatusChange(selectedContact.id, e.target.value as Contact['status'], selectedContact.name)
                     }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-[#1B3A4B]"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-white/[.08] rounded-lg text-sm focus:outline-none focus:border-[#1B3A4B]"
                   >
                     <option value="new">New</option>
                     <option value="contacted">Contacted</option>

@@ -90,6 +90,34 @@
   --modal-ease: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+/* Dark theme — toggled by ThemeProvider via the `.dark` class on <html>.
+   Mirrors the admin dashboard palette so shadcn/ui components (which render
+   in body-level portals and read these CSS variables) theme correctly. */
+.dark {
+  --primary: #1B3A4B;
+  --primary-foreground: #FFFFFF;
+  --accent: #C6A75E;
+  --accent-foreground: #0F1A2E;
+  --background: #070B14;
+  --foreground: #E6ECF5;
+  --card: #0F1A2E;
+  --card-foreground: #E6ECF5;
+  --popover: #0F1A2E;
+  --popover-foreground: #E6ECF5;
+  --secondary: #1A2740;
+  --secondary-foreground: #E6ECF5;
+  --muted: #16223A;
+  --muted-foreground: #93A1B5;
+  --border: #28344C;
+  --input: #16223A;
+  --ring: #C6A75E;
+  --destructive: #DC2626;
+  --destructive-foreground: #FFFFFF;
+  --sidebar: #0A1020;
+  --sidebar-foreground: #E6ECF5;
+  --sidebar-border: rgba(255, 255, 255, 0.07);
+}
+
 @layer base {
   * { @apply border-border outline-ring/50; }
 

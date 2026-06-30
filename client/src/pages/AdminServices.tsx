@@ -153,8 +153,8 @@ export default function AdminServices() {
     <AdminLayout>
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">Service Manager</h1>
-          <p className="text-slate-500">Manage the services displayed on your website</p>
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100">Service Manager</h1>
+          <p className="text-slate-500 dark:text-slate-400">Manage the services displayed on your website</p>
         </div>
         <Button onClick={() => { resetForm(); setIsDialogOpen(true); }} className="bg-[#1B3A4B] hover:bg-[#1B3A4B]/90">
           <Plus className="w-4 h-4 mr-2" /> Add New Service
@@ -164,7 +164,7 @@ export default function AdminServices() {
       {isLoading ? (
         <p>Loading services...</p>
       ) : (
-        <div className="bg-white p-6 rounded-xl border border-slate-200">
+        <div className="bg-white dark:bg-[#0F1A2E] p-6 rounded-xl border border-slate-200 dark:border-white/[.08]">
           <Table>
             <TableHeader>
               <TableRow>

@@ -178,10 +178,10 @@ export default function AdminClients() {
 
   const getPriorityColor = (priority: PriorityLevel) => {
     switch (priority) {
-      case 'critical': return 'bg-red-100 text-red-700 border-red-200';
-      case 'hot': return 'bg-orange-100 text-orange-700 border-orange-200';
-      case 'warm': return 'bg-blue-100 text-blue-700 border-blue-200';
-      default: return 'bg-gray-100 text-gray-700 border-gray-200';
+      case 'critical': return 'bg-red-100 dark:bg-red-500/15 text-red-700 dark:text-red-300 border-red-200 dark:border-red-500/25';
+      case 'hot': return 'bg-orange-100 text-orange-700 dark:text-orange-300 border-orange-200 dark:border-orange-500/25';
+      case 'warm': return 'bg-blue-100 dark:bg-blue-500/15 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-500/25';
+      default: return 'bg-gray-100 dark:bg-white/[.06] text-gray-700 dark:text-slate-300 border-gray-200 dark:border-white/[.08]';
     }
   };
 
@@ -198,15 +198,15 @@ export default function AdminClients() {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-slate-900">Partnership Pipeline</h1>
-            <p className="text-slate-500 mt-1">Manage business opportunities and strategic growth.</p>
+            <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100">Partnership Pipeline</h1>
+            <p className="text-slate-500 dark:text-slate-400 mt-1">Manage business opportunities and strategic growth.</p>
           </div>
           <div className="flex items-center gap-3">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" />
               <Input 
                 placeholder="Search pipeline..." 
-                className="pl-10 w-64 bg-white"
+                className="pl-10 w-64 bg-white dark:bg-[#0F1A2E]"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -231,8 +231,8 @@ export default function AdminClients() {
                 <div className="flex items-center justify-between mb-4 px-1">
                   <div className="flex items-center gap-2">
                     <div className={`w-2 h-2 rounded-full ${stage.color}`} />
-                    <h3 className="font-semibold text-slate-700 uppercase tracking-wider text-xs">{stage.label}</h3>
-                    <Badge variant="secondary" className="bg-slate-200 text-slate-600 text-[10px] px-1.5 py-0">
+                    <h3 className="font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider text-xs">{stage.label}</h3>
+                    <Badge variant="secondary" className="bg-slate-200 dark:bg-white/[.08] text-slate-600 dark:text-slate-400 text-[10px] px-1.5 py-0">
                       {filteredOpportunities.filter(o => o.stage === stage.id).length}
                     </Badge>
                   </div>
@@ -249,7 +249,7 @@ export default function AdminClients() {
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0, scale: 0.95 }}
-                          className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all group"
+                          className="bg-white dark:bg-[#0F1A2E] p-4 rounded-xl border border-slate-200 dark:border-white/[.08] shadow-sm hover:shadow-md transition-all group"
                         >
                           <div className="flex justify-between items-start mb-2">
                             <Badge className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${getPriorityColor(opp.priority)}`}>
@@ -278,17 +278,17 @@ export default function AdminClients() {
                             </DropdownMenu>
                           </div>
 
-                          <h4 className="font-bold text-slate-900 leading-tight mb-1">{opp.companyName}</h4>
-                          <p className="text-xs text-slate-500 mb-4 flex items-center gap-1">
+                          <h4 className="font-bold text-slate-900 dark:text-slate-100 leading-tight mb-1">{opp.companyName}</h4>
+                          <p className="text-xs text-slate-500 dark:text-slate-400 mb-4 flex items-center gap-1">
                             <Building2 className="w-3 h-3" /> {opp.primaryContact}
                           </p>
 
-                          <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
-                            <div className="flex items-center gap-1.5 text-[#1B3A4B] font-bold text-sm">
+                          <div className="pt-3 border-t border-slate-100 dark:border-white/[.06] flex items-center justify-between">
+                            <div className="flex items-center gap-1.5 text-[#1B3A4B] dark:text-[#7FB6CC] font-bold text-sm">
                               <DollarSign className="w-3.5 h-3.5" />
                               {opp.estimatedValue?.toLocaleString() || '0'}
                             </div>
-                            <div className="flex items-center gap-1 text-[10px] text-slate-400">
+                            <div className="flex items-center gap-1 text-[10px] text-slate-400 dark:text-slate-500">
                               <Clock className="w-3 h-3" />
                               {opp.dateAdded?.toDate ? opp.dateAdded.toDate().toLocaleDateString() : 'Just now'}
                             </div>
@@ -306,7 +306,7 @@ export default function AdminClients() {
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogContent className="sm:max-w-[500px]">
             <DialogHeader>
-              <DialogTitle className="text-2xl font-bold text-slate-900">
+              <DialogTitle className="text-2xl font-bold text-slate-900 dark:text-slate-100">
                 {currentOpportunity?.id ? 'Edit Opportunity' : 'New Opportunity'}
               </DialogTitle>
             </DialogHeader>
@@ -352,7 +352,7 @@ export default function AdminClients() {
                 <div className="space-y-2">
                   <Label>Stage</Label>
                   <select 
-                    className="w-full h-10 px-3 rounded-md border border-slate-200 text-sm bg-white"
+                    className="w-full h-10 px-3 rounded-md border border-slate-200 dark:border-white/[.08] text-sm bg-white dark:bg-[#0F1A2E]"
                     value={currentOpportunity?.stage || 'new-lead'}
                     onChange={e => setCurrentOpportunity({...currentOpportunity, stage: e.target.value as OpportunityStage})}
                   >
@@ -362,7 +362,7 @@ export default function AdminClients() {
                 <div className="space-y-2">
                   <Label>Priority</Label>
                   <select 
-                    className="w-full h-10 px-3 rounded-md border border-slate-200 text-sm bg-white"
+                    className="w-full h-10 px-3 rounded-md border border-slate-200 dark:border-white/[.08] text-sm bg-white dark:bg-[#0F1A2E]"
                     value={currentOpportunity?.priority || 'warm'}
                     onChange={e => setCurrentOpportunity({...currentOpportunity, priority: e.target.value as PriorityLevel})}
                   >
@@ -376,7 +376,7 @@ export default function AdminClients() {
               <div className="space-y-2">
                 <Label>Notes</Label>
                 <textarea 
-                  className="w-full h-24 p-3 rounded-md border border-slate-200 text-sm bg-white"
+                  className="w-full h-24 p-3 rounded-md border border-slate-200 dark:border-white/[.08] text-sm bg-white dark:bg-[#0F1A2E]"
                   value={currentOpportunity?.notes || ''}
                   onChange={e => setCurrentOpportunity({...currentOpportunity, notes: e.target.value})}
                   placeholder="Additional details..."

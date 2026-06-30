@@ -101,10 +101,10 @@ export default function AdminAnalytics() {
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">Live Analytics</h1>
-            <p className="text-slate-500">Real-time performance from your database</p>
+            <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Live Analytics</h1>
+            <p className="text-slate-500 dark:text-slate-400">Real-time performance from your database</p>
           </div>
-          <div className="flex items-center gap-2 px-3 py-1 bg-green-50 text-green-700 rounded-full text-sm font-medium animate-pulse">
+          <div className="flex items-center gap-2 px-3 py-1 bg-green-50 dark:bg-green-500/10 text-green-700 dark:text-green-300 rounded-full text-sm font-medium animate-pulse">
             <Activity size={16} />
             Live Connection
           </div>
@@ -117,35 +117,35 @@ export default function AdminAnalytics() {
             value={contacts.length} 
             icon={<Users className="text-blue-600" />}
             trend="+12%"
-            color="bg-blue-50"
+            color="bg-blue-50 dark:bg-blue-500/10"
           />
           <StatCard 
             title="Job Applications" 
             value={applications.length} 
             icon={<TrendingUp className="text-green-600" />}
             trend="+8%"
-            color="bg-green-50"
+            color="bg-green-50 dark:bg-green-500/10"
           />
           <StatCard 
             title="Conversion Rate" 
             value={`${contacts.length > 0 ? ((applications.length / contacts.length) * 100).toFixed(1) : 0}%`}
             icon={<MousePointer2 className="text-purple-600" />}
             trend="+0.5%"
-            color="bg-purple-50"
+            color="bg-purple-50 dark:bg-purple-500/10"
           />
           <StatCard 
             title="Database Records" 
             value={contacts.length + applications.length}
             icon={<Globe className="text-orange-600" />}
             trend="Live"
-            color="bg-orange-50"
+            color="bg-orange-50 dark:bg-orange-500/10"
           />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Trend Chart */}
-          <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-            <h3 className="font-semibold text-slate-900 mb-6">Submission Trends (Last 7 Days)</h3>
+          <div className="bg-white dark:bg-[#0F1A2E] p-6 rounded-xl border border-slate-200 dark:border-white/[.08] shadow-sm">
+            <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-6">Submission Trends (Last 7 Days)</h3>
             <div className="h-[300px]">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={getTrendData()}>
@@ -169,8 +169,8 @@ export default function AdminAnalytics() {
           </div>
 
           {/* Service Distribution */}
-          <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-            <h3 className="font-semibold text-slate-900 mb-6">Inquiries by Service</h3>
+          <div className="bg-white dark:bg-[#0F1A2E] p-6 rounded-xl border border-slate-200 dark:border-white/[.08] shadow-sm">
+            <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-6">Inquiries by Service</h3>
             <div className="h-[300px]">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
@@ -195,8 +195,8 @@ export default function AdminAnalytics() {
               {getServiceDistribution().map((item, index) => (
                 <div key={item.name} className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS[index % COLORS.length] }}></div>
-                  <span className="text-sm text-slate-600 truncate">{item.name}</span>
-                  <span className="text-sm font-semibold text-slate-900 ml-auto">{item.value}</span>
+                  <span className="text-sm text-slate-600 dark:text-slate-400 truncate">{item.name}</span>
+                  <span className="text-sm font-semibold text-slate-900 dark:text-slate-100 ml-auto">{item.value}</span>
                 </div>
               ))}
             </div>
@@ -209,18 +209,18 @@ export default function AdminAnalytics() {
 
 function StatCard({ title, value, icon, trend, color }: any) {
   return (
-    <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+    <div className="bg-white dark:bg-[#0F1A2E] p-6 rounded-xl border border-slate-200 dark:border-white/[.08] shadow-sm">
       <div className="flex justify-between items-start mb-4">
         <div className={`p-2 rounded-lg ${color}`}>
           {icon}
         </div>
-        <span className="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded">
+        <span className="text-xs font-medium text-green-600 bg-green-50 dark:bg-green-500/10 px-2 py-1 rounded">
           {trend}
         </span>
       </div>
       <div>
-        <p className="text-sm text-slate-500 font-medium">{title}</p>
-        <h4 className="text-2xl font-bold text-slate-900 mt-1">{value}</h4>
+        <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">{title}</p>
+        <h4 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mt-1">{value}</h4>
       </div>
     </div>
   );

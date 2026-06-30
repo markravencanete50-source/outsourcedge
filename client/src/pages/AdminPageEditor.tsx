@@ -93,8 +93,8 @@ export default function AdminPageEditor() {
     <AdminLayout>
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">Website Editor</h1>
-          <p className="text-slate-500">Update your website's text and information in real-time</p>
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100">Website Editor</h1>
+          <p className="text-slate-500 dark:text-slate-400">Update your website's text and information in real-time</p>
         </div>
         <Button 
           onClick={handleSave} 
@@ -107,7 +107,7 @@ export default function AdminPageEditor() {
       </div>
 
       <Tabs defaultValue="homepage" className="space-y-6">
-        <TabsList className="bg-slate-100 p-1">
+        <TabsList className="bg-slate-100 dark:bg-white/[.06] p-1">
           <TabsTrigger value="homepage" className="flex items-center gap-2">
             <Layout size={16} /> Homepage
           </TabsTrigger>
@@ -119,7 +119,7 @@ export default function AdminPageEditor() {
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="homepage" className="space-y-6 bg-white p-6 rounded-xl border border-slate-200">
+        <TabsContent value="homepage" className="space-y-6 bg-white dark:bg-[#0F1A2E] p-6 rounded-xl border border-slate-200 dark:border-white/[.08]">
           <div className="grid gap-6">
             <div className="space-y-2">
               <Label>Hero Section Title</Label>
@@ -146,7 +146,7 @@ export default function AdminPageEditor() {
           </div>
         </TabsContent>
 
-        <TabsContent value="about" className="space-y-6 bg-white p-6 rounded-xl border border-slate-200">
+        <TabsContent value="about" className="space-y-6 bg-white dark:bg-[#0F1A2E] p-6 rounded-xl border border-slate-200 dark:border-white/[.08]">
           <div className="grid gap-6">
             <div className="space-y-2">
               <Label>About Section Title</Label>
@@ -166,7 +166,7 @@ export default function AdminPageEditor() {
           </div>
         </TabsContent>
 
-        <TabsContent value="contact" className="space-y-6 bg-white p-6 rounded-xl border border-slate-200">
+        <TabsContent value="contact" className="space-y-6 bg-white dark:bg-[#0F1A2E] p-6 rounded-xl border border-slate-200 dark:border-white/[.08]">
           <div className="grid grid-cols-2 gap-6">
             <div className="space-y-2">
               <Label>Support Email</Label>

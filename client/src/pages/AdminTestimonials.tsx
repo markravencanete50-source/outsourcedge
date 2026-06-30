@@ -65,7 +65,7 @@ export default function AdminTestimonials() {
         </Button>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      <div className="bg-white dark:bg-[#0F1A2E] rounded-xl shadow-sm border border-gray-200 dark:border-white/[.08] overflow-hidden">
         <Table>
           <TableHeader>
             <TableRow>

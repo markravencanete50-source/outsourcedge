@@ -149,8 +149,8 @@ export default function AdminJobs() {
       <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">Job Management</h1>
-            <p className="text-slate-500">Post and manage available positions on your site</p>
+            <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Job Management</h1>
+            <p className="text-slate-500 dark:text-slate-400">Post and manage available positions on your site</p>
           </div>
           <button
             onClick={() => setIsAdding(!isAdding)}
@@ -162,7 +162,7 @@ export default function AdminJobs() {
         </div>
 
         {isAdding && (
-          <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm mb-8">
+          <div className="bg-white dark:bg-[#0F1A2E] p-6 rounded-xl border border-slate-200 dark:border-white/[.08] shadow-sm mb-8">
             <h2 className="text-lg font-semibold mb-4">Post a New Job</h2>
             <form onSubmit={handleAddJob} className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
@@ -264,36 +264,36 @@ export default function AdminJobs() {
           </div>
         )}
 
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+        <div className="bg-white dark:bg-[#0F1A2E] rounded-xl border border-slate-200 dark:border-white/[.08] shadow-sm overflow-hidden">
           <table className="w-full text-left border-collapse">
-            <thead className="bg-slate-50 border-b border-slate-200">
+            <thead className="bg-slate-50 dark:bg-white/[.04] border-b border-slate-200 dark:border-white/[.08]">
               <tr>
-                <th className="px-6 py-4 text-sm font-semibold text-slate-700">Position</th>
-                <th className="px-6 py-4 text-sm font-semibold text-slate-700">Category</th>
-                <th className="px-6 py-4 text-sm font-semibold text-slate-700">Timeline</th>
-                <th className="px-6 py-4 text-sm font-semibold text-slate-700">Status</th>
-                <th className="px-6 py-4 text-sm font-semibold text-slate-700">Actions</th>
+                <th className="px-6 py-4 text-sm font-semibold text-slate-700 dark:text-slate-300">Position</th>
+                <th className="px-6 py-4 text-sm font-semibold text-slate-700 dark:text-slate-300">Category</th>
+                <th className="px-6 py-4 text-sm font-semibold text-slate-700 dark:text-slate-300">Timeline</th>
+                <th className="px-6 py-4 text-sm font-semibold text-slate-700 dark:text-slate-300">Status</th>
+                <th className="px-6 py-4 text-sm font-semibold text-slate-700 dark:text-slate-300">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200">
               {jobs.map((job) => (
-                <tr key={job.id} className="hover:bg-slate-50 transition-colors">
+                <tr key={job.id} className="hover:bg-slate-50 dark:hover:bg-white/[.04] transition-colors">
                   <td className="px-6 py-4">
-                    <div className="font-medium text-slate-900">{job.title}</div>
-                    <div className="text-xs text-slate-500">{job.type} • {job.location}</div>
+                    <div className="font-medium text-slate-900 dark:text-slate-100">{job.title}</div>
+                    <div className="text-xs text-slate-500 dark:text-slate-400">{job.type} • {job.location}</div>
                   </td>
-                  <td className="px-6 py-4 text-sm text-slate-600">{job.category}</td>
-                  <td className="px-6 py-4 text-sm text-slate-600">
+                  <td className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">{job.category}</td>
+                  <td className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">
                     <div className="flex items-center gap-1">
-                      <Calendar size={14} className="text-slate-400" />
+                      <Calendar size={14} className="text-slate-400 dark:text-slate-500" />
                       {job.hiringTimeline || 'ASAP'}
                     </div>
                   </td>
                   <td className="px-6 py-4">
                     <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium ${
                       job.status === 'active' 
-                        ? 'bg-green-100 text-green-800' 
-                        : 'bg-slate-100 text-slate-800'
+                        ? 'bg-green-100 dark:bg-green-500/15 text-green-800 dark:text-green-300' 
+                        : 'bg-slate-100 dark:bg-white/[.06] text-slate-800 dark:text-slate-200'
                     }`}>
                       {job.status === 'active' ? <CheckCircle size={12} /> : <Clock size={12} />}
                       {job.status.charAt(0).toUpperCase() + job.status.slice(1)}
@@ -303,14 +303,14 @@ export default function AdminJobs() {
                     <div className="flex items-center gap-2">
                       <button 
                         onClick={() => toggleStatus(job)}
-                        className="p-1 hover:bg-slate-100 rounded text-slate-600"
+                        className="p-1 hover:bg-slate-100 dark:hover:bg-white/[.06] rounded text-slate-600 dark:text-slate-400"
                         title="Toggle Status"
                       >
                         <Edit2 size={18} />
                       </button>
                       <button 
                         onClick={() => handleDeleteJob(job.id, job.title)}
-                        className="p-1 hover:bg-red-50 rounded text-red-600"
+                        className="p-1 hover:bg-red-50 dark:hover:bg-red-500/10 rounded text-red-600"
                         title="Delete Job"
                       >
                         <Trash2 size={18} />

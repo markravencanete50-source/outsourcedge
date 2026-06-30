@@ -251,16 +251,16 @@ export default function AdminCeoDashboard() {
   };
 
   const kpis = [
-    { label: 'Total Inquiries', value: contactsCount, icon: Mail, tint: 'bg-blue-50 text-blue-600' },
+    { label: 'Total Inquiries', value: contactsCount, icon: Mail, tint: 'bg-blue-50 dark:bg-blue-500/10 text-blue-600' },
     {
       label: 'Pipeline Value',
       value: `$${pipeline.totalValue.toLocaleString()}`,
       icon: DollarSign,
-      tint: 'bg-green-50 text-green-600',
+      tint: 'bg-green-50 dark:bg-green-500/10 text-green-600',
     },
-    { label: 'Active Deals', value: pipeline.count, icon: Users, tint: 'bg-purple-50 text-purple-600' },
-    { label: 'Win Rate', value: `${pipeline.winRate}%`, icon: TrendingUp, tint: 'bg-orange-50 text-orange-600' },
-    { label: 'Job Applications', value: applicationsCount, icon: FileText, tint: 'bg-indigo-50 text-indigo-600' },
+    { label: 'Active Deals', value: pipeline.count, icon: Users, tint: 'bg-purple-50 dark:bg-purple-500/10 text-purple-600' },
+    { label: 'Win Rate', value: `${pipeline.winRate}%`, icon: TrendingUp, tint: 'bg-orange-50 dark:bg-orange-500/10 text-orange-600' },
+    { label: 'Job Applications', value: applicationsCount, icon: FileText, tint: 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600' },
     { label: 'Active Jobs', value: activeJobsCount, icon: Briefcase, tint: 'bg-teal-50 text-teal-600' },
   ];
 
@@ -302,25 +302,25 @@ export default function AdminCeoDashboard() {
           {kpis.map((kpi) => (
             <div
               key={kpi.label}
-              className="group bg-white p-5 rounded-xl border border-slate-200 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
+              className="group bg-white dark:bg-[#0F1A2E] p-5 rounded-xl border border-slate-200 dark:border-white/[.08] shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
             >
               <div className={`inline-flex p-2.5 rounded-lg ${kpi.tint}`}>
                 <kpi.icon className="w-5 h-5" />
               </div>
-              <p className="text-sm text-slate-500 font-medium mt-3">{kpi.label}</p>
-              <h3 className="text-2xl font-bold text-slate-900">{kpi.value}</h3>
+              <p className="text-sm text-slate-500 dark:text-slate-400 font-medium mt-3">{kpi.label}</p>
+              <h3 className="text-2xl font-bold text-slate-900 dark:text-slate-100">{kpi.value}</h3>
             </div>
           ))}
         </div>
 
         {/* ── Pipeline chart + access summary ──────────────────────────────── */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 bg-white rounded-xl border border-slate-200 shadow-sm p-6">
-            <h3 className="font-bold text-slate-900 mb-4 flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-[#1B3A4B]" /> Pipeline by Stage
+          <div className="lg:col-span-2 bg-white dark:bg-[#0F1A2E] rounded-xl border border-slate-200 dark:border-white/[.08] shadow-sm p-6">
+            <h3 className="font-bold text-slate-900 dark:text-slate-100 mb-4 flex items-center gap-2">
+              <TrendingUp className="w-5 h-5 text-[#1B3A4B] dark:text-[#7FB6CC]" /> Pipeline by Stage
             </h3>
             {opportunities.length === 0 ? (
-              <div className="h-[280px] flex items-center justify-center text-slate-400 text-sm italic">
+              <div className="h-[280px] flex items-center justify-center text-slate-400 dark:text-slate-500 text-sm italic">
                 No pipeline data yet.
               </div>
             ) : (
@@ -346,25 +346,25 @@ export default function AdminCeoDashboard() {
             )}
           </div>
 
-          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
-            <h3 className="font-bold text-slate-900 mb-5 flex items-center gap-2">
+          <div className="bg-white dark:bg-[#0F1A2E] rounded-xl border border-slate-200 dark:border-white/[.08] shadow-sm p-6">
+            <h3 className="font-bold text-slate-900 dark:text-slate-100 mb-5 flex items-center gap-2">
               <ShieldCheck className="w-5 h-5 text-green-600" /> Access Control
             </h3>
             <div className="space-y-3">
-              <div className="flex items-center justify-between rounded-lg bg-slate-50 px-4 py-3">
-                <span className="text-sm text-slate-500 flex items-center gap-2">
-                  <Users className="w-4 h-4 text-slate-400" /> Total admins
+              <div className="flex items-center justify-between rounded-lg bg-slate-50 dark:bg-white/[.04] px-4 py-3">
+                <span className="text-sm text-slate-500 dark:text-slate-400 flex items-center gap-2">
+                  <Users className="w-4 h-4 text-slate-400 dark:text-slate-500" /> Total admins
                 </span>
-                <span className="text-xl font-bold text-slate-900">{admins.length}</span>
+                <span className="text-xl font-bold text-slate-900 dark:text-slate-100">{admins.length}</span>
               </div>
-              <div className="flex items-center justify-between rounded-lg bg-green-50 px-4 py-3">
-                <span className="text-sm text-green-700 flex items-center gap-2">
+              <div className="flex items-center justify-between rounded-lg bg-green-50 dark:bg-green-500/10 px-4 py-3">
+                <span className="text-sm text-green-700 dark:text-green-300 flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-green-600" /> Active
                 </span>
                 <span className="text-xl font-bold text-green-600">{activeAdmins}</span>
               </div>
-              <div className="flex items-center justify-between rounded-lg bg-red-50 px-4 py-3">
-                <span className="text-sm text-red-700 flex items-center gap-2">
+              <div className="flex items-center justify-between rounded-lg bg-red-50 dark:bg-red-500/10 px-4 py-3">
+                <span className="text-sm text-red-700 dark:text-red-300 flex items-center gap-2">
                   <ShieldOff className="w-4 h-4 text-red-600" /> Suspended
                 </span>
                 <span className="text-xl font-bold text-red-600">{suspendedAdmins}</span>
@@ -374,14 +374,14 @@ export default function AdminCeoDashboard() {
         </div>
 
         {/* ── Admin management ─────────────────────────────────────────────── */}
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-          <div className="p-6 border-b border-slate-100 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <h3 className="font-bold text-slate-900 flex items-center gap-2">
-              <Users className="w-5 h-5 text-[#1B3A4B]" /> Admin Accounts
+        <div className="bg-white dark:bg-[#0F1A2E] rounded-xl border border-slate-200 dark:border-white/[.08] shadow-sm overflow-hidden">
+          <div className="p-6 border-b border-slate-100 dark:border-white/[.06] flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <h3 className="font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+              <Users className="w-5 h-5 text-[#1B3A4B] dark:text-[#7FB6CC]" /> Admin Accounts
               <Badge variant="secondary" className="ml-1">{admins.length}</Badge>
             </h3>
             <div className="relative w-full sm:w-72">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 dark:text-slate-500" />
               <Input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
@@ -394,7 +394,7 @@ export default function AdminCeoDashboard() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-slate-500 border-b border-slate-100 bg-slate-50/60">
+                <tr className="text-left text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-white/[.06] bg-slate-50/60">
                   <th className="px-6 py-3 font-medium">Member</th>
                   <th className="px-6 py-3 font-medium">Role</th>
                   <th className="px-6 py-3 font-medium">Status</th>
@@ -405,7 +405,7 @@ export default function AdminCeoDashboard() {
               <tbody>
                 {adminsLoading ? (
                   Array.from({ length: 3 }).map((_, i) => (
-                    <tr key={i} className="border-b border-slate-50">
+                    <tr key={i} className="border-b border-slate-50 dark:border-white/[.06]">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
                           <Skeleton className="h-9 w-9 rounded-full" />
@@ -423,7 +423,7 @@ export default function AdminCeoDashboard() {
                   ))
                 ) : filteredAdmins.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="px-6 py-10 text-center text-slate-400 italic">
+                    <td colSpan={5} className="px-6 py-10 text-center text-slate-400 dark:text-slate-500 italic">
                       {search ? 'No admins match your search.' : 'No admin accounts found.'}
                     </td>
                   </tr>
@@ -434,24 +434,24 @@ export default function AdminCeoDashboard() {
                     const isSuspended = admin.status === 'suspended';
                     const lastLogin = formatWhen(admin.lastLoginAt);
                     return (
-                      <tr key={admin.uid} className="border-b border-slate-50 last:border-0 hover:bg-slate-50/70 transition-colors">
+                      <tr key={admin.uid} className="border-b border-slate-50 dark:border-white/[.06] last:border-0 hover:bg-slate-50/70 transition-colors">
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-3">
                             <div
                               className={`grid h-9 w-9 shrink-0 place-items-center rounded-full text-xs font-bold ${
                                 admin.role === 'ceo'
                                   ? 'bg-amber-100 text-amber-700'
-                                  : 'bg-slate-100 text-slate-600'
+                                  : 'bg-slate-100 dark:bg-white/[.06] text-slate-600 dark:text-slate-400'
                               }`}
                             >
                               {initials(admin.displayName, admin.email)}
                             </div>
                             <div className="min-w-0">
-                              <div className="font-semibold text-slate-900 truncate">
+                              <div className="font-semibold text-slate-900 dark:text-slate-100 truncate">
                                 {admin.displayName || '—'}
-                                {isSelf && <span className="ml-2 text-[10px] text-slate-400">(you)</span>}
+                                {isSelf && <span className="ml-2 text-[10px] text-slate-400 dark:text-slate-500">(you)</span>}
                               </div>
-                              <div className="text-slate-500 truncate">{admin.email}</div>
+                              <div className="text-slate-500 dark:text-slate-400 truncate">{admin.email}</div>
                             </div>
                           </div>
                         </td>
@@ -471,17 +471,17 @@ export default function AdminCeoDashboard() {
                             <Badge className="bg-green-600 hover:bg-green-600">Active</Badge>
                           )}
                         </td>
-                        <td className="px-6 py-4 text-slate-500">{lastLogin || '—'}</td>
+                        <td className="px-6 py-4 text-slate-500 dark:text-slate-400">{lastLogin || '—'}</td>
                         <td className="px-6 py-4 text-right">
                           {!canManage(admin) ? (
-                            <span className="text-xs text-slate-400 italic">
+                            <span className="text-xs text-slate-400 dark:text-slate-500 italic">
                               {isSelf ? 'Your account' : isFounder ? 'Protected' : '—'}
                             </span>
                           ) : isSuspended ? (
                             <Button
                               size="sm"
                               variant="outline"
-                              className="text-green-700 border-green-200 hover:bg-green-50"
+                              className="text-green-700 dark:text-green-300 border-green-200 dark:border-green-500/25 hover:bg-green-50 dark:hover:bg-green-500/10"
                               onClick={() => setPending({ type: 'reactivate', admin })}
                             >
                               <ShieldCheck className="w-4 h-4 mr-1" /> Reactivate
@@ -490,7 +490,7 @@ export default function AdminCeoDashboard() {
                             <Button
                               size="sm"
                               variant="outline"
-                              className="text-red-700 border-red-200 hover:bg-red-50"
+                              className="text-red-700 dark:text-red-300 border-red-200 dark:border-red-500/25 hover:bg-red-50 dark:hover:bg-red-500/10"
                               onClick={() => setPending({ type: 'suspend', admin })}
                             >
                               <ShieldOff className="w-4 h-4 mr-1" /> Suspend
