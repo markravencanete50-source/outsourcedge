@@ -1,7 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import AdminLayout from '@/components/AdminLayout';
 import { useAdmin } from '@/contexts/AdminContext';
 import { useAdminActivityLogger } from '@/hooks/useAdminActivityLogger';
+import DateRangeFilter from '@/components/DateRangeFilter';
+import { ALL_TIME, DateRange, toJsDate, inRange } from '@/lib/dateRange';
 import { 
   collection, 
   onSnapshot, 
@@ -78,9 +80,16 @@ const STAGES: { id: OpportunityStage; label: string; color: string }[] = [
 export default function AdminClients() {
   const { isAuthenticated, adminName } = useAdmin();
   const { logActivity } = useAdminActivityLogger();
-  const [opportunities, setOpportunities] = useState<Opportunity[]>([]);
+  const [opportunitiesRaw, setOpportunities] = useState<Opportunity[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [range, setRange] = useState<DateRange>(ALL_TIME);
+
+  // Pipeline scoped to the selected calendar range (by dateAdded).
+  const opportunities = useMemo(
+    () => opportunitiesRaw.filter((o) => inRange(toJsDate(o.dateAdded), range)),
+    [opportunitiesRaw, range],
+  );
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [currentOpportunity, setCurrentOpportunity] = useState<Partial<Opportunity> | null>(null);
 
@@ -201,17 +210,18 @@ export default function AdminClients() {
             <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100">Partnership Pipeline</h1>
             <p className="text-slate-500 dark:text-slate-400 mt-1">Manage business opportunities and strategic growth.</p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
+            <DateRangeFilter value={range} onChange={setRange} />
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" />
-              <Input 
-                placeholder="Search pipeline..." 
+              <Input
+                placeholder="Search pipeline..."
                 className="pl-10 w-64 bg-white dark:bg-[#0F1A2E]"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-            <Button 
+            <Button
               onClick={() => {
                 setCurrentOpportunity({ stage: 'new-lead', priority: 'warm', estimatedValue: 0 });
                 setIsDialogOpen(true);

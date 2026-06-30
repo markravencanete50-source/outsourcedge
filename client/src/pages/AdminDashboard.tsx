@@ -5,6 +5,8 @@ import { useTheme } from '@/contexts/ThemeProvider';
 import { useAdminActivityLogger } from '@/hooks/useAdminActivityLogger';
 import { collection, onSnapshot, query, orderBy, limit } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
+import DateRangeFilter from '@/components/DateRangeFilter';
+import { ALL_TIME, DateRange, toJsDate, inRange } from '@/lib/dateRange';
 import {
   AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
   RadialBarChart, RadialBar,
@@ -51,10 +53,23 @@ export default function AdminDashboard() {
   const { trackPageView } = useAdminActivityLogger();
 
   // ---- live Firestore state (all real, no seeded sample data) ----
-  const [contacts, setContacts] = useState<any[]>([]);
-  const [applications, setApplications] = useState<any[]>([]);
-  const [opportunities, setOpportunities] = useState<any[]>([]);
+  const [contactsRaw, setContacts] = useState<any[]>([]);
+  const [applicationsRaw, setApplications] = useState<any[]>([]);
+  const [opportunitiesRaw, setOpportunities] = useState<any[]>([]);
   const [activities, setActivities] = useState<any[]>([]);
+  const [range, setRange] = useState<DateRange>(ALL_TIME);
+
+  // KPIs and charts below read contacts/applications/opportunities — scope them
+  // to the selected calendar range. The "Recent Activity" feed stays as-is.
+  const contacts = useMemo(
+    () => contactsRaw.filter((c) => inRange(toJsDate(c.createdAt), range)),
+    [contactsRaw, range]);
+  const applications = useMemo(
+    () => applicationsRaw.filter((a) => inRange(toJsDate(a.createdAt), range)),
+    [applicationsRaw, range]);
+  const opportunities = useMemo(
+    () => opportunitiesRaw.filter((o) => inRange(toJsDate(o.dateAdded), range)),
+    [opportunitiesRaw, range]);
 
   useEffect(() => { trackPageView('Admin Dashboard'); }, []);
 
@@ -137,9 +152,12 @@ export default function AdminDashboard() {
   return (
     <AdminLayout>
       <div className="space-y-[18px]">
-        <div>
-          <h1 className="font-[Poppins] font-semibold text-[21px] tracking-[-.01em]">Dashboard Overview</h1>
-          <p className="text-[12.5px] text-slate-500 dark:text-slate-400 mt-0.5">Real-time performance &amp; administrative activity</p>
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+          <div>
+            <h1 className="font-[Poppins] font-semibold text-[21px] tracking-[-.01em]">Dashboard Overview</h1>
+            <p className="text-[12.5px] text-slate-500 dark:text-slate-400 mt-0.5">Real-time performance &amp; administrative activity</p>
+          </div>
+          <DateRangeFilter value={range} onChange={setRange} />
         </div>
 
         {/* KPI ROW — all real */}

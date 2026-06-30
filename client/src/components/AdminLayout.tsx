@@ -51,11 +51,21 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const onClick = (e: MouseEvent) => {
-      const el = (e.target as HTMLElement).closest('button, a, [role="button"]');
-      if (el) {
-        const name = el.textContent?.trim() || el.getAttribute('aria-label') || 'Unknown';
-        if (name && !['Logout', 'OE', 'OutsourcEdge'].includes(name)) trackClick(name);
-      }
+      const el = (e.target as HTMLElement).closest(
+        'button, a, [role="button"], [role="menuitem"], [role="tab"], [role="option"]',
+      ) as HTMLElement | null;
+      if (!el) return;
+      const label =
+        el.getAttribute('aria-label') ||
+        el.textContent?.replace(/\s+/g, ' ').trim() ||
+        el.getAttribute('title') ||
+        '';
+      if (!label || ['OE', 'OutsourcEdge'].includes(label)) return;
+      const control =
+        el.tagName === 'A'
+          ? 'link'
+          : el.getAttribute('role') || el.tagName.toLowerCase();
+      trackClick(label, { control });
     };
     window.addEventListener('click', onClick);
     return () => window.removeEventListener('click', onClick);

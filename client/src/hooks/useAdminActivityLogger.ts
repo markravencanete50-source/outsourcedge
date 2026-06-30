@@ -1,11 +1,10 @@
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useAdmin } from '@/contexts/AdminContext';
 
 export const useAdminActivityLogger = () => {
   const { adminEmail, adminName } = useAdmin();
-  const heartbeatIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const currentPageRef = useRef<string>('Dashboard');
 
   const logActivity = async (
@@ -33,26 +32,28 @@ export const useAdminActivityLogger = () => {
 
   const trackPageView = (pageName: string) => {
     currentPageRef.current = pageName;
-    logActivity('view', pageName, `Visited ${pageName}`);
+    logActivity('view', pageName, `Opened ${pageName}`);
   };
 
-  // NEW: Log specific clicks (buttons, links, etc.)
-  const trackClick = (elementName: string, details?: string) => {
-    logActivity('click', currentPageRef.current, `Clicked ${elementName}`, { details });
+  // Log a specific click (button, link, menu item …) with rich context so the
+  // audit trail reads like "what they actually did", not just timestamps.
+  const trackClick = (
+    elementName: string,
+    extra?: { control?: string; details?: string },
+  ) => {
+    const page = currentPageRef.current;
+    const label = (elementName || 'an element').replace(/\s+/g, ' ').trim().slice(0, 80);
+    logActivity(
+      'click',
+      page,
+      extra?.details || `Clicked "${label}" on ${page}`,
+      { element: label, control: extra?.control || 'button', page },
+    );
   };
 
-  useEffect(() => {
-    if (!adminEmail || !db) return;
-
-    // Heartbeat every 60 seconds
-    heartbeatIntervalRef.current = setInterval(() => {
-      logActivity('heartbeat', currentPageRef.current, 'User is still active');
-    }, 60000);
-
-    return () => {
-      if (heartbeatIntervalRef.current) clearInterval(heartbeatIntervalRef.current);
-    };
-  }, [adminEmail]);
+  // No heartbeat: activity is recorded only when the admin actually does
+  // something (navigates, clicks, creates/updates/deletes). This keeps the log
+  // an action trail rather than a presence ping.
 
   return { logActivity, trackPageView, trackClick };
 };

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import AdminLayout from '@/components/AdminLayout';
 import { useAdmin } from '@/contexts/AdminContext';
 import { useLocation } from 'wouter';
@@ -6,13 +6,26 @@ import { Eye, Users, MousePointer2, Clock, ArrowUpRight, TrendingUp, Globe, Moni
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell, PieChart, Pie } from 'recharts';
 import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
+import DateRangeFilter from '@/components/DateRangeFilter';
+import { ALL_TIME, DateRange, toJsDate, inRange } from '@/lib/dateRange';
 
 export default function AdminAnalytics() {
   const { isAuthenticated } = useAdmin();
   const [, setLocation] = useLocation();
-  const [contacts, setContacts] = useState<any[]>([]);
-  const [applications, setApplications] = useState<any[]>([]);
+  const [contactsRaw, setContacts] = useState<any[]>([]);
+  const [applicationsRaw, setApplications] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [range, setRange] = useState<DateRange>(ALL_TIME);
+
+  // Everything below reads `contacts`/`applications`, now scoped to the picked range.
+  const contacts = useMemo(
+    () => contactsRaw.filter((c) => inRange(toJsDate(c.createdAt), range)),
+    [contactsRaw, range],
+  );
+  const applications = useMemo(
+    () => applicationsRaw.filter((a) => inRange(toJsDate(a.createdAt), range)),
+    [applicationsRaw, range],
+  );
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -104,9 +117,12 @@ export default function AdminAnalytics() {
             <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Live Analytics</h1>
             <p className="text-slate-500 dark:text-slate-400">Real-time performance from your database</p>
           </div>
-          <div className="flex items-center gap-2 px-3 py-1 bg-green-50 dark:bg-green-500/10 text-green-700 dark:text-green-300 rounded-full text-sm font-medium animate-pulse">
-            <Activity size={16} />
-            Live Connection
+          <div className="flex flex-wrap items-center gap-3">
+            <DateRangeFilter value={range} onChange={setRange} />
+            <div className="flex items-center gap-2 px-3 py-1 bg-green-50 dark:bg-green-500/10 text-green-700 dark:text-green-300 rounded-full text-sm font-medium animate-pulse">
+              <Activity size={16} />
+              Live Connection
+            </div>
           </div>
         </div>
 
