@@ -4,7 +4,7 @@ import type { AdminRole, AdminStatus } from '@/types/admin';
 // and can never be suspended or deleted (mirrored in firestore.rules). Override
 // it per environment with VITE_CEO_BOOTSTRAP_EMAIL.
 export const CEO_BOOTSTRAP_EMAIL = (
-  import.meta.env.VITE_CEO_BOOTSTRAP_EMAIL || 'markravencanete50@gmail.com'
+  import.meta.env.VITE_CEO_BOOTSTRAP_EMAIL || 'richieann@outsourcedge.com'
 )
   .toString()
   .trim()

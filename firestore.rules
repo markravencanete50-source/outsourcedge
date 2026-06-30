@@ -25,7 +25,7 @@ service cloud.firestore {
     }
 
     function bootstrapCeoEmail() {
-      return 'markravencanete50@gmail.com';
+      return 'richieann@outsourcedge.com';
     }
 
     // Case-insensitive comparison of the signed-in user's email to the founder's.
