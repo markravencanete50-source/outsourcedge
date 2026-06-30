@@ -284,7 +284,7 @@ export default function AdminCeoDashboard() {
                 <Crown className="h-7 w-7" />
               </div>
               <div>
-                <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">CEO Command Center</h1>
+                <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">CEO Command Center</h1>
                 <p className="mt-1 text-sm text-white/70">
                   Executive overview &amp; administrative access control
                 </p>

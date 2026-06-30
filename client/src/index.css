@@ -164,6 +164,11 @@
     font-family: "Poppins", "Inter", system-ui, sans-serif;
     letter-spacing: 0;
   }
+  /* In dark mode, headings without an explicit text utility must not stay deep
+     navy on dark surfaces. Tailwind text-* utilities still override this. */
+  .dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6 {
+    color: var(--foreground);
+  }
 }
 
 @layer components {
