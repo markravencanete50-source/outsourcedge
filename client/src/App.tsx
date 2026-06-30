@@ -92,17 +92,18 @@ function Router() {
           <Route path="/admin/applications">
             {() => <ProtectedRoute component={AdminApplications} />}
           </Route>
+          {/* CEO-exclusive intelligence — regular admins are bounced to the dashboard */}
           <Route path="/admin/analytics">
-            {() => <ProtectedRoute component={AdminAnalytics} />}
+            {() => <CeoRoute component={AdminAnalytics} />}
           </Route>
           <Route path="/admin/jobs">
             {() => <ProtectedRoute component={AdminJobs} />}
           </Route>
           <Route path="/admin/clients">
-            {() => <ProtectedRoute component={AdminClients} />}
+            {() => <CeoRoute component={AdminClients} />}
           </Route>
           <Route path="/admin/activity-logs">
-            {() => <ProtectedRoute component={AdminActivityLogs} />}
+            {() => <CeoRoute component={AdminActivityLogs} />}
           </Route>
           <Route path="/admin/editor">
             {() => <ProtectedRoute component={AdminPageEditor} />}

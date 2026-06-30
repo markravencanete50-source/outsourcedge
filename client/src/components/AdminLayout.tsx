@@ -25,21 +25,24 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   const [location, setLocation] = useLocation();
   const [dbConnected, setDbConnected] = useState(false);
 
-  const adminMenu = [
-    { href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard, section: 'Overview' },
-    { href: '/admin/contacts', label: 'Contact Submissions', icon: Mail, section: 'Overview' },
-    { href: '/admin/applications', label: 'Job Applications', icon: Users, section: 'Overview' },
-    { href: '/admin/jobs', label: 'Manage Jobs', icon: Briefcase, section: 'Overview' },
-    { href: '/admin/analytics', label: 'Analytics', icon: BarChart3, section: 'Intelligence' },
-    { href: '/admin/clients', label: 'Partnership Pipeline', icon: Zap, section: 'Intelligence' },
-    { href: '/admin/activity-logs', label: 'Activity Logs', icon: Clock, section: 'Intelligence' },
-    { href: '/admin/editor', label: 'Website Editor', icon: Layout, section: 'Content' },
-    { href: '/admin/services', label: 'Service Manager', icon: Settings, section: 'Content' },
-    { href: '/admin/testimonials', label: 'Testimonial Manager', icon: Star, section: 'Content' },
-    { href: '/admin/service-questionnaires', label: 'Service Inquiries', icon: FileText, section: 'Content' },
+  // access: 'all'  → both CEO and admin
+  //         'ceo'   → CEO view only (hidden + route-guarded from regular admins)
+  //         'admin' → regular admin operational pages (not shown in the CEO view)
+  const allMenu = [
+    { href: '/admin/ceo', label: 'Command Center', icon: Crown, section: 'Executive', access: 'ceo' },
+    { href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard, section: 'Overview', access: 'all' },
+    { href: '/admin/contacts', label: 'Contact Submissions', icon: Mail, section: 'Overview', access: 'admin' },
+    { href: '/admin/applications', label: 'Job Applications', icon: Users, section: 'Overview', access: 'admin' },
+    { href: '/admin/jobs', label: 'Manage Jobs', icon: Briefcase, section: 'Overview', access: 'admin' },
+    { href: '/admin/analytics', label: 'Analytics', icon: BarChart3, section: 'Intelligence', access: 'ceo' },
+    { href: '/admin/clients', label: 'Partnership Pipeline', icon: Zap, section: 'Intelligence', access: 'ceo' },
+    { href: '/admin/activity-logs', label: 'Activity Logs', icon: Clock, section: 'Intelligence', access: 'ceo' },
+    { href: '/admin/editor', label: 'Website Editor', icon: Layout, section: 'Content', access: 'admin' },
+    { href: '/admin/services', label: 'Service Manager', icon: Settings, section: 'Content', access: 'admin' },
+    { href: '/admin/testimonials', label: 'Testimonial Manager', icon: Star, section: 'Content', access: 'admin' },
+    { href: '/admin/service-questionnaires', label: 'Service Inquiries', icon: FileText, section: 'Content', access: 'admin' },
   ];
-  const ceoMenu = [{ href: '/admin/ceo', label: 'Command Center', icon: Crown, section: 'Executive' }];
-  const menu = isCeo ? [...ceoMenu, ...adminMenu] : adminMenu;
+  const menu = allMenu.filter((m) => m.access === 'all' || m.access === (isCeo ? 'ceo' : 'admin'));
 
   useEffect(() => {
     const name = menu.find((m) => m.href === location)?.label || 'Admin Page';
